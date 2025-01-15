@@ -1,0 +1,61 @@
+
+### (Potential) Research questions and analysis ###
+
+# Metrics
+ET   := Execution Time
+CS   := Code Size (SLOC)
+SLOC := Source Lines Of Code
+DCT  := Dynamic (JIT) Compile-Time (Assuming we get it from JIT logging or JFR.)
+SCT  := Static Compile-Time
+LIVE COUNT := Time series (Would need to overlay graphs and do some line fitting to determine what happens over time)
+BYTES      := Time series
+GC-runs/statistics := reclaimed bytes and objects per event? (Also, full vs. partial)
+...
+
+# General
+How does metrics {M} change by refactoring R?          (specific)
+How does metrics {M} change by refactorings of type T? (correlation)
+
+# Execution time
+How does execution time change by refactoring X?
+
+# Code size
+
+Is there a correlation between code size and name length?
+- local, parameter, method, class, enum, package(?), type-param
+
+What is the effect on code size when extracting a given method?
+What is the effect on code size when inlining a given method (one vs. all references)?
+
+# JIT compile time
+Since we are working with "hot code" (if we define it as methods that the runtime JIT compile)
+we could ask how compile time changes when we compile a method vs. when we inline a called method.
+*** This requires that we output meta data when refactoring so that we know what action was taken
+    and for which method.
+
+    Refactoring descriptors holds all meta data we need for this.
+
+    METHOD <name> INLINE  <something that uniquely defines the inlined call; ...>
+    METHOD <name> EXTRACT <something that uniquely identifies the extracted section; lines; span>
+
+    LOCAL <name> RENAME <new-name>
+    CLASS <name> RENAME <new-name>
+    ...
+
+    *** We must also be able to retarget the same element for renamings to compare different lengths
+        - Basically specify an exact descriptor to rerun (parameterize serialized descriptors in opportunity cache)
+
+# JREs
+We could also do analysis on the input produced for the refactoring framework:
+  Does different runtime versions give different input to the refactoring framework?
+  I.e., are their definitions of "hot methods" aligned and does this correlate with potential
+  performance differences between JDKs?
+
+# Analysis
+
+Are there signs of correlations between SV, TV, RT:
+  Does SV have a certain characteristic when compiled for target version TV?
+  Does TV have a certain characteristic when run with RT (Runtime Version)?
+
+
+
