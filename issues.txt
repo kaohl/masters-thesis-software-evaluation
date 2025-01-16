@@ -1,0 +1,5 @@
+
+- Looking at the method sampling in the flight recording for xalan,
+  the Batik driver is on the stack trace... what is up with that?
+  The harness runs the xalan benchmark though. I'm confused.
+
