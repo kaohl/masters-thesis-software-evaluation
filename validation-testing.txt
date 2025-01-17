@@ -1,0 +1,27 @@
+
+Approximate execution times for validation of
+refactored artifacts using provided testsuites.
+
+# JaCoP 4.6.0
+- upTo5sec  (914 top-level folders => up to 76 min)
+- upTo30sec (60  top-level folders => up to 30 min)
+- upTo1min  (32  top-level folders => up to 32 min)
+- upTo5min  (67  top-level folders => up to 5.6 h)
+- upTo10min (34  top-level folders => up to 5.7 h)
+- upTo1hour (43  top-level folders => up to 43 h)
+
+# ExtendJ 8.1.2 regression
+Between 25-30 seconds
+
+# Hardware
+uname -a
+  - Linux 6.12.4-arch1-1 #1 SMP PREEMPT_DYNAMIC Mon, 09 Dec 2024 14:31:57 +0000 x86_64 GNU/Linux
+lshw / lscpu
+  - Intel(R) Core(TM) i5-7200U CPU @ 2.50GHz
+    - L1 cache 128KiB
+    - L2 cache 512KiB
+    - L3 cache 3MiB
+    * configuration: cores=2 enabledcores=2 microcode=246 threads=4
+  - 8 GiB RAM (SODIMM DDR4 Synchronous 2133 MHz (0.5 ns))
+
+
