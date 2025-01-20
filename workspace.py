@@ -44,6 +44,10 @@ import tools
 def generate_eclipse_workspace_configuration(coord, location, out):
     # TODO: Wrap all calls to daivy in an in-memory cache backed by disk
     #       to avoid resolving things multiple times.
+
+    src_location = location / 'assets/src'
+    lib_location = location / 'assets/lib'
+
     source_projects, build_order = daivy_commands.get_project_info(coord)
     source_projects  = set(source_projects)
     libs             = set()
@@ -57,8 +61,8 @@ def generate_eclipse_workspace_configuration(coord, location, out):
             libs.add(master_jar)
             continue
 
-        if not (location / master_main).exists():
-            raise ValueError("Missing source archive", master_main, "in", str(location))
+        if not (src_location / master_main).exists():
+            raise ValueError("Missing source archive", master_main, "in", str(src_location))
 
         # Main
         out.write(master_stem + " {" + os.linesep)
@@ -81,7 +85,7 @@ def generate_eclipse_workspace_configuration(coord, location, out):
         master_stem = Path(master_jar).stem
         master_test = master_stem + "-test-src.jar"
 
-        if not (location / master_test).exists():
+        if not (src_location / master_test).exists():
             continue
 
         # Test
@@ -104,16 +108,15 @@ def generate_eclipse_workspace_configuration(coord, location, out):
         out.write("   src / " + master_stem + "-test-src.jar" + os.linesep)
         out.write("}" + os.linesep)
 
-    libs_dir = location / 'libs'
-    libs_dir.mkdir()
+    lib_location.mkdir()
     for lib in libs:
-        dst = libs_dir / Path(lib).name
-        shutil.copy2(lib, libs_dir)
+        shutil.copy2(lib, lib_location)
 
 def generate_workspace_resources(project):
-    location = daivy_commands.export_project_sources(project)
-    print("Source location", location)
-    test_projects = []
+    location     = daivy_commands.export_project_sources(project)
+    src_location = location / 'assets' / 'src'
+    src_location.mkdir(parents = True)
+    print("Using resource location", location)
     with tempfile.TemporaryDirectory(dir = location) as unpack_dir:
         for root, dirs, files in os.walk(location):
             for file in files:
@@ -122,12 +125,13 @@ def generate_workspace_resources(project):
                 with tempfile.TemporaryDirectory(dir = location) as t:
                     print("Unpack", file, "into", t)
                     stem     = file[:file.rfind('-')]
-                    src_jar  = location / (stem + "-main-src.jar")
-                    test_jar = location / (stem + "-test-src.jar")
+                    src_jar  = src_location / (stem + "-main-src.jar")
+                    test_jar = src_location / (stem + "-test-src.jar")
 
-                    d = tools.unzip(location / file, Path(t))
+                    d      = tools.unzip(location / file, Path(t))
                     d_main = d / 'src/main/java'
                     d_test = d / 'src/test/java'
+
                     if next(os.scandir(d_main), None):
                         tools.jar(d_main, src_jar)
                     if next(os.scandir(d_test), None):
@@ -135,7 +139,7 @@ def generate_workspace_resources(project):
 
     with io.StringIO() as out:
         generate_eclipse_workspace_configuration(project, location, out)
-        with open(location / "workspace.config", "w") as f:
+        with open(src_location / "workspace.config", "w") as f:
             f.write(out.getvalue())
 
     return location
