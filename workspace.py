@@ -138,10 +138,32 @@ def generate_workspace_resources(project):
         with open(location / "workspace.config", "w") as f:
             f.write(out.getvalue())
 
+    return location
+
+def create_workspace(project, clean):
+    ws_name   = project.replace(':', '-').replace('.', '_')
+    ws_path   = Path(os.getcwd()) / 'workspaces'
+    p_ws_path = ws_path / ws_name
+
+    if not ws_path.exists():
+        ws_path.mkdir()
+    
+    if clean and p_ws_path.exists():
+        shutil.rmtree(p_ws_path)
+
+    if p_ws_path.exists():
+        return p_ws_path
+
+    temp_location = generate_workspace_resources(args.project)
+    shutil.copytree(temp_location, p_ws_path)
+    shutil.rmtree(temp_location)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--project', required = True,
         help = "Coordinate of project to operate on")
+    parser.add_argument('--clean', required = False, action = 'store_true',
+        help = "Remove associated cached resources before executing the specified operation.")
     args = parser.parse_args()
-    generate_workspace_resources(args.project)
+    create_workspace(args.project, args.clean)
 
