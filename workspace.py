@@ -162,6 +162,8 @@ def create_workspace(project, clean):
     shutil.copytree(temp_location, p_ws_path)
     shutil.rmtree(temp_location)
 
+    return p_ws_path
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--project', required = True,
