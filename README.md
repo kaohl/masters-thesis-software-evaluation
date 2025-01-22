@@ -1,9 +1,11 @@
 # masters-thesis-software-evaluation
-Master's thesis software evaluation 
+Master's thesis software evaluation
 
-# Run workspace script
+# Generate and benchmark refactoring
 ```
-mkdir -p temp deployments
 export DAIVY_HOME=...
-./workspace.py --project dacapo:batik:1.0
+mkdir -p experiments/x
+./workspace.py --experiment x --project dacapo:batik:1.0
+./run_benchmark.py --bm batik --data experiments/x/dacapo-batik-1_0/data/tmp...
 ```
+

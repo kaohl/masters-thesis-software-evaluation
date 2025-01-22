@@ -5,9 +5,11 @@ import io
 import os
 from pathlib import Path
 import shutil
+import subprocess
 import tempfile
 
 import daivy_commands
+import patch
 import tools
 
 # We extract one '<artifact stem>-build.zip' per project which
@@ -25,21 +27,10 @@ import tools
 # must have a "test" master configuration that we can use
 # to resolve test dependencies.
 #
-# Dependencies of test projects are source dependencies if
-# they are also source dependencies of the main target.
+# Dependencies of test projects are added as project dependencies
+# if they are also project dependencies of the main target.
 # Otherwise, they are added as binary dependencies.
 #
-# TODO
-#   Source tree splitting results in distinct patches.
-#   We have to apply these patches onto respective paths
-#   on an original unzip of the '-build.zip' archive to
-#   then generate a single patch containing all changes.
-#   Alternatively, we could have daivy apply a list of
-#   patches on the build folder.
-#
-#   Another approach would be to change the refactoring
-#   framework to use the layout exported from daivy in
-#   '-build.zip'.
 
 def generate_eclipse_workspace_configuration(coord, location, out):
     # TODO: Wrap all calls to daivy in an in-memory cache backed by disk
@@ -53,7 +44,24 @@ def generate_eclipse_workspace_configuration(coord, location, out):
     libs             = set()
     defined_projects = set()
     for p in build_order:
-        master_jar  = daivy_commands.resolve_classpath(p, ['master'])[0]
+        # Resolve the artifact of the module (assuming there is only one per module).
+        # If the 'master' configuration does not exist, or if this is an interface
+        # module we will get an empty array as response.
+        #   In both cases, we assume it's an interface module and ignore it with
+        # a warning.
+        #   Interface modules has no source code. Therefore, they do not require
+        # an eclipse project. All dependencies will transfer transitively to
+        # all modules depending on an interface, including 'compile' dependencies.
+        master_jars = daivy_commands.resolve_classpath(p, ['master'])
+        if len(master_jars) == 0:
+            print("Skipping interface project", p)
+            continue
+        elif len(master_jars) > 1:
+            # Each artifact has its own source tree.
+            # Therefore, we assume only one master artifact per module.
+            raise ValueError("Ambiguous master artifact", master_jars)
+
+        master_jar  = master_jars[0]
         master_stem = Path(master_jar).stem
         master_main = master_stem + "-main-src.jar"
 
@@ -70,7 +78,7 @@ def generate_eclipse_workspace_configuration(coord, location, out):
             d_path = Path(d)
             d_stem = d_path.stem
             if d_stem in defined_projects:
-                out.write("   dep " + d_stem + os.linesep) # Eclipse project dependency
+                out.write("   dep " + d_stem + os.linesep) # Eclipse project dependency.
             else:
                 out.write("   lib " + d_path.name + " ?" + os.linesep)
         out.write("   src / " + master_stem + "-main-src.jar" + os.linesep)
@@ -112,6 +120,11 @@ def generate_eclipse_workspace_configuration(coord, location, out):
     for lib in libs:
         shutil.copy2(lib, lib_location)
 
+def is_empty_folder(path):
+    if next(os.scandir(path), None):
+        return False
+    return True
+
 def generate_workspace_resources(project):
     location     = daivy_commands.export_project_sources(project)
     src_location = location / 'assets' / 'src'
@@ -132,20 +145,109 @@ def generate_workspace_resources(project):
                     d_main = d / 'src/main/java'
                     d_test = d / 'src/test/java'
 
-                    if next(os.scandir(d_main), None):
-                        tools.jar(d_main, src_jar)
-                    if next(os.scandir(d_test), None):
-                        tools.jar(d_test, test_jar)
+                    # The 'source-artifacts.txt' file is used when
+                    # generating patches for all exported archives.
+                    with open(src_location / 'source-artifacts.txt', 'a') as artifacts:
+                        if not is_empty_folder(d_main):
+                            tools.jar(d_main, src_jar)
+                            artifacts.write(src_jar.name + os.linesep)
+
+                        if not is_empty_folder(d_test):
+                            tools.jar(d_test, test_jar)
+                            artifacts.write(test_jar.name + os.linesep)
 
     with io.StringIO() as out:
         generate_eclipse_workspace_configuration(project, location, out)
         with open(src_location / "workspace.config", "w") as f:
             f.write(out.getvalue())
 
+    # TODO: Decide how the user should add these configurations.
+    #       They should not be added here unless we want to
+    #       allow the user to specify path patterns that we
+    #       convert into the correct configuration files.
+    #
+    # When we prepare a workspace we must specify which experiment
+    # to use. This is the context in which configuration files
+    # and the opportunity cache is saved.
+    #
+    # ATTENTION
+    # The generated configuration files determines
+    # which packages and classes are probed for
+    # refactoring opportunities. The generated
+    # opportunity cache is tied to this configuration. 
+
+    with open(src_location / 'variable.config', 'w') as var:
+        var.write("batik-all-1.16-main-src.jar" + os.linesep)
+
+    with open(src_location / 'units.config', 'w') as units:
+        units.write("batik-all-1.16=\\" + os.linesep)
+        units.write("    org/apache/batik/ext/awt/image/codec/png/PNGEncodeParam.java" + os.linesep)
+
+    with open(src_location / 'units.config.helper', 'w') as units:
+        units.write("org/apache/batik/ext/awt/image/codec/png/PNGEncodeParam.java" + os.linesep)
+
+    with open(src_location / 'packages.config', 'w') as pkgs:
+        pkgs.write("batik-all-1.16=\\" + os.linesep)
+        pkgs.write("    org.apache.batik.ext.awt.image.codec.png" + os.linesep)
+
+    with open(src_location / 'packages.config.helper', 'w') as pkgs:
+        pkgs.write("batik-all-1.16.include=\\" + os.linesep)
+        pkgs.write("    org.apache.batik.ext.awt.image.codec.png" + os.linesep)
+        #pkgs.write("batik-all-1.16.exclude=\\" + os.linesep)
+        #pkgs.write("    org/apache/batik/ext/image/codec/png" + os.linesep)
+
     return location
 
+def prepare_eclipse_workspace(path):
+    workspace = path
+    oppcache  = workspace / 'oppcache'
+    cmd = " ".join([
+        './eclipse/eclipse',
+        '-data',
+        str(workspace),     # Workspace root.
+        '--prepare',
+        '--runtime',
+        '/home/pddp/.sdkman/candidates/java/current/jre/lib/rt.jar', #'`sdk home java current`/jre/lib/rt.jar', # TODO: Is this only relevant for java 8? How does it work in >8?
+        '--report',
+        'DUMMY-REPORT-DIR', # Not used here.
+        '--src',
+        'assets/src',       # <workspace>/assets/src
+        '--lib',
+        'assets/lib',       # <workspace>/assets/lib
+        '--cache',
+        oppcache.name,      # <workspace>/oppcache
+        '--out',
+        'output',           # <workspace>/output
+        '--type',
+        'rename'            # Not relevant when preparing the workspace (but a required option).
+    ])
+    subprocess.run(cmd, shell = True)
+
+    # TODO: All cache files may not be generated if the refactoring scope is small.
+    #       This is a temporary fix to create them as empty files if that happens.
+    #
+    #       *** This should be fixed in the refactoring framework instead.
+    #
+    oppfiles = [
+        'extract.field.txt',
+        'extract.method.txt',
+        'inline.field.txt',
+        'inline.method.txt',
+        'rename.field.txt',
+        'rename.local.variable.txt',
+        'rename.method.txt',
+        'rename.type.parameter.txt',
+        'rename.type.txt'
+    ]
+    for f in oppfiles:
+        with open(oppcache / f, 'a'):
+            pass
+
+def get_name_from_project_coordinate(coord):
+    return coord.replace(':', '-').replace('.', '_')
+
 def create_workspace(project, clean):
-    ws_name   = project.replace(':', '-').replace('.', '_')
+    ws_name   = get_name_from_project_coordinate(project)
     ws_path   = Path(os.getcwd()) / 'workspaces'
     p_ws_path = ws_path / ws_name
 
@@ -162,14 +264,138 @@ def create_workspace(project, clean):
     shutil.copytree(temp_location, p_ws_path)
     shutil.rmtree(temp_location)
 
+    # Eclipse (refactoring) output directory.
+    (p_ws_path / 'output').mkdir()
+    prepare_eclipse_workspace(p_ws_path)
     return p_ws_path
+
+def refactor(args, proc_id):
+    experiment = args.experiment
+    project    = get_name_from_project_coordinate(args.project)
+    cached_workspace = create_workspace(args.project, False)
+    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as context:
+        workspace = Path(context) / 'workspace'
+        print("Using workspace", str(workspace))
+
+        shutil.copytree(cached_workspace, workspace)
+
+        report_dir           = Path(os.getcwd()) / 'refactoring-reports' / ('report-proc-' + str(proc_id))
+        report_file          = report_dir / 'refactoring-output.txt'
+        success_tracker_file = report_dir / 'successTrackerFile.txt'
+        failure_tracker_file = report_dir / 'failureTrackerFile.txt'
+
+        if not report_dir.exists():
+            report_dir.mkdir()
+        
+        # Clear file between invocations.
+        with open(report_file, 'w'):
+            pass
+
+        # Create if not already exists. (Accumulate over multiple runs.)
+        with open(success_tracker_file, 'a'):
+            pass
+
+        # Create if not already exists. (Accumulate over multiple runs.)
+        with open(failure_tracker_file, 'a'):
+            pass
+
+        cmd = " ".join([
+            './eclipse/eclipse',
+            '-data',
+            str(workspace),     # Workspace root.
+            '--runtime',
+            '/home/pddp/.sdkman/candidates/java/current/jre/lib/rt.jar', #'`sdk home java current`/jre/lib/rt.jar'
+            '--report',
+            str(report_dir),
+            '--src',
+            'assets/src',       # <workspace>/assets/src
+            '--lib',
+            'assets/lib',       # <workspace>/assets/lib
+            '--cache',
+            'oppcache',         # <workspace>/oppcache
+            '--out',
+            'output',           # <workspace>/output
+            # TODO: Handle parameters (all below).
+            '--limit',
+            '1000',
+            '--type',
+            'rename',
+            '--length',
+            '49',
+            '--seed',
+            '0',
+            '--shuffle',
+            '0',
+            '--select',
+            '0'
+        ])
+        # TODO: See if we can get the subprocess command to write directly to file instead of explicit redirection.
+        subprocess.run(cmd + ' > ' + str(workspace / 'output.log'), shell = True)
+
+        ws_output = workspace / 'output'
+
+        if is_empty_folder(ws_output):
+            raise ValueError("Refactoring failed. No output available.")
+
+        experiment_location = Path(os.getcwd()) / 'experiments' / experiment
+        data_location       = experiment_location / project / 'data'
+
+        if not data_location.exists():
+            data_location.mkdir(parents = True)
+
+        with tempfile.TemporaryDirectory(delete = False, dir = data_location) as data_dir:
+            data = Path(data_dir)
+            
+            # Save refactoring framework report.
+            shutil.copy2(report_file, data / 'refactoring-output.txt')
+
+            # Save command.
+            with open(data / 'cmd.txt', "w") as cmd_file:
+                cmd_file.write(cmd)
+
+            # Save standard out from refactoring framework.
+            shutil.copy2(workspace / 'output.log', data / 'output.log')
+
+            archives = []
+            with open(workspace / 'assets/src/source-artifacts.txt', 'r') as artifacts:
+                archives.extend([ x for x in [ archive.strip() for archive in artifacts.readlines() ] if x != "" ])
+
+            patches_file = data / 'patches.txt'
+
+            for name in archives:
+                old = workspace / 'assets/src' / name
+                new = workspace / 'output' / name
+                out = data / (name + '.patch')
+
+                if new.exists():
+                    patch.create_patch(old, new, out)
+                    # Append patch content to patches file.
+                    with open(patches_file, 'a') as psf:
+                        with open(out, 'r') as outf:
+                            psf.writelines(outf.readlines())
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--experiment', required = True,
+        help = "A simple name. All experiment folders are placed in the 'experiments' folder.")
     parser.add_argument('--project', required = True,
-        help = "Coordinate of project to operate on")
+        help = "Coordinate of project to operate on.")
     parser.add_argument('--clean', required = False, action = 'store_true',
         help = "Remove associated cached resources before executing the specified operation.")
     args = parser.parse_args()
+
+    # TODO: This script should not be called as a main script anymore.
+    #       It is time to setup the top level experiment with two
+    #       entry points:
+    #         1) refactor, to generate data, and
+    #         2) benchmark, to build and benchmark generated refactorings one by one.
+    #            - We could build in parallel but there is a time space trade-off to
+    #              be made. The output of each deployment is not that small so we
+    #              could run out of disk space if we don't discard the deployment
+    #              after each build.
+    #        
+
+    # This is just a test to see that we get a refactoring.
     create_workspace(args.project, args.clean)
+    refactor(args, 0)
 
