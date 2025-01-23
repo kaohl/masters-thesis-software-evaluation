@@ -269,14 +269,24 @@ def create_workspace(project, clean):
     prepare_eclipse_workspace(p_ws_path)
     return p_ws_path
 
-def refactor(args, proc_id):
-    experiment = args.experiment
-    project    = get_name_from_project_coordinate(args.project)
-    cached_workspace = create_workspace(args.project, False)
+def create_workspace_in_location(project, location):
+    temp_location = generate_workspace_resources(project)
+    shutil.copytree(temp_location, location, dirs_exist_ok = True)
+    shutil.rmtree(temp_location)
+
+    # Eclipse (refactoring) output directory.
+    (location / 'output').mkdir()
+    prepare_eclipse_workspace(location)
+    return location
+
+def refactor(workspace_location, data_location, refactoring_config, proc_id):
+    cached_workspace = workspace_location #experiment_location / 'workspace'
+    #data_location    = experiment_location / 'data' / tag
     with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as context:
         workspace = Path(context) / 'workspace'
         print("Using workspace", str(workspace))
 
+        # TODO: Use a symlink for oppcache.
         shutil.copytree(cached_workspace, workspace)
 
         report_dir           = Path(os.getcwd()) / 'refactoring-reports' / ('report-proc-' + str(proc_id))
@@ -315,20 +325,7 @@ def refactor(args, proc_id):
             'oppcache',         # <workspace>/oppcache
             '--out',
             'output',           # <workspace>/output
-            # TODO: Handle parameters (all below).
-            '--limit',
-            '1000',
-            '--type',
-            'rename',
-            '--length',
-            '49',
-            '--seed',
-            '0',
-            '--shuffle',
-            '0',
-            '--select',
-            '0'
-        ])
+        ] + [ "{} {}".format(k, v) for k, v in refactoring_config._values.items() ])
         # TODO: See if we can get the subprocess command to write directly to file instead of explicit redirection.
         subprocess.run(cmd + ' > ' + str(workspace / 'output.log'), shell = True)
 
@@ -336,9 +333,6 @@ def refactor(args, proc_id):
 
         if is_empty_folder(ws_output):
             raise ValueError("Refactoring failed. No output available.")
-
-        experiment_location = Path(os.getcwd()) / 'experiments' / experiment
-        data_location       = experiment_location / project / 'data'
 
         if not data_location.exists():
             data_location.mkdir(parents = True)
@@ -373,6 +367,11 @@ def refactor(args, proc_id):
                     with open(patches_file, 'a') as psf:
                         with open(out, 'r') as outf:
                             psf.writelines(outf.readlines())
+
+#def refactor(args, proc_id):
+#    experiment = args.experiment
+#    project    = get_name_from_project_coordinate(args.project)
+#    cached_workspace = create_workspace(args.project, False)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

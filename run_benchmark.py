@@ -122,6 +122,20 @@ def build_and_benchmark_refactoring(args):
             deploy_benchmark(bm, clean, deploy_dir, import_dir)
         run_benchmark(bm, deploy_dir, { '-size' : size }, jfr, jfr_file)
 
+def build_and_benchmark(data_location, configuration, jfr = True):
+    bm       = configuration.bm()
+    #jfr      = jfr
+    jfr_file = 'flight.jfr'
+    data     = data_location # args.data and Path(args.data)
+    size     = configuration.size() # DaCapo option.
+    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as location:
+        import_dir = Path(location)
+        deploy_dir = Path(location) / 'deployment'
+        deploy_dir.mkdir()
+        prime_import_location(bm, import_dir, data)
+        deploy_benchmark(bm, True, deploy_dir, import_dir)
+        run_benchmark(bm, deploy_dir, { '-size' : size }, jfr, jfr_file)
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--bm', required = True,
