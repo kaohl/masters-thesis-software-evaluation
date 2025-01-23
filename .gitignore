@@ -1,5 +1,9 @@
 *~
+*.jfr
+experiments
 deployments
 workspaces
 temp
+eclipse
+refactoring-reports
 
