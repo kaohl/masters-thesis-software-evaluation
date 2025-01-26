@@ -1,5 +1,6 @@
 #!/bin/env python
 
+import argparse
 import hashlib
 import math
 import os
@@ -560,7 +561,9 @@ class CoverageStore:
                             mt[ti].add(li)
                             n_line_contribs = n_line_contribs + 1
                 else:
-                    raise ValueError("No file", test, unit, file)
+                    # The current test does not cover the current unit.
+                    # raise ValueError("No file", test, unit, file)
+                    pass
 
             ui_lc = len(ml) # Number of lines in 'ui'.
             ui_tc = len(mc) # Tests covering 'ui'.
@@ -579,18 +582,22 @@ class CoverageStore:
                     uniqueness = ui_tc - li_tc # Number of tests covering 'ui' but not 'li', which is covered by 'ti'.
                     score      = score + uniqueness * uniqueness
                     # Note: The bias will be zero if all tests cover a line.
-                rarity      = math.sqrt(score / len(ti_lines)) # Standard deviation.
+                rarity      = math.sqrt(score / (len(ti_lines) or 1)) # Standard deviation.
                 final_score = lcput + rarity
 
                 # '<unit_type>.vec' holds "coverage per unit time" for 'ti' on units 'ui'.
                 with open(self._location / test / (unit_type + '.vec'), 'a') as f:
                     f.write(str(final_score) + os.linesep) # Write element: m['ti','ui'] = final_score;
 
-    def summarize(self):
+    def get_all_tests(self):
         test_folders = []
         for root, folders, files in os.walk(self._location):
             test_folders.extend(folders)
             break
+        return test_folders
+
+    def summarize(self):
+        test_folders = self.get_all_tests()
 
         tests   = set() # Total set of tests.
         classes = set() # Total set of classes for which coverage has been found.
@@ -657,7 +664,18 @@ class CoverageStore:
 
         # TODO: Save digest-to-name mappings.
 
-        
+    # Return all tests that cover one or more of
+    # specified fully qualified method names.
+    def find_tests_covering_methods(self, methods):
+        digests   = set([ Report.text_digest(method) for method in methods ])
+        tests     = set(self.get_all_tests())
+        selection = set()
+        for test in tests:
+            for digest in digests:
+                if (self._location / test / ('MLC-' + digest + '.txt')).exists():
+                    selection.add(test)
+        return selection
+
 class Coverage:
 
     # I'm guessing the jacoco report html classes in
@@ -741,9 +759,32 @@ class Coverage:
         return methods
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--collect', required = False, action = 'store_true',# default = False,
+        help = "Run a random tests and collect coverage information.")
+    parser.add_argument('-n', required = False, type = int, default = 1, help = "Number of tests to collect.")
+    parser.add_argument('-s', '--find-method-coverage', required = False, action = 'store_true', default = False,
+        help = "Find tests covering methods specified using the -m or --methods option.")
+    parser.add_argument('-m', '--methods', required = False, nargs='+', default = [],
+        help = "List of fully qualified method signatures. I.e., values on format '<pkg>.<method-name>(<parameter type list>)'.")
+    args = parser.parse_args()
+
+    # TODO: Alternative approach. Not fully working. Issue when copying folders around.
     #find_sub_suite('reports', 'jacop-4.10.0')
 
+    if args.collect:
+        for i in range(max(1, args.n)):
+            main()
+    elif args.find_method_coverage:
+        # Example (Note: Must be fully qualified method signatures.)
+        # methods = [
+        #     'org.jacop.constraints.regular.RegStateInt.RegStateInt(int,int,int,int)'
+        # ]
+        store = CoverageStore(Path('coverage_store'))
+        for t in store.find_tests_covering_methods(args.methods):
+            print(t)
+    else:
+        parser.print_help()
 
     # https://www.jacoco.org/jacoco/trunk/doc/cli.html
     #java -jar jacococli.jar merge [<execfiles> ...] --destfile <path> [--help] [--quiet]
