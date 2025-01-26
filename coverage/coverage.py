@@ -582,9 +582,9 @@ class CoverageStore:
             test_folders.extend(folders)
             break
 
-        tests   = set()
-        classes = set()
-        methods = set()
+        tests   = set() # Total set of tests.
+        classes = set() # Total set of classes for which coverage has been found.
+        methods = set() # Total set of methods for which coverage has been found.
 
         MLC = 'MLC' # Method Line Coverage
         CLC = 'CLC' # Class  Line Coverage
@@ -610,10 +610,19 @@ class CoverageStore:
         print(  "tests  ", len(tests))
         print(  "classes", len(classes))
         print(  "methods", len(methods))
-        # TODO: We only have class lines at the moment...
-        #       Need to find start line number of method declarations
-        #       - Can get from refactoring framework by loading in code and parsing files..., or
-        #       - Use python regex...
+
+        # NOTE
+        # We should be able to get more exact line numbers for
+        # method start and end using the code parser in the
+        # refactoring framework, if we need it. We are only
+        # using it to try to determine if the line coverage
+        # provided by a particular test is more valuable
+        # (rare) than for other tests that cover the same
+        # method.
+        #   This will bias the test selection towards edge
+        # cases. So we might want to be able to run the
+        # algorithm with this enabled and then also disabled
+        # and then potentially join the results.
 
         self._write_unit_coverage(tests, classes, CLC)
         self._write_unit_coverage(tests, methods, MLC)
