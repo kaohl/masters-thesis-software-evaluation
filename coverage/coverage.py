@@ -529,8 +529,15 @@ class CoverageStore:
         data = self._location / test
         return Report(data) if data.exists() else None
 
+    def execution_time(self, test):
+        return self.find_report_by_digest(test).execution_time()
+
     def _write_unit_coverage(self, tests, units, unit_type):
-        print("Write unit coverage", unit_type)
+        print("Resetting test coverage vectors")
+        for test in tests:
+            with open(self._location / test / (unit_type + '.vec'), 'w'):
+                pass
+        print("Computing test coverage vectors", unit_type)
         n_file_contribs = 0
         n_line_contribs = 0
         for ui, unit in enumerate(sorted(units)):
@@ -555,23 +562,26 @@ class CoverageStore:
                 else:
                     raise ValueError("No file", test, unit, file)
 
+            ui_lc = len(ml) # Number of lines in 'ui'.
+            ui_tc = len(mc) # Tests covering 'ui'.
             print("File contribs", str(n_file_contribs))
             print("Line contribs", str(n_line_contribs))
             print("Computing coverage on unit", unit)
             for ti, test in enumerate(sorted(tests)):
-                # What is the coverage per unit time for 'ti'?
-                # How many lines does 'ti' cover of the total available in 'ui'?, an in what time?
-                ui_lc = len(ml)     # Number of lines in 'ui'.
-                ti_ml = len(mt.get(ti, set())) # Number of lines covered by 'ti' in 'ui'.
-                xt    = self.find_report_by_digest(test).execution_time() # Test execution time.
-                score = 0
-                n = len(mc)          # Tests covering 'ui'.
-                for li in mt.get(ti, set()):    # Lines covered by 'ti'.
-                    lc = len(ml[li]) # Total number of tests covering 'li'.
-                    score = score + (n - lc)*(n - lc)
-                rarity = math.sqrt(score) / n
-                base_score  = (ti_ml / ui_lc) / xt # Coverage per unit time.
-                final_score = base_score + rarity  #
+                ti_lc = len(mt.get(ti, set()))    # Lines covered by 'ti' in 'ui'.
+                xt    = self.execution_time(test) #
+                lcput = (ti_lc / ui_lc) / xt      # Line coverage per unit time.
+
+                score    = 0                 # Bias towards edge cases (rarity).
+                ti_lines = mt.get(ti, set()) # Lines in 'ui' covered by 'ti'.
+                for li in ti_lines:
+                    li_tc      = len(ml[li])   # Total number of tests covering 'li'.
+                    uniqueness = ui_tc - li_tc # Number of tests covering 'ui' but not 'li', which is covered by 'ti'.
+                    score      = score + uniqueness * uniqueness
+                    # Note: The bias will be zero if all tests cover a line.
+                rarity      = math.sqrt(score / len(ti_lines)) # Standard deviation.
+                final_score = lcput + rarity
+
                 # '<unit_type>.vec' holds "coverage per unit time" for 'ti' on units 'ui'.
                 with open(self._location / test / (unit_type + '.vec'), 'a') as f:
                     f.write(str(final_score) + os.linesep) # Write element: m['ti','ui'] = final_score;
