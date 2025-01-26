@@ -1,0 +1,14 @@
+% Description:
+%   One test with no coverage.
+%
+% Expected output:
+%   TTime      100
+%   TCoverage  1
+%   Suite     [1]
+%   Coverage  [1]
+%
+target_time = 15000; % ms
+Tn   = 1;
+Un   = 1;
+m    = array2d(0..Tn-1, 0..Un-1, [|1|]);
+txms = array1d(0..Tn-1, [100]);
