@@ -40,6 +40,8 @@ class Test(unittest.TestCase):
             self.assertEqual('T[],T,T', parse('T[] x, T x, T x'))
         with self.subTest():
             self.assertEqual('T[],T,T[],T', parse('T[] x, T x, T[] x, T x'))
+        with self.subTest():
+            self.assertEqual('T[],T<T>,T', parse('T[] x, T<T> x, T x'))
 
     # Trailing simple parameter(s) behind generic split.
     def test_9(self):
@@ -87,11 +89,13 @@ class Test(unittest.TestCase):
                     self.write_random_type(signature, parameter_list, limit)
                 return (signature.getvalue(), parameter_list.getvalue())
 
-    # Randomize input to try to find unhandled cases.
+    @unittest.skip("Random tests. Random input to try to find unhandled cases.")
     def test_x(self):
-        p = self.random_pair()
-        print("Parsing", p)
-        self.assertEqual(p[0], parse(p[1]))
+        for i in range(1000):
+            with self.subTest(i = i):
+                p = self.random_pair()
+                print("Parsing", p)
+                self.assertEqual(p[0], parse(p[1]))
 
 if __name__ == '__main__':
     unittest.main()

@@ -2,7 +2,7 @@ import re
 
 param_of_gen_type = re.compile('>\\s+\\w+\\s*,') # 'List<String> x,'
 param_of_arr_type = re.compile(']\\s+\\w+\\s*,') # 'int[] x,'
-param_of_sim_type = re.compile('(\\w+)\\s+\\w+\\s*,')  # 'int x,'
+param_of_sim_type = re.compile('\\s*(\\w+)\\s+\\w+\\s*,')  # 'int x,'
 
 replacements = [
     ('&lt;', '<'),
@@ -52,7 +52,8 @@ def get_plist(params):
                         y = y.strip()
                         if iy + 1 == len(ys) and ix + 1 == len(xs): # Last.
                             y = y[:-1] # Drop trailing comma.
-                        plist.append(y)
+                        if y != "":
+                            plist.append(y)
                 else:
                     x = x.strip()
                     if ix + 1 == len(xs): # Last.
@@ -62,6 +63,7 @@ def get_plist(params):
         ys = param_of_gen_type.split(params)
         if len(ys) > 1:
             for iy, y in enumerate(ys):
+                #y = y.strip()
                 if y == '':
                     continue
                 # Append the target separator on all but the last.
@@ -75,7 +77,8 @@ def get_plist(params):
                 y = y.strip()
                 if iy + 1 == len(ys): # Last.
                     y = y[:-1] # Drop trailing comma.
-                plist.append(y)
+                if y != "":
+                    plist.append(y)
         else:
             m = param_of_sim_type.match(params)
             while not m is None:
