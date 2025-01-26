@@ -614,15 +614,17 @@ class CoverageStore:
         # NOTE
         # We should be able to get more exact line numbers for
         # method start and end using the code parser in the
-        # refactoring framework, if we need it. We are only
-        # using it to try to determine if the line coverage
-        # provided by a particular test is more valuable
-        # (rare) than for other tests that cover the same
-        # method.
-        #   This will bias the test selection towards edge
-        # cases. So we might want to be able to run the
-        # algorithm with this enabled and then also disabled
-        # and then potentially join the results.
+        # refactoring framework, if we need it.
+        #
+        # We are using line coverage to try to determine if the
+        # line coverage provided by a particular test is more
+        # valuable (rare) than for other tests that cover the
+        # same method.
+        #
+        # This will bias the test selection towards edge cases.
+        # So we might want to be able to run the algorithm with
+        # this enabled and then also disabled and then
+        # potentially join the results.
 
         self._write_unit_coverage(tests, classes, CLC)
         self._write_unit_coverage(tests, methods, MLC)
