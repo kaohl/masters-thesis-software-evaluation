@@ -1,6 +1,7 @@
 #!/bin/env python
 
 import hashlib
+import math
 import os
 from pathlib import Path
 from random import randrange
@@ -499,7 +500,10 @@ class CoverageStore:
         data = self._location / Report.text_digest(test)
         return Report(data) if data.exists() else None
 
-    def _write_unit_coverage(self, units, tests, unit_type):
+    def _write_unit_coverage(self, tests, units, unit_type):
+        print("Write unit coverage", unit_type)
+        n_file_contribs = 0
+        n_line_contribs = 0
         for ui, unit in enumerate(sorted(units)):
             ml = dict() # {line => {test}}
             mt = dict() # {test => {line}}
@@ -507,6 +511,7 @@ class CoverageStore:
             for ti, test in enumerate(sorted(tests)):
                 file = self._location / test / (unit_type + '-' + unit + '.txt')
                 if Path(file).exists():
+                    n_file_contribs = n_file_contribs + 1
                     mc.add(ti)
                     with open(file, 'r') as f:
                         for line in f:
@@ -517,19 +522,25 @@ class CoverageStore:
                                 mt[ti] = set()
                             ml[li].add(ti)
                             mt[ti].add(li)
+                            n_line_contribs = n_line_contribs + 1
+                else:
+                    raise ValueError("No file", test, unit, file)
 
+            print("File contribs", str(n_file_contribs))
+            print("Line contribs", str(n_line_contribs))
+            print("Computing coverage on unit", unit)
             for ti, test in enumerate(sorted(tests)):
                 # What is the coverage per unit time for 'ti'?
                 # How many lines does 'ti' cover of the total available in 'ui'?, an in what time?
                 ui_lc = len(ml)     # Number of lines in 'ui'.
-                ti_ml = len(mt[ti]) # Number of lines covered by 'ti' in 'ui'.
+                ti_ml = len(mt.get(ti, set())) # Number of lines covered by 'ti' in 'ui'.
                 xt    = 500         # Test execution time. (Record and write to file in store.) (TODO)
                 score = 0
                 n = len(mc)          # Tests covering 'ui'.
-                for li in mt[ti]:    # Lines covered by 'ti'.
+                for li in mt.get(ti, set()):    # Lines covered by 'ti'.
                     lc = len(ml[li]) # Total number of tests covering 'li'.
                     score = score + (n - lc)*(n - lc)
-                rarity = sqrt(score) / (n-1)
+                rarity = math.sqrt(score) / n
                 base_score  = (ti_ml / ui_lc) / xt # Coverage per unit time.
                 final_score = base_score + rarity  #
                 # '<unit_type>.vec' holds "coverage per unit time" for 'ti' on units 'ui'.
@@ -551,25 +562,32 @@ class CoverageStore:
 
         for test in test_folders:
             tests.add(test)
-            for root, folders, files in os.walk(test):
+            for root, folders, files in os.walk(self._location / test):
                 for file in files:
                     if file.startswith(MLC + '-'):
-                        stem   = Path(file).stem
-                        method = stem[stem.rfind('-')+1:]
+                        method = Path(file).stem[4:]
                         methods.add(method)
+                        #if not Path(self._location / test / ('MLC-' + method + '.txt')).exists():
+                        #    raise ValueError()
+
                     if file.startswith(CLC + '-'):
-                        stem  = Path(file).stem
-                        clazz = stem[stem.rfind('-')+1:]
+                        clazz = Path(file).stem[4:]
                         classes.add(clazz)
+                        #if not Path(self._location / test / ('CLC-' + clazz + '.txt')).exists():
+                        #    raise ValueError()
                 break
 
+        print("Processing")
+        print(  "tests  ", len(tests))
+        print(  "classes", len(classes))
+        print(  "methods", len(methods))
         # TODO: We only have class lines at the moment...
         #       Need to find start line number of method declarations
         #       - Can get from refactoring framework by loading in code and parsing files..., or
         #       - Use python regex...
 
-        self._write_unit_coverage(tests, methods, MLC)
         self._write_unit_coverage(tests, classes, CLC)
+        self._write_unit_coverage(tests, methods, MLC)
 
         # Write line-index-mappings for tests, classes, and methods.
 
