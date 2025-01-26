@@ -76,8 +76,21 @@ def generate_coverage_report(problem, jacop_root, report_storage, store):
         "-javaagent:" + agent_jar + "=" + ",".join(jacoco_options),
         "-jar",
         junit_jar,
-    ] + junit_options)#  + " " + " ".join(junit_options)
-    subprocess.run(cmd, shell = True, cwd = str(jacop_root))
+    ] + junit_options)
+    result = subprocess.run(
+        cmd,
+        shell = True,
+        cwd = str(jacop_root),
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT
+    )
+    p = re.compile('(\\d+) ms')
+    text = result.stdout.decode('utf-8')
+    junit_reported_execution_time = p.findall(text)[0]
+    print("--- SUBPROCESS OUTPUT ---")
+    print(text)
+    print("--- SUBPROCESS OUTPUT END ---")
+    print("CAPTURED EXECUTION TIME", junit_reported_execution_time, "ms")
 
     # Generate report using jacococli.
 
@@ -106,7 +119,7 @@ def generate_coverage_report(problem, jacop_root, report_storage, store):
     shutil.copy2(jacop_root / 'jacoco.exec', store_at / 'jacoco.exec')
 
     # Extract and store coverage information.
-    store.store_report(problem, store_at / 'report')
+    store.store_report(problem, junit_reported_execution_time, store_at / 'report')
     store.summarize()
 
 def main():
@@ -331,9 +344,20 @@ class Report:
     def _method_coverage_file(self):
         return self._data_location / 'method-coverage.txt'
 
+    def _execution_time_file(self):
+        return self._data_location / 'execution_time.txt'
+
     def _line_coverage_file(self, unit_name, unit_type):
         digest = Report.text_digest(unit_name)
         return self._data_location / (unit_type + '-' + digest + '.txt')
+
+    def write_execution_time(self, xtime):
+        with open(self._execution_time_file(), 'w') as f:
+            f.write(str(xtime) + os.linesep)
+
+    def execution_time(self):
+        with open(self._execution_time_file(), 'r') as f:
+            return int(f.readlines()[0].strip())
 
     def cover_method(self, method):
         with open(self._method_coverage_file(), 'a') as f:
@@ -490,14 +514,19 @@ class CoverageStore:
     def __init__(self, location):
         self._location = location
 
-    def store_report(self, test, report_location):
-        name   = Report.text_digest(test)          # TODO: Store name list mapping to digest.
+    def store_report(self, test, xtime, report_location):
+        name   = Report.text_digest(test)
         data   = self._location / name
         data.mkdir(parents = True)
         report = Report.load(report_location, data)
+        report.write_execution_time(xtime)
 
-    def find_report(self, test):
-        data = self._location / Report.text_digest(test)
+    def find_report_by_name(self, test_name):
+        data = self._location / Report.text_digest(test_name)
+        return Report(data) if data.exists() else None
+
+    def find_report_by_digest(self, test):
+        data = self._location / test
         return Report(data) if data.exists() else None
 
     def _write_unit_coverage(self, tests, units, unit_type):
@@ -534,7 +563,7 @@ class CoverageStore:
                 # How many lines does 'ti' cover of the total available in 'ui'?, an in what time?
                 ui_lc = len(ml)     # Number of lines in 'ui'.
                 ti_ml = len(mt.get(ti, set())) # Number of lines covered by 'ti' in 'ui'.
-                xt    = 500         # Test execution time. (Record and write to file in store.) (TODO)
+                xt    = self.find_report_by_digest(test).execution_time() # Test execution time.
                 score = 0
                 n = len(mc)          # Tests covering 'ui'.
                 for li in mt.get(ti, set()):    # Lines covered by 'ti'.
