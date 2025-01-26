@@ -339,10 +339,14 @@ class Report:
             f.write(method + os.linesep)
 
     def cover_line(self, clazz, method, label):
-        with open(self._line_coverage_file(clazz, 'CLC'), 'a') as f:
+        clc = self._line_coverage_file(clazz, 'CLC')
+        mlc = self._line_coverage_file(method, 'MLC')
+        print("CLC", label, clazz, clc)
+        print("MLC", label, method, mlc)
+        with open(clc, 'a') as f:
             f.write(label + os.linesep)
         if not method is None:
-            with open(self._line_coverage_file(method, 'MLC'), 'a') as f:
+            with open(mlc, 'a') as f:
                 f.write(label + os.linesep)
 
     def load_packages(report_location):
@@ -395,29 +399,60 @@ class Report:
             for root, folders, files in os.walk(package_location):
                 for file in files:
                     if file.endswith('.java.html'):
-                        fs.append((package, Path(root) / file))
+                        path  = Path(root) / file
+                        clazz = file[:file.find('.')]
+                        fs.append((package, clazz, path))
                 break
 
+        ppkg = re.compile('\\s*package\\s+([^;]+);')
         p  = re.compile('^<span class="fc" id="L(\\d+)"')
         p2 = re.compile('^\\s*\\}</span>')
         p3 = re.compile('(\\w+)\\(([^\\)]*)\\)\\s*\\{')
-        # p4 = re.compile('^\\s*\\{')
+        # p4 = re.compile('^\\s*\\{') # TODO: Consider skipping coverage on closing braces to reduce labels.
 
-        for pkg, file in fs:
+        # ATTENTION: (TODO)
+        # The line to method association does not work for nested types.
+        # The issue is that we don't know when we are leaving a class even
+        # if we know where it starts based on the 'class' keyword.
+        #  Alt. Solution 1: Work with indentation of 'class' line and closing brace lines.
+        #  Alt. Solution 2: Count open/closed braces as we parse line-by-line and look for 'class'.
+        #
+        # *** Anonymous classes are more problematic.
+        #     - Perhaps we could exclude lines within methods declarations
+        #       that have a too large indentation and simply add those lines
+        #       to the wrapping type but not to the last seen method:
+        #       class A {
+        #            class B {
+        #                void f() {
+        #                    new X() {
+        #                        <record coverage here for outer method: <pkg>.A.B.f()>.
+        #                    };
+        #     - If we trace the context on a stack as we parse class declarations
+        #       we can always commit the line to the inner most method whose parent
+        #       context is a class. This would be <pkg>.A.B.f() in this example.
+        #
+        # *** Note that the .html file gives us plain line coverage
+        #     even when the .java.html file is not available.
+
+        java_keywords = { 'if', 'switch', 'for', 'while' }
+        for package_name, clazz_name, file in fs:
             with open(file, 'r') as f:
-                method = None
+                #package_name = None
+                method_name = None
+                method      = None
                 for i, line in enumerate(f):
+                    # NOTE: Already have package name from folder name.
+                    #package_match = ppkg.match(line)
+                    #if not package_match is None:
+                    #    package_name = package_match.groups()[0]
+                    #    pass
                     method_match = p3.findall(line)
                     if len(method_match) > 0:
-                        name, params = method_match[-1]
-                        params = params.strip()
+                        method_name, params = method_match[-1]
+                        if method_name in java_keywords:
+                            continue
                         signature = parse_plist.get_signature(params)
-
-                        TODO
-
-                        parts = [x.strip().split(" ")[0].strip() for x in params.split(",")]
-                        method = "{}({})".format(name, ", ".join(parts))
-                        # TODO: Does not work with generics yet...
+                        method = "{}.{}.{}({})".format(package_name,clazz_name, method_name, signature)
                         print("Enter Method", method)
                     # Only include full line statement coverage.
                     # We are only interested in blocks, branching
@@ -436,7 +471,8 @@ class Report:
                         id   = m.groups()[0]
                         rest = m.groups()[0][next:]
                         if not p2.match(rest):
-                            report.cover_line(file.name, method, id)
+                            qualified_class_name = package_name + '.' + clazz_name
+                            report.cover_line(qualified_class_name, method, id)
 
     def load(report_location, data_location):
         report           = Report(data_location)
