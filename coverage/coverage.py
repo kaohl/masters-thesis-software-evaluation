@@ -411,7 +411,7 @@ class Report:
                     if len(method_match) > 0:
                         name, params = method_match[-1]
                         params = params.strip()
-                        plist = parse_plist.get_plist(params)
+                        signature = parse_plist.get_signature(params)
 
                         TODO
 

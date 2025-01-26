@@ -7,7 +7,7 @@ import unittest
 import parse_plist
 
 def parse(params):
-    return parse_plist.get_plist(params)
+    return parse_plist.get_signature(params)
 
 class Test(unittest.TestCase):
 
@@ -51,6 +51,9 @@ class Test(unittest.TestCase):
             self.assertEqual('T<X>,T,T', parse('T<X> x, T x, T x'))
         with self.subTest():
             self.assertEqual('T<X>,T,T<X>,T', parse('T<X> x, T x, T<X> x, T x'))
+
+    def test_10(self):
+        self.assertEqual('T<X>', parse('T< X > x'))
 
     def write_random_type(self, signature, parameter_list, limit, depth = 0):
         # Force simple type at 'limit' to limit recursion depth.

@@ -9,7 +9,7 @@ replacements = [
     ('&gt;', '>')
 ]
 
-def get_plist(params):
+def get_signature(params):
     # All patterns assumes that there is a trailing
     # comma in the input string. Append it if the
     # caller missed it.
@@ -25,8 +25,6 @@ def get_plist(params):
     xs = param_of_arr_type.split(params)
     if len(xs) > 1:
         for ix, x in enumerate(xs):
-            if x == '':
-                continue
             # Append the target separator on all but the last.
             if ix + 1 < len(xs):
                 x = x + "]"
@@ -39,8 +37,6 @@ def get_plist(params):
                 ys = param_of_gen_type.split(x)
                 if len(ys) > 1:
                     for iy, y in enumerate(ys):
-                        if y == '':
-                            continue
                         # Append the target separator on all but the last.
                         if iy + 1 < len(ys):
                             y = y + ">"
@@ -63,9 +59,6 @@ def get_plist(params):
         ys = param_of_gen_type.split(params)
         if len(ys) > 1:
             for iy, y in enumerate(ys):
-                #y = y.strip()
-                if y == '':
-                    continue
                 # Append the target separator on all but the last.
                 if iy + 1 < len(ys):
                     y = y + ">"
@@ -85,4 +78,5 @@ def get_plist(params):
                 plist.append(m.groups()[0])
                 params = params[m.span()[1]+1:]
                 m      = param_of_sim_type.match(params)
-    return ",".join(plist)
+    return ",".join(plist).replace(" ", '').replace('\t', '').replace('\n', '')
+
