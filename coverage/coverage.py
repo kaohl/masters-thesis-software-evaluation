@@ -10,6 +10,8 @@ import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 
+import parse_plist
+
 # https://github.com/radsz/jacop/archive/refs/tags/4.10.0.zip
 # https://github.com/radsz/jacop/archive/refs/tags/4.10.0.tar.gz
 
@@ -408,6 +410,11 @@ class Report:
                     method_match = p3.findall(line)
                     if len(method_match) > 0:
                         name, params = method_match[-1]
+                        params = params.strip()
+                        plist = parse_plist.get_plist(params)
+
+                        TODO
+
                         parts = [x.strip().split(" ")[0].strip() for x in params.split(",")]
                         method = "{}({})".format(name, ", ".join(parts))
                         # TODO: Does not work with generics yet...
