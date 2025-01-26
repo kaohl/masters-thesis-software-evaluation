@@ -1,8 +1,10 @@
 #!/bin/env python
 
+import hashlib
 import os
 from pathlib import Path
 from random import randrange
+import re
 import shutil
 import subprocess
 import tempfile
@@ -32,7 +34,7 @@ def get_random_selection(n, problems):
         selection.append(problems[randrange(len(problems))])
     return selection
 
-def generate_coverage_report(problem, jacop_root, report_storage):
+def generate_coverage_report(problem, jacop_root, report_storage, store):
     # See: src/test/fz/listchoosegenerator.sh
     # Generates problems into a 'mizincbasedchosen/list.txt'.
     # We don't use this script, but instead generate tests
@@ -100,6 +102,10 @@ def generate_coverage_report(problem, jacop_root, report_storage):
     shutil.copytree(jacop_root / 'report', store_at / 'report')
     shutil.copy2(jacop_root / 'jacoco.exec', store_at / 'jacoco.exec')
 
+    # Extract and store coverage information.
+    store.store_report(problem, store_at / 'report')
+    store.summarize()
+
 def main():
 
     # NOTE
@@ -108,6 +114,7 @@ def main():
     # and 'mvn test-compile' in
     # targeted jacop distribution.
 
+    store          = CoverageStore(Path('coverage_store'))
     report_storage = 'reports'
     accept_test_p  = lambda p: not (Path(report_storage) / p).exists()
 
@@ -134,7 +141,7 @@ def main():
             problem = get_random_selection(1, problems)[0]
             if accept_test_p(problem):
                 print("Select problem", problem)
-                generate_coverage_report(problem, dist, report_storage)
+                generate_coverage_report(problem, dist, report_storage, store)
                 found = True
                 break
         if not found:
@@ -146,7 +153,7 @@ def main():
                 problem = problems[i]
                 if accept_test_p(problem):
                     print("Select problem", problem)
-                    generate_coverage_report(problem, dist, report_storage)
+                    generate_coverage_report(problem, dist, report_storage, store)
                     found = True
                     break
             if not found:
@@ -155,7 +162,7 @@ def main():
                     problem = problems[i]
                     if accept_test_p(problem):
                         print("Select problem", problem)
-                        generate_coverage_report(problem, dist, report_storage)
+                        generate_coverage_report(problem, dist, report_storage, store)
                         found = True
                         break
         if not found:
@@ -307,6 +314,239 @@ def find_sub_suite(storage, jacop_dist_location):
             shutil.copy2(include_file, suite_initial_location / 'include.txt')
             shutil.copy2(exclude_file, suite_initial_location / 'exclude.txt')
 
+class Report:
+    def __init__(self, data_location):
+        self._data_location = data_location
+
+        self._files   = set() # {(.html, .java.html)}
+        self._methods = set()  # {name:string}
+        self._classes = dict() # CLASSNAME => {label:string}
+
+    def text_digest(text):
+        return hashlib.md5(bytes(str(text), encoding = 'utf-8')).hexdigest()
+
+    def _method_coverage_file(self):
+        return self._data_location / 'method-coverage.txt'
+
+    def _line_coverage_file(self, unit_name, unit_type):
+        digest = Report.text_digest(unit_name)
+        return self._data_location / (unit_type + '-' + digest + '.txt')
+
+    def cover_method(self, method):
+        with open(self._method_coverage_file(), 'a') as f:
+            f.write(method + os.linesep)
+
+    def cover_line(self, clazz, method, label):
+        with open(self._line_coverage_file(clazz, 'CLC'), 'a') as f:
+            f.write(label + os.linesep)
+        if not method is None:
+            with open(self._line_coverage_file(method, 'MLC'), 'a') as f:
+                f.write(label + os.linesep)
+
+    def load_packages(report_location):
+        packages = []
+        for root, folders, files in os.walk(report_location):
+            for folder in folders:
+                if not folder.startswith('jacoco-'):
+                    packages.append(folder)
+            break
+        return packages
+
+    def load_html_files(report, report_location, packages):
+        fs = []
+        for package in packages:
+            package_location = report_location / package
+            for root, folders, files in os.walk(package_location):
+                for file in files:
+                    skip_files = {
+                        "index.html",
+                        "index.source.html"
+                    }
+                    if not file in skip_files and not file.endswith('.java.html'):
+                        fs.append((package, Path(root) / file))
+                    else:
+                        if not file.endswith('.java.html') and not file in skip_files:
+                            print("Skip file", package, file)
+                break
+
+        for pkg, file in fs:
+            #print("Parsing html", str(file))
+            tree = ET.parse(file)
+            root = tree.getroot()
+            xmlns = lambda sym: "{http://www.w3.org/1999/xhtml}" + sym
+            for tr in root.find(xmlns('body')).find(xmlns('table')).find(xmlns('tbody')).findall(xmlns('tr')):
+                tds        = tr.findall(xmlns('td'))
+                a_name     = tds[0].find(xmlns('a'))    # Used when .java.html exists (if source was available).
+                s_name     = tds[0].find(xmlns('span')) # Used when source was not available during report generation.
+                method     = (a_name if not a_name is None else s_name).text
+                i_coverage = tds[2].text
+                b_coverage = tds[4].text
+                hit        = int(tds[-2].text) == 0 # 0 := hit; 1 := miss
+
+                if hit:
+                    report.cover_method(pkg + "." + method)
+
+    def load_java_files(report, report_location, packages):
+        fs = []
+        for package in packages:
+            package_location = report_location / package
+            for root, folders, files in os.walk(package_location):
+                for file in files:
+                    if file.endswith('.java.html'):
+                        fs.append((package, Path(root) / file))
+                break
+
+        p  = re.compile('^<span class="fc" id="L(\\d+)"')
+        p2 = re.compile('^\\s*\\}</span>')
+        p3 = re.compile('(\\w+)\\(([^\\)]*)\\)\\s*\\{')
+        # p4 = re.compile('^\\s*\\{')
+
+        for pkg, file in fs:
+            with open(file, 'r') as f:
+                method = None
+                for i, line in enumerate(f):
+                    method_match = p3.findall(line)
+                    if len(method_match) > 0:
+                        name, params = method_match[-1]
+                        parts = [x.strip().split(" ")[0].strip() for x in params.split(",")]
+                        method = "{}({})".format(name, ", ".join(parts))
+                        # TODO: Does not work with generics yet...
+                        print("Enter Method", method)
+                    # Only include full line statement coverage.
+                    # We are only interested in blocks, branching
+                    # is implied.
+                    # <span class="fc" id="L70">
+                    #
+                    # Exclude:
+                    # <span class="fc bfc" id="L153" title="All 2 branches covered.">
+                    # <span class="pc bpc" id="L156" title="1 of 2 branches missed.">
+                    # <span class="nc" id="L157">
+                    # <span class="nc" id="L84">    }</span>
+                    # ...
+                    m = p.match(line)
+                    if not m is None:
+                        next = m.span()[1]
+                        id   = m.groups()[0]
+                        rest = m.groups()[0][next:]
+                        if not p2.match(rest):
+                            report.cover_line(file.name, method, id)
+
+    def load(report_location, data_location):
+        report           = Report(data_location)
+        packages         = Report.load_packages(report_location)
+        Report.load_html_files(report, report_location, packages)
+        Report.load_java_files(report, report_location, packages)
+        return report
+
+class TestCoverage:
+    def __init__(self):
+        pass
+
+class CoverageStore:
+    def __init__(self, location):
+        self._location = location
+
+    def store_report(self, test, report_location):
+        name   = Report.text_digest(test)          # TODO: Store name list mapping to digest.
+        data   = self._location / name
+        data.mkdir(parents = True)
+        report = Report.load(report_location, data)
+
+    def find_report(self, test):
+        data = self._location / Report.text_digest(test)
+        return Report(data) if data.exists() else None
+
+    def _write_unit_coverage(self, units, tests, unit_type):
+        for ui, unit in enumerate(sorted(units)):
+            ml = dict() # {line => {test}}
+            mt = dict() # {test => {line}}
+            mc = set()  # Tests covering 'ui'.
+            for ti, test in enumerate(sorted(tests)):
+                file = self._location / test / (unit_type + '-' + unit + '.txt')
+                if Path(file).exists():
+                    mc.add(ti)
+                    with open(file, 'r') as f:
+                        for line in f:
+                            li = int(line)
+                            if not li in ml:
+                                ml[li] = set()
+                            if not ti in mt:
+                                mt[ti] = set()
+                            ml[li].add(ti)
+                            mt[ti].add(li)
+
+            for ti, test in enumerate(sorted(tests)):
+                # What is the coverage per unit time for 'ti'?
+                # How many lines does 'ti' cover of the total available in 'ui'?, an in what time?
+                ui_lc = len(ml)     # Number of lines in 'ui'.
+                ti_ml = len(mt[ti]) # Number of lines covered by 'ti' in 'ui'.
+                xt    = 500         # Test execution time. (Record and write to file in store.) (TODO)
+                score = 0
+                n = len(mc)          # Tests covering 'ui'.
+                for li in mt[ti]:    # Lines covered by 'ti'.
+                    lc = len(ml[li]) # Total number of tests covering 'li'.
+                    score = score + (n - lc)*(n - lc)
+                rarity = sqrt(score) / (n-1)
+                base_score  = (ti_ml / ui_lc) / xt # Coverage per unit time.
+                final_score = base_score + rarity  #
+                # '<unit_type>.vec' holds "coverage per unit time" for 'ti' on units 'ui'.
+                with open(self._location / test / (unit_type + '.vec'), 'a') as f:
+                    f.write(str(final_score) + os.linesep) # Write element: m['ti','ui'] = final_score;
+
+    def summarize(self):
+        test_folders = []
+        for root, folders, files in os.walk(self._location):
+            test_folders.extend(folders)
+            break
+
+        tests   = set()
+        classes = set()
+        methods = set()
+
+        MLC = 'MLC' # Method Line Coverage
+        CLC = 'CLC' # Class  Line Coverage
+
+        for test in test_folders:
+            tests.add(test)
+            for root, folders, files in os.walk(test):
+                for file in files:
+                    if file.startswith(MLC + '-'):
+                        stem   = Path(file).stem
+                        method = stem[stem.rfind('-')+1:]
+                        methods.add(method)
+                    if file.startswith(CLC + '-'):
+                        stem  = Path(file).stem
+                        clazz = stem[stem.rfind('-')+1:]
+                        classes.add(clazz)
+                break
+
+        # TODO: We only have class lines at the moment...
+        #       Need to find start line number of method declarations
+        #       - Can get from refactoring framework by loading in code and parsing files..., or
+        #       - Use python regex...
+
+        self._write_unit_coverage(tests, methods, MLC)
+        self._write_unit_coverage(tests, classes, CLC)
+
+        # Write line-index-mappings for tests, classes, and methods.
+
+        with open(self._location / 'tests.index', 'w') as f:
+            for test in sorted(tests):
+                f.write(str(test) + os.linesep)
+
+        with open(self._location / 'classes.index', 'w') as f:
+            for clazz in sorted(classes):
+                f.write(clazz + os.linesep)
+
+        # TODO: Need to map line numbers to methods.
+        #
+        with open(self._location / 'methods.index', 'w') as f:
+            for method in sorted(methods):
+                f.write(method + os.linesep)
+
+        # TODO: Save digest-to-name mappings.
+
+        
 class Coverage:
 
     # I'm guessing the jacoco report html classes in
@@ -321,7 +561,7 @@ class Coverage:
     
     def __init__(self, dist_location):
         self.dist_location = Path(dist_location)
-        
+
     def _find_covered_methods(self, report_location):
         methods          = set()
         packages         = []
@@ -390,8 +630,8 @@ class Coverage:
         return methods
 
 if __name__ == '__main__':
-    #main()
-    find_sub_suite('reports', 'jacop-4.10.0')
+    main()
+    #find_sub_suite('reports', 'jacop-4.10.0')
 
 
     # https://www.jacoco.org/jacoco/trunk/doc/cli.html
