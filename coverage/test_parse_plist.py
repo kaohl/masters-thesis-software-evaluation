@@ -32,8 +32,23 @@ class Test(unittest.TestCase):
     def test_7(self):
         self.assertEqual('List<String>', parse('List&lt;String&gt; l'))
 
+    # Trailing simple parameter(s) behind array split.
     def test_8(self):
-        self.assertEqual('T[],T', parse('T[] x, T x'))
+        with self.subTest():
+            self.assertEqual('T[],T', parse('T[] x, T x'))
+        with self.subTest():
+            self.assertEqual('T[],T,T', parse('T[] x, T x, T x'))
+        with self.subTest():
+            self.assertEqual('T[],T,T[],T', parse('T[] x, T x, T[] x, T x'))
+
+    # Trailing simple parameter(s) behind generic split.
+    def test_9(self):
+        with self.subTest():
+            self.assertEqual('T<X>,T', parse('T<X> x, T x'))
+        with self.subTest():
+            self.assertEqual('T<X>,T,T', parse('T<X> x, T x, T x'))
+        with self.subTest():
+            self.assertEqual('T<X>,T,T<X>,T', parse('T<X> x, T x, T<X> x, T x'))
 
     def write_random_type(self, signature, parameter_list, limit, depth = 0):
         # Force simple type at 'limit' to limit recursion depth.
