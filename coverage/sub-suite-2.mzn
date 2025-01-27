@@ -1,8 +1,6 @@
 
 % Find sub suite that maximize coverage on a time budge.
 
-%QuadrFloat=true;
-
 % DATA
 
 % Use case 1:
@@ -45,10 +43,26 @@ constraint forall(j in 0..Un-1) (
 %   Ideally, all input tests should provide some
 % coverage, and zero coverage tests be filtered
 % out from the input. But just in case...
-var int   : total_time         = sum (i in 0..Tn-1) (active[i] * suite[i] * txms[i]) + 1;
+var int   : total_time         = sum (i in 0..Tn-1) (active[i] * suite[i] * txms[i]);
 var float : total_coverage     = sum (i in 0..Un-1) (coverage[i]);
-%var float : is_time_acceptable = bool2float(total_time <= target_time); 
-%constraint cptu = is_time_acceptable * total_coverage / total_time;% / (target_time / total_time); % Multiply by time constraint to drive score to zero when target time is exceeded.
-constraint cptu = total_coverage * 2 * target_time * total_time / (target_time*target_time + total_time*total_time); % Use seconds instead to reduce magnitudes?
+
+% The following is the total_coverage times the alignment of total_time with target_time.
+% We want a quantity that maximizes towards 1 as the variable 't' approaches the specified
+% constant value 'T'. The scalar product of the two vectors u = (T,t) and v = (t,T) has this
+% property. This value is their project along the diagonal line between them (y = x) in
+% the first quadrant, which is 1 when t == T, and <1 when t differs from T, because of the
+% angle between them. As t approaches T they meet on the diagonal. If t under- or over-shoot
+% the target value, the vectors are less aligned and therefore the projection is less than 1.
+% There is no bias in either direction. Also, we can scale the coordinates by 'T' without
+% loss of generality, which gives:
+%   u = (1, z=t/T)
+%   v = (z=t/T, 1)
+%   s = u*v = (1,z)*(z,1)
+%     = (1*z + z*1) / (sqrt(1*1 + z*z)*sqrt(z*z + 1*1))
+%     = 2z/(1 + z*z),
+% where 1+z*z is the product of the two lengths: ul, vl = sqrt(1+z*z*) which normalizes the
+% vectors in the scalar product.
+%
+constraint cptu = total_coverage * 2 * (total_time / target_time) / (1 + (total_time / target_time)*(total_time / target_time));
 solve maximize cptu;
 output [ "TTime ", show(total_time - 1), "\nTCoverage ", show(total_coverage), "\nSuite\n", show(suite), "\n", "\nCoverage\n", show(coverage) ];
