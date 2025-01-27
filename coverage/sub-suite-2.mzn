@@ -11,7 +11,7 @@
 % - Compute minimum suite that provides max coverage (removes overlapping tests)
 %   (Requires a binary coverage measure. Works best when applied to line coverage but may be too high resolution.)
 
-int : target_time;     % The desired execution time of the computed test sub-suite.
+int : tt; % Target time. The desired execution time of the computed test sub-suite.
 %int : target_coverage; % The desired total coverage.
 
 int : Tn; % Number of test programs.
@@ -21,13 +21,16 @@ array [0..Tn-1]          of int   : txms; % Test execution times. This is just f
 
 % PARAMETERS
 
-var int   : time; % Total execution time.
+%var int   : time; % Total execution time.
 var float : cptu; % Coverage per time unit.
 array [0..Tn-1] of var 0..1  : suite;
 array [0..Un-1] of var float : coverage;
 array [0..Tn-1] of var 0..1  : active;   % Register active tests to avoid including tests with no coverage.
 
 % CONSTRAINTS
+
+var int   : time           = sum (i in 0..Tn-1) (active[i] * suite[i] * txms[i]);
+var float : total_coverage = sum (i in 0..Un-1) (coverage[i]);
 
 constraint forall(i in 0..Tn-1) (
   active[i] = (sum (j in 0..Un-1) (uc[i, j]) > 0)
@@ -36,9 +39,6 @@ constraint forall(i in 0..Tn-1) (
 constraint forall(j in 0..Un-1) (
   coverage[j] = sum(i in 0..Tn-1) (active[i] * suite[i] * uc[i, j])
 );
-
-var int   : total_time         = sum (i in 0..Tn-1) (active[i] * suite[i] * txms[i]);
-var float : total_coverage     = sum (i in 0..Un-1) (coverage[i]);
 
 % The following is the total_coverage times the alignment of total_time with target_time.
 % We want a quantity that maximizes towards 1 as the variable 't' approaches the specified
@@ -58,7 +58,7 @@ var float : total_coverage     = sum (i in 0..Un-1) (coverage[i]);
 % vectors in the scalar product. The scalar product of any two unit vectors in the first
 % quadrant is a positive value that is maximized when the the vectors are fully aligned.
 %
-constraint cptu = total_coverage * 2 * (total_time / target_time) / (1 + (total_time / target_time)*(total_time / target_time));
+constraint cptu = total_coverage * 2 * (time / tt) / (1 + (time / tt)*(time / tt));
 
 solve maximize cptu;
-output [ "TTime ", show(total_time - 1), "\nTCoverage ", show(total_coverage), "\nSuite\n", show(suite), "\n", "\nCoverage\n", show(coverage) ];
+output [ "TTime ", show(time - 1), "\nTCoverage ", show(total_coverage), "\nSuite\n", show(suite), "\n", "\nCoverage\n", show(coverage) ];

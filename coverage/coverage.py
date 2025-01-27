@@ -573,7 +573,7 @@ class CoverageStore:
             for ti, test in enumerate(sorted(tests)):
                 ti_lc = len(mt.get(ti, set()))    # Lines covered by 'ti' in 'ui'.
                 xt    = self.execution_time(test) #
-                lcput = (ti_lc / ui_lc) / xt      # Line coverage per unit time.
+                lc    = (ti_lc / ui_lc)           # Line coverage.
 
                 score    = 0                 # Bias towards edge cases (rarity).
                 ti_lines = mt.get(ti, set()) # Lines in 'ui' covered by 'ti'.
@@ -583,7 +583,9 @@ class CoverageStore:
                     score      = score + uniqueness * uniqueness
                     # Note: The bias will be zero if all tests cover a line.
                 rarity      = math.sqrt(score / (len(ti_lines) or 1)) # Standard deviation.
-                final_score = lcput + rarity
+                final_score = (lc + rarity) / xt # Coverage per unit time
+                # Note: We divide both 'lc' and 'rarity' by time to be
+                #       able to trade all types of coverage against time.
 
                 # '<unit_type>.vec' holds "coverage per unit time" for 'ti' on units 'ui'.
                 with open(self._location / test / (unit_type + '.vec'), 'a') as f:
@@ -678,7 +680,9 @@ class CoverageStore:
                     selection.add(test)
         return selection
 
-    def generate_method_vector(self, dzn_file): # TODO: Constrain tests to include by user input.
+    # TODO: Constrain input vectors based on user input to get
+    #       feasible execution times of the sub-suite finder.
+    def generate_method_vector(self, target_time, dzn_file):
         tests     = self.get_all_tests()
         mlc_lines = [] # Unit coverage vector per test.
         tn        = len(tests)
@@ -693,10 +697,11 @@ class CoverageStore:
                     elems = [ x.strip() for x in f.readlines() ]
                 if first:
                     un = len(elems)
-                    dzn.write('Tn = ' + str(tn) + os.linesep)
-                    dzn.write('Un = ' + str(un) + os.linesep)
+                    dzn.write('tt = ' + str(target_time) + ';' + os.linesep)
+                    dzn.write('Tn = ' + str(tn) + ';' + os.linesep)
+                    dzn.write('Un = ' + str(un) + ';' + os.linesep)
                     dzn.write('uc = array2d(0..Tn-1, 0..Un-1, [|')
-                dzn.write(','.join(elems) + '|')
+                dzn.write(os.linesep + "  " + ','.join(elems) + '|')
                 first = False
             dzn.write(']);' + os.linesep)
             dzn.write('txms = array1d(0..Tn-1, [' + ','.join(txms) + ']);' + os.linesep)
@@ -812,7 +817,7 @@ if __name__ == '__main__':
             print(t)
     elif args.method_vec:
         store = CoverageStore(Path('coverage_store'))
-        store.generate_method_vector(Path('mlc.dzn'))
+        store.generate_method_vector(15000, Path('mlc.dzn'))
     else:
         parser.print_help()
 
