@@ -37,12 +37,6 @@ constraint forall(j in 0..Un-1) (
   coverage[j] = sum(i in 0..Tn-1) (active[i] * suite[i] * uc[i, j])
 );
 
-% We add 1 to total time to avoid division by zero
-% in the trivial case where all tests provide zero
-% coverage.
-%   Ideally, all input tests should provide some
-% coverage, and zero coverage tests be filtered
-% out from the input. But just in case...
 var int   : total_time         = sum (i in 0..Tn-1) (active[i] * suite[i] * txms[i]);
 var float : total_coverage     = sum (i in 0..Un-1) (coverage[i]);
 
