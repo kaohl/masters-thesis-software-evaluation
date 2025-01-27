@@ -589,12 +589,14 @@ class CoverageStore:
                 with open(self._location / test / (unit_type + '.vec'), 'a') as f:
                     f.write(str(final_score) + os.linesep) # Write element: m['ti','ui'] = final_score;
 
+    # Return tests in sorted order.
     def get_all_tests(self):
         test_folders = []
         for root, folders, files in os.walk(self._location):
             test_folders.extend(folders)
             break
-        return test_folders
+        # Explicit sort to avoid depending on sorting returned by walk.
+        return [ t for t in sorted(test_folders) ]
 
     def summarize(self):
         test_folders = self.get_all_tests()
@@ -675,6 +677,29 @@ class CoverageStore:
                 if (self._location / test / ('MLC-' + digest + '.txt')).exists():
                     selection.add(test)
         return selection
+
+    def generate_method_vector(self, dzn_file): # TODO: Constrain tests to include by user input.
+        tests     = self.get_all_tests()
+        mlc_lines = [] # Unit coverage vector per test.
+        tn        = len(tests)
+        un        = None
+        txms      = []
+        with open(dzn_file, 'w') as dzn:
+            first = True
+            for test in tests:
+                txms.append(str(self.execution_time(test)))
+                elems = None
+                with open(self._location / test / 'MLC.vec', 'r') as f:
+                    elems = [ x.strip() for x in f.readlines() ]
+                if first:
+                    un = len(elems)
+                    dzn.write('Tn = ' + str(tn) + os.linesep)
+                    dzn.write('Un = ' + str(un) + os.linesep)
+                    dzn.write('uc = array2d(0..Tn-1, 0..Un-1, [|')
+                dzn.write(','.join(elems) + '|')
+                first = False
+            dzn.write(']);' + os.linesep)
+            dzn.write('txms = array1d(0..Tn-1, [' + ','.join(txms) + ']);' + os.linesep)
 
 class Coverage:
 
@@ -767,6 +792,8 @@ if __name__ == '__main__':
         help = "Find tests covering methods specified using the -m or --methods option.")
     parser.add_argument('-m', '--methods', required = False, nargs='+', default = [],
         help = "List of fully qualified method signatures. I.e., values on format '<pkg>.<method-name>(<parameter type list>)'.")
+    parser.add_argument('--method-vec', required = False, action = 'store_true',
+        help = "Generate method unit vector for minizinc program.")
     args = parser.parse_args()
 
     # TODO: Alternative approach. Not fully working. Issue when copying folders around.
@@ -783,6 +810,9 @@ if __name__ == '__main__':
         store = CoverageStore(Path('coverage_store'))
         for t in store.find_tests_covering_methods(args.methods):
             print(t)
+    elif args.method_vec:
+        store = CoverageStore(Path('coverage_store'))
+        store.generate_method_vector(Path('mlc.dzn'))
     else:
         parser.print_help()
 
