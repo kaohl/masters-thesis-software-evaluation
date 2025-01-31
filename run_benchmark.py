@@ -64,7 +64,7 @@ def run_benchmark(bm, deployment, bm_options, jfr, jfr_file):
     for name, value in bm_options.items():
         options.append(name)
         options.append(value)
-    code = "java " + " ".join(options)
+    code = "java -Xss4M " + " ".join(options)
     print("--- Run benchmark using ---")
     print(code)
     print("-" * 27)

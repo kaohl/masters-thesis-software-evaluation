@@ -13,9 +13,9 @@ def get_method_count(method_line__count):
     method__count = dict() # method => count
     for (m, l), c in method_line__count.items():
         if not m in method__count:
-            method__count[m] = 1
+            method__count[m] = c
         else:
-            method__count[m] = method__count[m] + 1
+            method__count[m] = method__count[m] + c
     return method__count
 
 # Return a dictionary mapping (method signature, line number)
@@ -48,7 +48,7 @@ def get_method_line_count(bm, jfr_file):
             method, lino = line.split(" line: ")
             method = method.strip()
             lino   = lino.strip()
-            if not method in methods:
+            if not (method, lino) in methods:
                 methods[(method, lino)] = 1
             else:
                 methods[(method, lino)] = methods[(method, lino)] + 1

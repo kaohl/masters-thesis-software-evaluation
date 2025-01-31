@@ -9,6 +9,11 @@ import evaluation
 
 benchmarks = {
     'batik' : Configuration().bm('batik').version('1.0').source_version('8')
+    'jacop' : Configuration().bm('jacop').version('1.0').source_version('8').jre_options(min = { '-Xss' : '4M' })
+
+    # TODO: Need to be able to detect benchmark failure so that we know when a benchmark
+    #       crashes, because, for example jacop usually passes with -Xss3M, but then
+    #       requires +3M in a later run and crashes.
 }
 
 def main(args):
