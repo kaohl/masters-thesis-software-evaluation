@@ -20,7 +20,7 @@ def get_method_count(method_line__count):
 
 # Return a dictionary mapping (method signature, line number)
 # pairs to sample count.
-def get_method_line_count(bm, jfr_file):
+def get_method_line_count(jfr_file):
     cmd = ' '.join([
         'jfr',
         'print',
@@ -66,12 +66,30 @@ def get_hot_methods_based_on_method_samples(method__count, threshold = 2):
         hot_methods[m] = c
     return hot_methods
 
+def get_hot_methods_based_on_sample_fraction(method__count, threshold = 0.05):
+    hot_methods = dict()
+    total = 0
+    for m, c in method__count.items():
+        total = total + c
+    for m, c in method__count.items():
+        frac = c / total
+        if frac < threshold:
+            continue
+        hot_methods[m] = (c, frac)
+    return hot_methods
+
 def get_compiled_methods(jfr_file):
     methods      = set()
     compilations = collect_jfr_metrics.get_compilations(jfr_file)
     for m, compilation_attrs in compilations.items():
         methods.add(m)
     return methods
+
+# Return dict from method signature to sample count.
+def get_method_samples(jfr_file):
+    method_line__count = get_method_line_count(jfr_file)
+    method__count      = get_method_count(method_line__count)
+    return method__count
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
