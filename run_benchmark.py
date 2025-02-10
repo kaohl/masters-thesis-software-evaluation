@@ -4,6 +4,7 @@ import argparse
 from multiprocessing import Process
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 
@@ -64,11 +65,24 @@ def run_benchmark(bm, deployment, bm_options, jfr, jfr_file):
     for name, value in bm_options.items():
         options.append(name)
         options.append(value)
-    code = "java -Xss4M " + " ".join(options)
+    code = "java -Xss4M " + " ".join(options) # TODO: Parameterize stack size
     print("--- Run benchmark using ---")
     print(code)
     print("-" * 27)
-    subprocess.run(code, shell = True)
+    result = subprocess.run(
+        code,
+        shell  = True,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT
+    )
+    p    = re.compile('PASSED in (\\d+) msec')
+    text = result.stdout.decode('utf-8')
+    execution_time = p.findall(text)[0]
+    print("--- BENCHMARK OUTPUT ---")
+    print(text)
+    print("--- BENCHMARK OUTPUT END ---")
+    print("CAPTURED EXECUTION TIME", execution_time, "ms")
+    return execution_time
 
 #def _main(bm, size, clean = False, jfr = False, jfr_file = 'flight.jfr'):
 #    deploy_benchmark(bm, clean)
@@ -124,7 +138,6 @@ def build_and_benchmark_refactoring(args):
 
 def build_and_benchmark(data_location, configuration, jfr = True):
     bm       = configuration.bm()
-    #jfr      = jfr
     jfr_file = 'flight.jfr'
     data     = data_location # args.data and Path(args.data)
     size     = configuration.size() # DaCapo option.

@@ -1,9 +1,8 @@
+import io
+import os
+import hashlib
 from random import randrange
 import sys
-
-# TODO: Consider moving parameters to a config file so that we
-#       can run different experiments by using different config
-#       files. Or simply create different python scripts...
 
 # TODO: Build compatibility matrix for benchmarks so that we don't
 #       waste time running configurations that always crash because
@@ -28,6 +27,38 @@ class ConfigurationBase:
         self._values  = dict()
         self._options = dict()
 
+    def id(self):
+        with io.StringIO() as text:
+            for k, v in sorted(self._values.items(), key = lambda it: it[0]):
+                text.write('='.join([str(k), str(v)]) + os.linesep)
+            return hashlib.md5(bytes(text.getvalue(), encoding = 'utf-8')).hexdigest()
+
+    def is_valid_key(self, key):
+        raise ValueError("Unimplemented")
+
+    def init_from_dict(self, parameters):
+        for key, options in parameters.items():
+            if not self.is_valid_key(key):
+                raise ValueError("Invalid configuration key", key)
+            self._clobber(key, options)
+        return self
+
+    def _all_rec(self, parameters, level = 0):
+        if level >= len(parameters):
+            return [[]]
+        value_lists      = self._all_rec(parameters, level + 1)
+        next_value_lists = []
+        key, options     = parameters[level]
+        for option in options:
+            for value_list in value_lists:
+                tmp = value_list + [(key, option)]
+                next_value_lists.append(tmp)
+        return next_value_lists
+
+    def get_all_combinations(self):
+        parameters = [ (key, options) for key, options in self._options.items() ]
+        return [ Configuration().init_from_dict(dict(value_list)) for value_list in self._all_rec(parameters) ]
+
     def _clobber(self, key, value):
         if not value is None:
             if isinstance(value, list):
@@ -50,6 +81,24 @@ class ConfigurationBase:
         config._options = { **self._options }
         return config
 
+    def load(self, file):
+        params = dict()
+        with open(file, 'r') as f:
+            for line in f:
+                line   = line.strip()
+                if line == '':
+                    continue
+                parts  = line.split('=')
+                name   = parts[0].strip()
+                values = [ x.strip() for x in parts[1].split(',') ]
+                params[name] = values
+        return self.init_from_dict(params)
+
+    def store(self, file):
+        with open(file, 'w') as f:
+            for key, value in sorted(self._values.items(), key = lambda it: it[0]):
+                f.write('='.join([key, value]) + os.linesep)
+
 class Configuration(ConfigurationBase):
     BM             = 'bm'
     SIZE           = 'size'
@@ -60,6 +109,19 @@ class Configuration(ConfigurationBase):
     JRE            = 'jre'
     HEAP_SIZE      = 'heap_size'
     JIT_ENABLED    = 'jit_enabled'
+
+    def is_valid_key(self, key):
+        return key in {
+            Configuration.BM,
+            Configuration.SIZE,
+            Configuration.VERSION,
+            Configuration.SOURCE_VERSION,
+            Configuration.TARGET_VERSION,
+            Configuration.JDK,
+            Configuration.JRE,
+            Configuration.HEAP_SIZE,
+            Configuration.JIT_ENABLED
+        }
 
     def __init__(self):
         super().__init__()
@@ -92,6 +154,17 @@ class Configuration(ConfigurationBase):
     def jit_enabled(self, value = None):
         return self._clobber(Configuration.JIT_ENABLED, value)
 
+class Metrics(ConfigurationBase):
+    EXECUTION_TIME = 'EXECUTION_TIME'
+
+    def is_valid_key(self, key):
+        return key in { Metrics.EXECUTION_TIME }
+
+    def __init__(self):
+        super().__init__()
+
+    def execution_time(self, value = None):
+        return self._clobber(Metrics.EXECUTION_TIME, value)
 
 class RefactoringConfiguration(ConfigurationBase):
     LIMIT   = '--limit'

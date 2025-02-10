@@ -9,6 +9,9 @@ import tempfile
 import run_benchmark as bm_script
 import collect_hot_methods as jfr
 
+def get_all_sampled_methods(bm, workload):
+    return [m for (m,_,_) in _filter_methods(bm, workload, 0.0)]
+
 def decimals(num):
     s = str(num)
     n = len(s[s.rfind('.')+1:])
