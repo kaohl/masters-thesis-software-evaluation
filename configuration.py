@@ -4,23 +4,7 @@ import hashlib
 from random import randrange
 import sys
 
-# TODO: Build compatibility matrix for benchmarks so that we don't
-#       waste time running configurations that always crash because
-#       of some incompatibility in parameters.
-
-# - Benchmark parameters (name, version, source_version) # Identification.
-# - Build     parameters (jdk, target_version)           #
-# - Runtime   parameters (jre, heap_size)                #
-
-#parameters = ['bm', 'version', 'source_version', 'target_version', 'jdk', 'jre', 'heap_size']
-    
-# Build options
-#jdk       = ['8.0.432-tem', '11.0.25-tem', '17.0.13-tem']
-#target    = ['8', '11', '17']
-
-# Benchmark options
-#jre       = ['8.0.432-tem', '11.0.25-tem', '17.0.13-tem']
-#heap_size = ['64M', '128M', '256M', '512M', '1G', '2G', '4G', '8G']
+import tools
 
 class ConfigurationBase:
     def __init__(self):
@@ -101,26 +85,196 @@ class ConfigurationBase:
 
 class Configuration(ConfigurationBase):
     BM             = 'bm'
-    SIZE           = 'size'
-    VERSION        = 'version'
-    SOURCE_VERSION = 'source_version'
-    TARGET_VERSION = 'target_version'
+    BM_VERSION     = 'bm_version'     # The benchmark version. Not the version of the benchmarked library.
+    BM_WORKLOAD    = 'bm_workload'
+    SOURCE_VERSION = 'source_version' # Used to constrain target_version.
+    TARGET_VERSION = 'target_version' # Any version compatible with source_version.
     JDK            = 'jdk'
     JRE            = 'jre'
     HEAP_SIZE      = 'heap_size'
-    JIT_ENABLED    = 'jit_enabled'
+    STACK_SIZE     = 'stack_size'
+
+    size_option_pattern = re.compile("(\\d+)([KkMmGg])")
+    
+    _options = {
+        'batik:1.0' : {
+            'bm'             : { 'batik' }                      # Values
+            'bm_version'     : { '1.0' },                       # Values
+            'bm_workload'    : { 'small', 'default', 'large' }, # Values
+            'source_version' : { '8' },                         # Fixed
+            'jre'            : set(tools.get_installed_sdks()),
+            'jdk'            : set(tools.get_installed_sdks())
+        },
+        'jacop:1.0' : {
+            'bm'             : { 'jacop' }    # Values
+            'bm_version'     : { '1.0' },     # Values
+            'bm_workload'    : { 'default' }, # Values
+            'source_version' : { '8' },       # Fixed
+            'stack_size'     : { '4M' },      # Lower limit
+            'jre'            : set(tools.get_installed_sdks()),
+            'jdk'            : set(tools.get_installed_sdks())
+        }
+    }
+
+    _compare_units = {
+        ('K', 'M') = -1,
+        ('K', 'G') = -2,
+        ('M', 'K') =  1,
+        ('M', 'G') = -1,
+        ('G', 'K') =  2,
+        ('G', 'M') =  1
+    }
+    def compare_size_units(x, y):
+        if x == y:
+            return 0
+        else:
+            return Configuration._compare_units[(x.upper(), y.upper())]
+
+    def test_size_option(opt, val, test):
+        opt_a, opt_u = size_option_pattern.findall(opt)[0]
+        val_a, val_u = size_option_pattern.findall(val)[0]
+        opt_a        = int(opt_a)
+        val_a        = int(val_a)
+        c            = compare_size_units(val_u, opt_u)
+        # Change to the smaller unit unless units are equal.
+        if c < 0:
+            while c < 0:
+                opt_a = opt_a * 1024
+                c     = c + 1
+        elif c > 0:
+            while c > 0:
+                val_a = val_a * 1024
+                c     = c - 1
+        # Compare constants now that units are equal.
+        return test(val_a, opt_a)
+
+    def test_size_ge(opt, val):
+        return Configuration.test_size_option(opt, val, Configuration.test_int_ge)
+
+    def test_int_ge(x, y):
+        return int(x) >= int(y)
+
+    def test_int_eq(x, y):
+        return int(x) == int(y)
+
+    def get_options(self, key):
+        bm         = self.bm()
+        bm_version = self.bm_version()
+        return Configuration._options[':'.join([bm, bm_version])].get(key)
 
     def is_valid_key(self, key):
         return key in {
             Configuration.BM,
-            Configuration.SIZE,
-            Configuration.VERSION,
+            Configuration.BM_VERSION,
+            Configuration.BM_WORKLOAD,
             Configuration.SOURCE_VERSION,
             Configuration.TARGET_VERSION,
             Configuration.JDK,
             Configuration.JRE,
             Configuration.HEAP_SIZE,
-            Configuration.JIT_ENABLED
+            Configuration.STACK_SIZE
+        }
+
+    def _raise_errors(self):
+        is_valid_option           = lambda k: self._clobber(k) in self.get_options(k)
+        is_valid_option_test      = lambda k, test: len({ x for x in self.get_options(k) if test(x, self._clobber(k)) }) > 0
+        is_valid_size_option_test = lambda k, test: len({ x for x in self.get_options(k) if test(x, self._clobber(k)) }) > 0
+        bad_option_message        = "Bad '{}' option: \"{}\". Constraint: {}."
+        errors                    = []
+        if not is_valid_option(Configuration.BM):
+            errors.append(bad_option_message.format(
+                Configuration.BM,
+                self.bm(),
+                self.get_options(Configuration.BM)
+            ))
+        if not is_valid_option(Configuration.BM_VERSION):
+            errors.append(bad_option_message.format(
+                Configuration.BM_VERSION,
+                self.bm_version(),
+                self.get_options(Configuration.BM_VERSION)
+            ))
+        if not is_valid_option(Configuration.BM_WORKLOAD):
+            errors.append(bad_option_message.format(
+                Configuration.BM_WORKLOAD,
+                self.bm_workload(),
+                self.get_options(Configuration.BM_WORKLOAD)
+            ))
+        if not is_valid_option_test(Configuration.SOURCE_VERSION, Configuration.test_int_eq):
+            errors.append(bad_option_message.format(
+                Configuration.SOURCE_VERSION,
+                self.source_version(),
+                self.get_options(Configuration.SOURCE_VERSION)
+            ))
+        if not is_valid_size_option_test(Configuration.HEAP_SIZE, Configuration.test_size_ge):
+            errors.append(bad_option_message.format(
+                Configuration.HEAP_SIZE,
+                self.heap_size(),
+                self.get_options(Configuration.HEAP_SIZE)
+            ))
+        if not is_valid_size_option_test(Configuration.STACK_SIZE, Configuration.test_size_ge):
+            errors.append(bad_option_message.format(
+                Configuration.STACK_SIZE,
+                self.stack_size(),
+                self.get_options(Configuration.STACK_SIZE)
+            ))
+        if not is_valid_option(Configuration.JRE):
+            errors.append(bad_option_message.format(
+                Configuration.JRE,
+                self.jre(),
+                self.get_options(Configuration.JRE)
+            ))
+        if not is_valid_option(Configuration.JDK):
+            errors.append(bad_option_message.format(
+                Configuration.JDK,
+                self.jdk(),
+                self.get_options(Configuration.JDK)
+            ))
+        if len(errors) > 0:
+            raise ValueError("Bad configuration", errors)
+
+    def _check_constraints(self):
+        source_version    = int(self.source_version())
+        target_version    = int(self.target_version())
+        jre_major_version = int(self.jre()[:self.jre().find('.')])
+        jdk_major_version = int(self.jdk()[:self.jdk().find('.')])
+
+        if target_version < source_version:
+            return False
+
+        if jre_major_version < target_version:
+            return False
+
+        if jdk_major_version < source_version:
+            return False
+
+        if jdk_major_version < target_version:
+            return False
+
+        return True
+
+    def is_valid(self):
+        self._raise_errors()
+        return self._check_constraints()
+
+    def get_compile_options(self):
+        return {
+            Configuration.JDK            : self._clobber(Configuration.JDK),
+            Configuration.TARGET_VERSION : self._clobber(Configuration.TARGET_VERSION),
+            Configuration.SOURCE_VERSION : self._clobber(Configuration.SOURCE_VERSION)
+        }
+
+    def get_harness_options(self):
+        return {
+            Configuration.BM          : self._clobber(Configuration.BM),
+            Configuration.BM_VERSION  : self._clobber(Configuration.BM_VERSION),
+            Configuration.BM_WORKLOAD : self._clobber(Configuration.BM_WORKLOAD)
+        }
+
+    def get_runtime_options(self):
+        return {
+            Configuration.JRE       : self._clobber(Configuration.JRE),
+            Configuration.HEAP_SIZE : self._clobber(Configuration.HEAP_SIZE),
+            Configuration.STACK_SIZE : self._clobber(Configuration.STACK_SIZE)
         }
 
     def __init__(self):
@@ -129,12 +283,11 @@ class Configuration(ConfigurationBase):
     def bm(self, value = None):
         return self._clobber(Configuration.BM, value)
 
-    # Payload size.
-    def size(self, value = None):
-        return self._clobber(Configuration.SIZE, value)
+    def bm_version(self, value = None):
+        return self._clobber(Configuration.BM_VERSION, value)
 
-    def version(self, value = None):
-        return self._clobber(Configuration.VERSION, value)
+    def bm_workload(self, value = None):
+        return self._clobber(Configuration.BM_WORKLOAD, value)
 
     def source_version(self, value = None):
         return self._clobber(Configuration.SOURCE_VERSION, value)
@@ -151,8 +304,8 @@ class Configuration(ConfigurationBase):
     def heap_size(self, value = None):
         return self._clobber(Configuration.HEAP_SIZE, value)
 
-    def jit_enabled(self, value = None):
-        return self._clobber(Configuration.JIT_ENABLED, value)
+    def stack_size(self, value = None):
+        return self._clobber(Configuration.STACK_SIZE, value)
 
 class Metrics(ConfigurationBase):
     EXECUTION_TIME = 'EXECUTION_TIME'
