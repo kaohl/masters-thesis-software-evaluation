@@ -177,7 +177,6 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
     except TypeError as e:
         raise e
     except Exception as e:
-        raise e
         log.warning("Benchmark failure: {}", configuration._values)
         with open(failure, 'w') as f:
             f.write(str(e))
