@@ -28,12 +28,15 @@ def deploy_benchmark(args, configuration, clean, context = None, import_dir = No
     ]
     cmd        = " ".join(options)
     DAIVY_HOME = os.environ['DAIVY_HOME']
-    subprocess.run(tools.sdk_run(configuration.jdk(), cmd), shell = True, cwd = DAIVY_HOME)
+    result     = subprocess.run(tools.sdk_run(configuration.jdk(), cmd), shell = True, cwd = DAIVY_HOME)
+
+    if result.returncode != 0:
+        raise ValueError("Benchmark deployment failed")
 
 def run_benchmark(args, configuration, deployment, jfr, jfr_file):
 
     bm         = configuration.bm()
-    workload   = configuration.workload()
+    workload   = configuration.bm_workload()
 
     bm_options = { '-size' : workload }
 
@@ -81,6 +84,8 @@ def run_benchmark(args, configuration, deployment, jfr, jfr_file):
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT
     )
+    if result.returncode != 0:
+        raise ValueError("Benchmark failed")
     p    = re.compile('PASSED in (\\d+) msec')
     text = result.stdout.decode('utf-8')
     execution_time = p.findall(text)[0]

@@ -2,15 +2,21 @@
 
 import argparse
 import configuration
+import logging
 import os
 from pathlib import Path
 from random import randrange
 import shutil
 import tempfile
 
+import patch
 import run_benchmark as bm_script
 import steering
+import tools
 import workspace     as ws_script
+
+logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+log = logging.getLogger(__name__)
 
 def x_folder(args):
     return Path(args.x_location) / args.x
@@ -27,7 +33,18 @@ def get_workloads(args):
     return bmwl
 
 def get_workload_configuration(args, bm, workload):
-    return configuration.Configuration().load(x_folder(args) / 'workloads' / bm / workload / 'parameters.txt')
+    config = configuration.Configuration().load(x_folder(args) / 'workloads' / bm / workload / 'parameters.txt')
+    # Add default values given by resource organisation.
+    if config.bm() is None:
+        config.bm(bm)
+
+    if config.bm_version() is None:
+        config.bm_version('1.0')
+
+    if config.bm_workload() is None:
+        config.bm_workload(workload)
+
+    return config
 
 def add_workload_steering(args, bm, workload, workspace_src):
     target  = workspace_src / 'methods.config'
@@ -87,7 +104,7 @@ def prime_import_location(args, configuration, location, data):
     # Assume that we have workspaces available.
     # However, at this point we are only interested
     # in the orignal '-build.zip' files and patches.
-    ws = x_folder(args) / 'workspaces' / configuration.bm() / configuration.workload() / 'workspace'
+    ws = x_folder(args) / 'workspaces' / configuration.bm() / configuration.bm_workload() / 'workspace'
     for root, dirs, files in os.walk(ws):
         for file in files:
             if not file.endswith("-build.zip"):
@@ -111,74 +128,93 @@ def prime_import_location(args, configuration, location, data):
         break
 
 def build_and_benchmark(args, configuration, data_location, capture_flight_recording = True):
+    global log
+
     bm                 = configuration.bm()
-    workload           = configuration.workload()
+    workload           = configuration.bm_workload()
 
     store              = data_location / 'stats' / configuration.id()
+    failure            = store / 'FAILURE'
+    success            = store / 'SUCCESS'
     jfr_save           = store / 'flight.jfr'
     metrics_save       = store / 'metrics.txt'
     configuration_save = store / 'configuration.txt'
 
-    clean = True
-    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as location:
-        import_dir    = Path(location)
-        deploy_dir    = Path(location) / 'deployment'
-        jfr_file      = Path(location) / 'flight.jfr'
-        deploy_dir.mkdir()
-        prime_import_location(args, configuration, import_dir, data_location)
-        bm_script.deploy_benchmark(args, configuration, clean, deploy_dir, import_dir)
+    store.mkdir(parents = True, exist_ok = True)
 
-        # Capture execution time with flight recording disabled.
-        exectime = bm_script.run_benchmark(args, configuration, deploy_dir, False, None)
+    try:
+        clean = True
+        with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as location:
+            import_dir    = Path(location)
+            deploy_dir    = Path(location) / 'deployment'
+            jfr_file      = Path(location) / 'flight.jfr'
+            deploy_dir.mkdir()
+            prime_import_location(args, configuration, import_dir, data_location)
+            bm_script.deploy_benchmark(args, configuration, clean, deploy_dir, import_dir)
 
-        store.mkdir(parents = True, exist_ok = True)
+            # Capture execution time with flight recording disabled.
+            exectime = bm_script.run_benchmark(args, configuration, deploy_dir, False, None)
 
-        with open(metrics_save, 'w') as f:
-            f.write("EXECUTION_TIME=" + str(exectime) + os.linesep)
+            with open(metrics_save, 'w') as f:
+                f.write("EXECUTION_TIME=" + str(exectime) + os.linesep)
 
-        configuration.store(configuration_save)
+            configuration.store(configuration_save)
 
-        # ATTENTION
-        # The captured flight recording is not for the benchmark
-        # run that produced the captured execution time.
+            # ATTENTION
+            # The captured flight recording is not for the benchmark
+            # run that produced the captured execution time.
 
-        if capture_flight_recording:
-            print("Running again to capture flight recording")
-            bm_script.run_benchmark(args, configuration, deploy_dir, True, str(jfr_file))
-            shutil.copy2(jfr_file, jfr_save)
+            if capture_flight_recording:
+                print("Running again to capture flight recording")
+                bm_script.run_benchmark(args, configuration, deploy_dir, True, str(jfr_file))
+                shutil.copy2(jfr_file, jfr_save)
 
-# TODO: Not sure caching the plan is needed.
-def create_benchmark_execution_plan(args):
-    errors = []
-    plan   = []
+            with open(success, 'w'):
+                pass
+        return True
+    except AttributeError as e:
+        raise e
+    except TypeError as e:
+        raise e
+    except Exception as e:
+        raise e
+        log.warning("Benchmark failure: {}", configuration._values)
+        with open(failure, 'w') as f:
+            f.write(str(e))
+        return False
+
+def get_valid_configurations(args):
+    configs    = []
+    has_errors = False
     for (bm, workload) in get_workloads(args):
         config = get_workload_configuration(args, bm, workload)
-        # Add options given by resource organisation.
-        config.bm(bm)
-        config.bm_workload(workload)
         for c in config.get_all_combinations():
             try:
-                if not config.is_valid():
+                if not c.is_valid():
                     continue
-            except OSError as e:
-                errors.append(e)
+            except TypeError as e:
+                raise e
+            except AttributeError as e:
+                raise e
+            except Exception as e:
+                log.error(str(e))
+                has_errors = True
                 continue
-            for dir, folders, files in os.walk(x_folder(args) / 'data' / bm / workload):
-                for refactoring in folders:
-                    stats_c = Path(dir) / refactoring / 'stats' / c.id()
-                    if not stats_c.exists():
-                        plan.append((bm, workload, refactoring, c))
-                break
-    if len(errors) > 0:
-        raise ValueError("Configuration Errors", errors)
-    #plan_file = x_folder(args) / 'benchmark-execution-plan.txt'
-    #with open(plan_file, 'w') as f:
-    #    for (bm, workload, configuration) in plan:
-    #        f.write(','.join([bm, workload, configuration.id()]))
-    return plan#, configurations
+            configs.append((bm, workload, c))
+    if has_errors:
+        raise ValueError("Bad configuration")
+    return configs
 
 def get_benchmark_execution_plan(args):
-    return create_benchmark_execution_plan(args)
+    plan = []
+    for (bm, workload, configuration) in get_valid_configurations(args):
+        for dir, folders, files in os.walk(x_folder(args) / 'data' / bm / workload):
+            for refactoring in folders:
+                stats_c = Path(dir) / refactoring / 'stats' / configuration.id()
+                if not stats_c.exists():
+                    plan.append((bm, workload, refactoring, configuration))
+            break
+    return plan
 
 # Usage:
 #   ./evaluation.py --bm <bm> --x <ex> --tag <tag> --benchmark [--data <tmp...>]
@@ -188,7 +224,7 @@ def benchmark(args):
     # TODO: Handle benchmark failure.
     i = 0 # TODO: Add as input parameter.
     for (bm, workload, refactoring, configuration) in get_benchmark_execution_plan(args):
-        data_location = x_folder(args) / 'data' / bm / workload / refactoring
+        data_location = Path(os.getcwd()) / x_folder(args) / 'data' / bm / workload / refactoring
         build_and_benchmark(args, configuration, data_location)
         i = i + 1
         if i == 5:
@@ -196,6 +232,7 @@ def benchmark(args):
 
 def report(args):
     for (bm, workload) in get_workloads(args):
+        print("---", bm, workload, "---")
         for dir, refactorings, files in os.walk(x_folder(args) / 'data' / bm / workload):
             for refactoring in refactorings:
                 for dir_2, ids, files_2 in os.walk(Path(dir) / refactoring / 'stats'):
@@ -204,9 +241,18 @@ def report(args):
                         #       Consider letting the user specify the column headers (keys as CSV) and then print CSV rows.
                         config  = configuration.Configuration().load(Path(dir) / refactoring / 'stats' / id / 'configuration.txt')
                         metrics = configuration.Metrics().load(Path(dir) / refactoring / 'stats' / id / 'metrics.txt')
-                        print(config._values, metrics._values)
+                        print({ **config._values, **metrics._values })
                     break
+            print("-------------------------------------")
             break
+
+def print_configurations(args):
+    for (bm, workload, configuration) in get_valid_configurations(args):
+        print(bm, workload, configuration._values)
+
+def print_execution_plan(args):
+    for (bm, workload, refactoring, configuration) in get_benchmark_execution_plan(args):
+        print(bm, workload, refactoring, configuration._values)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -230,7 +276,19 @@ if __name__ == '__main__':
         help = "Refactoring type")
     parser.add_argument('--report', required = False, action = 'store_true',
         help = "Print statistics")
+    parser.add_argument('--show-configurations', required = False, action = 'store_true',
+        help = "Print all valid configurations to standard out")
+    parser.add_argument('--show-execution-plan', required = False, action = 'store_true',
+        help = "Print all pending benchmark executions")
     args = parser.parse_args()
+
+    if args.show_configurations:
+        print_configurations(args)
+        exit(0)
+
+    if args.show_execution_plan:
+        print_execution_plan(args)
+        exit(0)
 
     if args.create:
         create(args)

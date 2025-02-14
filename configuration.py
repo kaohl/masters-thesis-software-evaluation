@@ -1,5 +1,6 @@
 import io
 import os
+import re
 import hashlib
 from random import randrange
 import sys
@@ -43,7 +44,7 @@ class ConfigurationBase:
         parameters = [ (key, options) for key, options in self._options.items() ]
         return [ Configuration().init_from_dict(dict(value_list)) for value_list in self._all_rec(parameters) ]
 
-    def _clobber(self, key, value):
+    def _clobber(self, key, value = None):
         if not value is None:
             if isinstance(value, list):
                 self._options[key] = value
@@ -96,33 +97,33 @@ class Configuration(ConfigurationBase):
 
     size_option_pattern = re.compile("(\\d+)([KkMmGg])")
     
-    _options = {
+    _constraints = {
         'batik:1.0' : {
-            'bm'             : { 'batik' }                      # Values
+            'bm'             : { 'batik' },                     # Values
             'bm_version'     : { '1.0' },                       # Values
             'bm_workload'    : { 'small', 'default', 'large' }, # Values
-            'source_version' : { '8' },                         # Fixed
-            'jre'            : set(tools.get_installed_sdks()),
-            'jdk'            : set(tools.get_installed_sdks())
+            'source_version' : { '8' },                         # Values
+            'jre'            : set(tools.get_installed_sdks()), # Values
+            'jdk'            : set(tools.get_installed_sdks())  # Values
         },
         'jacop:1.0' : {
-            'bm'             : { 'jacop' }    # Values
-            'bm_version'     : { '1.0' },     # Values
-            'bm_workload'    : { 'default' }, # Values
-            'source_version' : { '8' },       # Fixed
-            'stack_size'     : { '4M' },      # Lower limit
-            'jre'            : set(tools.get_installed_sdks()),
-            'jdk'            : set(tools.get_installed_sdks())
+            'bm'             : { 'jacop' },                     # Values
+            'bm_version'     : { '1.0' },                       # Values
+            'bm_workload'    : { 'default' },                   # Values
+            'source_version' : { '8' },                         # Values
+            'stack_size'     : { '4M' },                        # Lower limit
+            'jre'            : set(tools.get_installed_sdks()), # Values
+            'jdk'            : set(tools.get_installed_sdks())  # Values
         }
     }
 
     _compare_units = {
-        ('K', 'M') = -1,
-        ('K', 'G') = -2,
-        ('M', 'K') =  1,
-        ('M', 'G') = -1,
-        ('G', 'K') =  2,
-        ('G', 'M') =  1
+        ('K', 'M') : -1,
+        ('K', 'G') : -2,
+        ('M', 'K') :  1,
+        ('M', 'G') : -1,
+        ('G', 'K') :  2,
+        ('G', 'M') :  1
     }
     def compare_size_units(x, y):
         if x == y:
@@ -157,10 +158,13 @@ class Configuration(ConfigurationBase):
     def test_int_eq(x, y):
         return int(x) == int(y)
 
-    def get_options(self, key):
+    def get_option_constraints(self, key):
         bm         = self.bm()
         bm_version = self.bm_version()
-        return Configuration._options[':'.join([bm, bm_version])].get(key)
+        return Configuration._constraints[':'.join([self.bm(), self.bm_version()])].get(key)
+
+    def has_option_constraints(self, key):
+        return Configuration._constraints[':'.join([self.bm(), self.bm_version()])].get(key) != None
 
     def is_valid_key(self, key):
         return key in {
@@ -176,58 +180,58 @@ class Configuration(ConfigurationBase):
         }
 
     def _raise_errors(self):
-        is_valid_option           = lambda k: self._clobber(k) in self.get_options(k)
-        is_valid_option_test      = lambda k, test: len({ x for x in self.get_options(k) if test(x, self._clobber(k)) }) > 0
-        is_valid_size_option_test = lambda k, test: len({ x for x in self.get_options(k) if test(x, self._clobber(k)) }) > 0
+        is_valid_option           = lambda k: not self.has_option_constraints(k) or self._clobber(k) in self.get_option_constraints(k)
+        is_valid_option_test      = lambda k, test: not self.has_option_constraints(k) or len({ x for x in self.get_option_constraints(k) if test(x, self._clobber(k)) }) > 0
+        is_valid_size_option_test = lambda k, test: not self.has_option_constraints(k) or len({ x for x in self.get_option_constraints(k) if test(x, self._clobber(k)) }) > 0
         bad_option_message        = "Bad '{}' option: \"{}\". Constraint: {}."
         errors                    = []
         if not is_valid_option(Configuration.BM):
             errors.append(bad_option_message.format(
                 Configuration.BM,
                 self.bm(),
-                self.get_options(Configuration.BM)
+                self.get_option_constraints(Configuration.BM)
             ))
         if not is_valid_option(Configuration.BM_VERSION):
             errors.append(bad_option_message.format(
                 Configuration.BM_VERSION,
                 self.bm_version(),
-                self.get_options(Configuration.BM_VERSION)
+                self.get_option_constraints(Configuration.BM_VERSION)
             ))
         if not is_valid_option(Configuration.BM_WORKLOAD):
             errors.append(bad_option_message.format(
                 Configuration.BM_WORKLOAD,
                 self.bm_workload(),
-                self.get_options(Configuration.BM_WORKLOAD)
+                self.get_option_constraints(Configuration.BM_WORKLOAD)
             ))
         if not is_valid_option_test(Configuration.SOURCE_VERSION, Configuration.test_int_eq):
             errors.append(bad_option_message.format(
                 Configuration.SOURCE_VERSION,
                 self.source_version(),
-                self.get_options(Configuration.SOURCE_VERSION)
+                self.get_option_constraints(Configuration.SOURCE_VERSION)
             ))
         if not is_valid_size_option_test(Configuration.HEAP_SIZE, Configuration.test_size_ge):
             errors.append(bad_option_message.format(
                 Configuration.HEAP_SIZE,
                 self.heap_size(),
-                self.get_options(Configuration.HEAP_SIZE)
+                self.get_option_constraints(Configuration.HEAP_SIZE)
             ))
         if not is_valid_size_option_test(Configuration.STACK_SIZE, Configuration.test_size_ge):
             errors.append(bad_option_message.format(
                 Configuration.STACK_SIZE,
                 self.stack_size(),
-                self.get_options(Configuration.STACK_SIZE)
+                self.get_option_constraints(Configuration.STACK_SIZE)
             ))
         if not is_valid_option(Configuration.JRE):
             errors.append(bad_option_message.format(
                 Configuration.JRE,
                 self.jre(),
-                self.get_options(Configuration.JRE)
+                self.get_option_constraints(Configuration.JRE)
             ))
         if not is_valid_option(Configuration.JDK):
             errors.append(bad_option_message.format(
                 Configuration.JDK,
                 self.jdk(),
-                self.get_options(Configuration.JDK)
+                self.get_option_constraints(Configuration.JDK)
             ))
         if len(errors) > 0:
             raise ValueError("Bad configuration", errors)

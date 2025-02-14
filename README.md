@@ -1,12 +1,27 @@
 # masters-thesis-software-evaluation
 Master's thesis software evaluation
 
-# Generate and benchmark refactoring
+# Create an experiment, refactor, and benchmark refactorings
+## Prerequisites
+- Requires SDKMAN! to be installed, including at least one SDK
+- Update the parameter file after copying it to the specified experiment directory with valid SDK options (jdk; jre)
+  (see procedure below)
+## Procedure
+Note that the `--x-location' argument is optional and defaults to 'experiments'.
 ```
+mkdir -p experiments/x/batik/small
+cp examples/batik.small.parameters.txt experiments/x/batik/small/parameters.txt
+
+<adapt parameter file: experiments/x/batik/small/parameters.txt>
+
 export DAIVY_HOME=...
-mkdir -p experiments/x
-./workspace.py --experiment x --project dacapo:batik:1.0
-./run_benchmark.py --bm batik --data experiments/x/dacapo-batik-1_0/data/tmp...
+./evaluation.py --x y --create
+./evaluation.py --x y --refactor --bm batik --workload small
+./evaluation.py --x y --benchmark
+./evaluation.py --x y --report
+
+./evaluation.py --x y --show-configurations
+./evaluation.py --x y --show-execution-plan
 ```
 
 # Troubleshooting
