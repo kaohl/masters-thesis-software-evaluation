@@ -260,27 +260,6 @@ class Configuration(ConfigurationBase):
         self._raise_errors()
         return self._check_constraints()
 
-    def get_compile_options(self):
-        return {
-            Configuration.JDK            : self._clobber(Configuration.JDK),
-            Configuration.TARGET_VERSION : self._clobber(Configuration.TARGET_VERSION),
-            Configuration.SOURCE_VERSION : self._clobber(Configuration.SOURCE_VERSION)
-        }
-
-    def get_harness_options(self):
-        return {
-            Configuration.BM          : self._clobber(Configuration.BM),
-            Configuration.BM_VERSION  : self._clobber(Configuration.BM_VERSION),
-            Configuration.BM_WORKLOAD : self._clobber(Configuration.BM_WORKLOAD)
-        }
-
-    def get_runtime_options(self):
-        return {
-            Configuration.JRE       : self._clobber(Configuration.JRE),
-            Configuration.HEAP_SIZE : self._clobber(Configuration.HEAP_SIZE),
-            Configuration.STACK_SIZE : self._clobber(Configuration.STACK_SIZE)
-        }
-
     def __init__(self):
         super().__init__()
 

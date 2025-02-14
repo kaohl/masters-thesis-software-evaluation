@@ -11,6 +11,18 @@ import tempfile
 import patch
 import tools
 
+def get_runtime_options(configuration):
+    java_options = []
+    if configuration.stack_size() != None:
+        java_options.append("-Xss" + configuration.stack_size())
+    if configuration.heap_size() != None:
+        java_options.append("-Xmx" + configuration.heap_size())
+    return java_options
+
+def get_harness_options(configuration):
+    options = [ '-size', configuration.bm_workload() ]
+    return options
+
 def deploy_benchmark(args, configuration, clean, context = None, import_dir = None):
     if not context:
         context = Path(os.getcwd()) / 'deployments'
@@ -22,9 +34,9 @@ def deploy_benchmark(args, configuration, clean, context = None, import_dir = No
         "--context",
         str(context),
         ("--clean" if clean else ""),
-        ("--import-path" if not import_dir is None else ""),
-        str((import_dir if not import_dir is None else "")),
-        "--verbose"
+        "--verbose",
+        ("--import-path " + str(import_dir) if import_dir != None else ""),
+        ("--target-version " + configuration.target_version() if configuration.target_version() != None else "")
     ]
     cmd        = " ".join(options)
     DAIVY_HOME = os.environ['DAIVY_HOME']
@@ -37,8 +49,6 @@ def run_benchmark(args, configuration, deployment, jfr, jfr_file):
 
     bm         = configuration.bm()
     workload   = configuration.bm_workload()
-
-    bm_options = { '-size' : workload }
 
     options  = []
     features = []
@@ -71,10 +81,11 @@ def run_benchmark(args, configuration, deployment, jfr, jfr_file):
         "-jar",
         str(deployment / "@BM-1.0.jar @BM".replace("@BM", bm))
     ])
-    for name, value in bm_options.items():
-        options.append(name)
-        options.append(value)
-    code = "java -Xss4M " + " ".join(options) # TODO: Parameterize stack size
+    options.extend(get_harness_options(configuration))
+
+    java_options = get_runtime_options(configuration)
+
+    code = ' '.join(['java', ' '.join(java_options), ' '.join(options)])
     print("--- Run benchmark using ---")
     print(code)
     print("-" * 27)
