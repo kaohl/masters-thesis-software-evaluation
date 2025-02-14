@@ -84,21 +84,28 @@ def create(args):
 #  ./evaluation.py --bm <bm> --x <ex> --tag <tag> --refactor --type <refactoring type> [ refactoring options ]
 #
 def refactor(args, proc_id):
-    if not 'bm' in args:
+    if args.bm is None:
         raise ValueError("Please specify a benchmark.")
 
-    if not 'workload' in args:
+    if args.workload is None:
         raise ValueError("Please specify a workload.")
+
+    if args.n <= 0:
+        raise ValueError("Please specify the number of refactorings to generate using a positive integer.")
+        return
 
     bm        = args.bm
     workload  = args.workload
     workspace = x_folder(args) / 'workspaces' / bm / workload / 'workspace'
     data      = x_folder(args) / 'data' / bm / workload
 
-    # TODO: Allow user to specify refactoring options on command line.
-    options = configuration.get_random_refactoring_configuration()
-
-    ws_script.refactor(workspace, data, options, proc_id)
+    i = 0
+    n = args.n
+    while i < n:
+        # TODO: Allow user to specify refactoring options on command line.
+        options = configuration.get_random_refactoring_configuration()
+        ws_script.refactor(workspace, data, options, proc_id)
+        i = i + 1
 
 def prime_import_location(args, configuration, location, data):
     # Assume that we have workspaces available.
@@ -219,14 +226,20 @@ def get_benchmark_execution_plan(args):
 #   ./evaluation.py --bm <bm> --x <ex> --tag <tag> --benchmark [--data <tmp...>]
 #
 def benchmark(args):
+    #
     # TODO: Do we need a better strategy to avoid generating duplicates of refactorings?
-    # TODO: Handle benchmark failure.
-    i = 0 # TODO: Add as input parameter.
+    #
+    i = 0
+    n = args.n
+
+    if n <= 0:
+        raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
+
     for (bm, workload, refactoring, configuration) in get_benchmark_execution_plan(args):
         data_location = Path(os.getcwd()) / x_folder(args) / 'data' / bm / workload / refactoring
         build_and_benchmark(args, configuration, data_location)
         i = i + 1
-        if i == 5:
+        if i >= n:
             break
 
 def report(args):
@@ -273,6 +286,8 @@ if __name__ == '__main__':
         help = "Refactor specified experiment workspace")
     parser.add_argument('--type', required = False,
         help = "Refactoring type")
+    parser.add_argument('--n', required = False, type = int, default = 1,
+        help = "The number of refactorings or benchmarks to run.")
     parser.add_argument('--report', required = False, action = 'store_true',
         help = "Print statistics")
     parser.add_argument('--show-configurations', required = False, action = 'store_true',
