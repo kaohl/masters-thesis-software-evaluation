@@ -18,6 +18,12 @@ import workspace     as ws_script
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
 log = logging.getLogger(__name__)
 
+_method_filters = {
+    'batik'    : ['batik'],
+    'lusearch' : ['lucene'],
+    'luindex'  : ['lucene']
+}
+
 def x_folder(args):
     return Path(args.x_location) / args.x
 
@@ -53,8 +59,10 @@ def add_workload_steering(args, bm, workload, workspace_src):
     methods = steering.get_all_sampled_methods(bm, workload)
     with open(target, 'w') as f:
         for method in methods:
-            if method.find(bm) != -1:
-                f.write(method + os.linesep)
+            for filter_text in _method_filters[bm]:
+                if method.find(filter_text) != -1:
+                    f.write(method + os.linesep)
+                    break
 
 def add_workspace_configuration(args, bm, workload, workspace):
     src    = workspace / 'assets/src'
