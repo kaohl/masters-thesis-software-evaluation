@@ -73,14 +73,38 @@ def generate_eclipse_workspace_configuration(coord, location, out):
             raise ValueError("Missing source archive", master_main, "in", str(src_location))
 
         # Main
+
         out.write(master_stem + " {" + os.linesep)
+
+        added_deps = set()
+        ds         = [] # Libs
         for d in daivy_commands.resolve_classpath(p, ['compile']):
             d_path = Path(d)
             d_stem = d_path.stem
             if d_stem in defined_projects:
                 out.write("   dep " + d_stem + os.linesep) # Eclipse project dependency.
+                added_deps.add(d_stem)
+
+        ## Add runtime dependencies that are also source dependencies.
+        ## This is required to get lucene-core onto the module path
+        ## of other lucene modules (e.g. codecs which only have core
+        ## as runtime dependency)
+        for d in daivy_commands.resolve_classpath(p, ['runtime']):
+            d_path = Path(d)
+            d_stem = d_path.stem
+            if d_stem in defined_projects and not d_stem in added_deps:
+                out.write("   dep " + d_stem + os.linesep) # Eclipse project dependency.
+                added_deps.add(d_stem)
             else:
-                out.write("   lib " + d_path.name + " ?" + os.linesep)
+                if not d_stem in defined_projects:
+                    ds.append(d_path.name)
+                    libs.add(d)
+                else:
+                    print("Skip lib", d)
+
+        for d in ds:
+            out.write("   lib " + d + " ?" + os.linesep)
+
         out.write("   src / " + master_stem + "-main-src.jar" + os.linesep)
         out.write("}" + os.linesep)
 
