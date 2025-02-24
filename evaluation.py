@@ -21,7 +21,9 @@ log = logging.getLogger(__name__)
 _method_filters = {
     'batik'    : ['batik'],
     'lusearch' : ['lucene'],
-    'luindex'  : ['lucene']
+    'luindex'  : ['lucene'],
+    'jacop'    : ['jacop'],
+    'xalan'    : ['xalan']
 }
 
 def x_folder(args):
@@ -222,7 +224,8 @@ def get_valid_configurations(args):
 def get_benchmark_execution_plan(args):
     plan = []
     for (bm, workload, configuration) in get_valid_configurations(args):
-        for dir, folders, files in os.walk(x_folder(args) / 'data' / bm / workload):
+        location = x_folder(args) / 'data' / bm / workload
+        for dir, folders, files in os.walk(location):
             for refactoring in folders:
                 stats_c = Path(dir) / refactoring / 'stats' / configuration.id()
                 if not stats_c.exists():

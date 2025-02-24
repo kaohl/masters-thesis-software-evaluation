@@ -70,7 +70,8 @@ def export_project_sources(coord):
             coord,
             '--export',
             '--export-path',
-            tempdir
+            tempdir,
+            '--clean'
         ])
         subprocess.run(cmd, shell = True, cwd = DAIVY_HOME)
     return export_dir

@@ -78,7 +78,7 @@ def generate_eclipse_workspace_configuration(coord, location, out):
 
         added_deps = set()
         ds         = [] # Libs
-        for d in daivy_commands.resolve_classpath(p, ['compile']):
+        for d in daivy_commands.resolve_classpath(p, ['compile,optional']):
             d_path = Path(d)
             d_stem = d_path.stem
             if d_stem in defined_projects:
@@ -89,7 +89,7 @@ def generate_eclipse_workspace_configuration(coord, location, out):
         ## This is required to get lucene-core onto the module path
         ## of other lucene modules (e.g. codecs which only have core
         ## as runtime dependency)
-        for d in daivy_commands.resolve_classpath(p, ['runtime']):
+        for d in daivy_commands.resolve_classpath(p, ['runtime,optional']):
             d_path = Path(d)
             d_stem = d_path.stem
             if d_stem in defined_projects and not d_stem in added_deps:
@@ -124,7 +124,7 @@ def generate_eclipse_workspace_configuration(coord, location, out):
         out.write(master_stem + "-test {" + os.linesep)
         out.write("   dep " + master_stem + os.linesep)
         ds = []
-        for d in daivy_commands.resolve_classpath(p, ['test']):
+        for d in daivy_commands.resolve_classpath(p, ['test,optional']):
             d_path = Path(d)
             d_stem = d_path.stem
             # Add as binary dependency unless source is already provided.

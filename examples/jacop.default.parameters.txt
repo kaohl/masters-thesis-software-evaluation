@@ -1,6 +1,6 @@
-bm             = batik
+bm             = jacop
 bm_version     = 1.0
-bm_workload    = small
+bm_workload    = default
 source_version = 8
 target_version = 8
 jdk            = 8.0.432-tem

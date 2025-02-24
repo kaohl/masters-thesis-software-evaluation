@@ -1,4 +1,4 @@
-bm             = batik
+bm             = xalan
 bm_version     = 1.0
 bm_workload    = small
 source_version = 8
