@@ -93,3 +93,10 @@ def sdk_run(sdk, command):
         raise ValueError("The specified sdk '{}' is not installed".format(sdk))
     return sdkman_command(' '.join(['sdk use java', sdk])) + command
 
+def sdk_of_minimum_major_version(major_version):
+    min_version = int(major_version)
+    for sdk in get_installed_sdks():
+        if int(sdk[:sdk.find('.')]) >= min_version:
+            return sdk
+    raise ValueError("Could not satisfy SDK minimum major version: {}. Found SDKs: {}".format(min_version, get_installed_sdks()))
+

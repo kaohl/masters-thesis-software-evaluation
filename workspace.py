@@ -222,18 +222,24 @@ def generate_workspace_resources(project):
 
     return location
 
-def prepare_eclipse_workspace(path):
+_project_compliance = {
+    'dacapo:batik:1.0'    : '1.8',
+    'dacapo:xalan:1.0'    : '1.8',
+    'dacapo:jacop:1.0'    : '1.8',
+    'dacapo:luindex:1.0'  : '11',
+    'dacapo:lusearch:1.0' : '11'
+}
+
+def prepare_eclipse_workspace(project, path):
     workspace = path
     oppcache  = workspace / 'oppcache'
     cmd = " ".join([
-        './eclipse/eclipse',
+        './refactoring-framework/eclipse/eclipse',
         '-data',
         str(workspace),     # Workspace root.
         '--prepare',
-        '--runtime',
-        '/home/pddp/.sdkman/candidates/java/current/jre/lib/rt.jar', #'`sdk home java current`/jre/lib/rt.jar', # TODO: Is this only relevant for java 8? How does it work in >8?
-        '--report',
-        'DUMMY-REPORT-DIR', # Not used here.
+        '--compliance',
+        _project_compliance[project],
         '--src',
         'assets/src',       # <workspace>/assets/src
         '--lib',
@@ -242,10 +248,8 @@ def prepare_eclipse_workspace(path):
         oppcache.name,      # <workspace>/oppcache
         '--out',
         'output',           # <workspace>/output
-        '--type',
-        'rename'            # Not relevant when preparing the workspace (but a required option).
     ])
-    subprocess.run(cmd, shell = True)
+    subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd), shell = True)
 
     # TODO: All cache files may not be generated if the refactoring scope is small.
     #       This is a temporary fix to create them as empty files if that happens.
@@ -270,28 +274,28 @@ def prepare_eclipse_workspace(path):
 def get_name_from_project_coordinate(coord):
     return coord.replace(':', '-').replace('.', '_')
 
-def create_workspace(project, clean):
-    ws_name   = get_name_from_project_coordinate(project)
-    ws_path   = Path(os.getcwd()) / 'workspaces'
-    p_ws_path = ws_path / ws_name
-
-    if not ws_path.exists():
-        ws_path.mkdir()
-    
-    if clean and p_ws_path.exists():
-        shutil.rmtree(p_ws_path)
-
-    if p_ws_path.exists():
-        return p_ws_path
-
-    temp_location = generate_workspace_resources(args.project)
-    shutil.copytree(temp_location, p_ws_path)
-    shutil.rmtree(temp_location)
-
-    # Eclipse (refactoring) output directory.
-    (p_ws_path / 'output').mkdir()
-    prepare_eclipse_workspace(p_ws_path)
-    return p_ws_path
+#def create_workspace(project, clean):
+#    ws_name   = get_name_from_project_coordinate(project)
+#    ws_path   = Path(os.getcwd()) / 'workspaces'
+#    p_ws_path = ws_path / ws_name
+#
+#    if not ws_path.exists():
+#        ws_path.mkdir()
+#    
+#    if clean and p_ws_path.exists():
+#        shutil.rmtree(p_ws_path)
+#
+#    if p_ws_path.exists():
+#        return p_ws_path
+#
+#    temp_location = generate_workspace_resources(args.project)
+#    shutil.copytree(temp_location, p_ws_path)
+#    shutil.rmtree(temp_location)
+#
+#    # Eclipse (refactoring) output directory.
+#    (p_ws_path / 'output').mkdir()
+#    prepare_eclipse_workspace(p_ws_path)
+#    return p_ws_path
 
 def create_workspace_in_location(project, location):
     temp_location = generate_workspace_resources(project)
@@ -300,7 +304,7 @@ def create_workspace_in_location(project, location):
 
     # Eclipse (refactoring) output directory.
     (location / 'output').mkdir()
-    prepare_eclipse_workspace(location)
+    prepare_eclipse_workspace(project, location)
     return location
 
 def refactor(workspace_location, data_location, refactoring_config, proc_id):
@@ -334,11 +338,11 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
             pass
 
         cmd = " ".join([
-            './eclipse/eclipse',
+            './refactoring-framework/eclipse/eclipse',
             '-data',
             str(workspace),     # Workspace root.
-            '--runtime',
-            '/home/pddp/.sdkman/candidates/java/current/jre/lib/rt.jar', #'`sdk home java current`/jre/lib/rt.jar'
+            #'--compliance',                        # TODO: Compliance should not be needed here... make optional.
+            #_project_compliance[project],
             '--report',
             str(report_dir),
             '--src',
@@ -351,7 +355,7 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
             'output',           # <workspace>/output
         ] + [ "{} {}".format(k, v) for k, v in refactoring_config._values.items() ])
         # TODO: See if we can get the subprocess command to write directly to file instead of explicit redirection.
-        subprocess.run(cmd + ' > ' + str(workspace / 'output.log'), shell = True)
+        subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd + ' > ' + str(workspace / 'output.log')), shell = True)
 
         ws_output = workspace / 'output'
 
