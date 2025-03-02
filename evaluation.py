@@ -9,6 +9,7 @@ from random import randrange
 import shutil
 import tempfile
 
+import opportunity_cache
 import patch
 import run_benchmark as bm_script
 import steering
@@ -109,13 +110,50 @@ def refactor(args, proc_id):
     workspace = x_folder(args) / 'workspaces' / bm / workload / 'workspace'
     data      = x_folder(args) / 'data' / bm / workload
 
-    i = 0
-    n = args.n
-    while i < n:
-        # TODO: Allow user to specify refactoring options on command line.
-        options = configuration.get_random_refactoring_configuration()
-        ws_script.refactor(workspace, data, options, proc_id)
-        i = i + 1
+    # Note
+    # Because duplications should be remove when assembling the
+    # descriptor lists for experiments, there should be no need
+    # to use the refactoring ID for folder names. We can use
+    # temp folder names and then look at the descriptor to
+    # determine which data folders map to each list after
+    # the experiment. (Consider using sequentially numbered folders
+    # per list (data/<listname>/{1,2,3,4, ...}) so that it is easy
+    # to go from descriptor list index to the data folder.
+
+    lists = []
+    for dir, folders, files in os.walk(x_folder(args) / 'workloads' / bm / workload / 'lists'):
+        for file in files:
+            if file.endswith('.list'):
+                lists.append(Path(dir) / file)
+        break
+
+    if len(lists) == 0:
+        raise ValueError("There are no descriptor lists defined for", bm, workload)
+
+    for lst in lists:
+        data = x_folder(args) / 'data' / bm / workload / lst.name
+        with open(lst, 'r') as f:
+            for i, line in enumerate(f):
+                line = line.strip()
+                if line == "" or (data / str(i)).exists():
+                    continue
+                print("Refactor", lst.name, str(i), line)
+                descriptor = opportunity_cache.RefactoringDescriptor(line)
+                options    = { '--descriptor' : descriptor.get_cli_line() }
+                ws_script.refactor(workspace, data / str(i), options, proc_id)
+
+    #oppcache = opportunity_cache.OppCache(workspace / 'oppcache')
+    #i = 0
+    #n = args.n
+    #while i < n:
+    #    # TODO: Allow user to specify refactoring options on command line.
+    #    #options = configuration.get_random_refactoring_configuration()
+    #    # TODO: The user should prepare files with descriptors to run. Don't use random unless specified.
+    #    descriptor = oppcache.get_random_descriptor()
+    #    # descriptor.update({ 'name' : 'TODO' }) # TODO: Generate name based on element type.
+    #    options = { '--descriptor' : descriptor.get_cli_line() }
+    #    ws_script.refactor(workspace, data, options, proc_id)
+    #    i = i + 1
 
 def prime_import_location(args, configuration, location, data):
     # Assume that we have workspaces available.

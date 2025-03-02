@@ -200,25 +200,25 @@ def generate_workspace_resources(project):
     # refactoring opportunities. The generated
     # opportunity cache is tied to this configuration. 
 
-    with open(src_location / 'variable.config', 'w') as var:
-        var.write("batik-all-1.16-main-src.jar" + os.linesep)
-
-    with open(src_location / 'units.config', 'w') as units:
-        units.write("batik-all-1.16=\\" + os.linesep)
-        units.write("    org/apache/batik/ext/awt/image/codec/png/PNGEncodeParam.java" + os.linesep)
-
-    with open(src_location / 'units.config.helper', 'w') as units:
-        units.write("org/apache/batik/ext/awt/image/codec/png/PNGEncodeParam.java" + os.linesep)
-
-    with open(src_location / 'packages.config', 'w') as pkgs:
-        pkgs.write("batik-all-1.16=\\" + os.linesep)
-        pkgs.write("    org.apache.batik.ext.awt.image.codec.png" + os.linesep)
-
-    with open(src_location / 'packages.config.helper', 'w') as pkgs:
-        pkgs.write("batik-all-1.16.include=\\" + os.linesep)
-        pkgs.write("    org.apache.batik.ext.awt.image.codec.png" + os.linesep)
-        #pkgs.write("batik-all-1.16.exclude=\\" + os.linesep)
-        #pkgs.write("    org/apache/batik/ext/image/codec/png" + os.linesep)
+    #with open(src_location / 'variable.config', 'w') as var:
+    #var.write("batik-all-1.16-main-src.jar" + os.linesep)
+    #
+    #with open(src_location / 'units.config', 'w') as units:
+    #units.write("batik-all-1.16=\\" + os.linesep)
+    #units.write("    org/apache/batik/ext/awt/image/codec/png/PNGEncodeParam.java" + os.linesep)
+    #
+    #with open(src_location / 'units.config.helper', 'w') as units:
+    #units.write("org/apache/batik/ext/awt/image/codec/png/PNGEncodeParam.java" + os.linesep)
+    #
+    #with open(src_location / 'packages.config', 'w') as pkgs:
+    #pkgs.write("batik-all-1.16=\\" + os.linesep)
+    #pkgs.write("    org.apache.batik.ext.awt.image.codec.png" + os.linesep)
+    #
+    #with open(src_location / 'packages.config.helper', 'w') as pkgs:
+    #pkgs.write("batik-all-1.16.include=\\" + os.linesep)
+    #pkgs.write("    org.apache.batik.ext.awt.image.codec.png" + os.linesep)
+    ##pkgs.write("batik-all-1.16.exclude=\\" + os.linesep)
+    ##pkgs.write("    org/apache/batik/ext/image/codec/png" + os.linesep)
 
     return location
 
@@ -251,25 +251,25 @@ def prepare_eclipse_workspace(project, path):
     ])
     subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd), shell = True)
 
-    # TODO: All cache files may not be generated if the refactoring scope is small.
-    #       This is a temporary fix to create them as empty files if that happens.
-    #
-    #       *** This should be fixed in the refactoring framework instead.
-    #
-    oppfiles = [
-        'extract.field.txt',
-        'extract.method.txt',
-        'inline.field.txt',
-        'inline.method.txt',
-        'rename.field.txt',
-        'rename.local.variable.txt',
-        'rename.method.txt',
-        'rename.type.parameter.txt',
-        'rename.type.txt'
-    ]
-    for f in oppfiles:
-        with open(oppcache / f, 'a'):
-            pass
+    ## TODO: All cache files may not be generated if the refactoring scope is small.
+    ##       This is a temporary fix to create them as empty files if that happens.
+    ##
+    ##       *** This should be fixed in the refactoring framework instead.
+    ##
+    #oppfiles = [
+    #    'extract.field.txt',
+    #    'extract.method.txt',
+    #    'inline.field.txt',
+    #    'inline.method.txt',
+    #    'rename.field.txt',
+    #    'rename.local.variable.txt',
+    #    'rename.method.txt',
+    #    'rename.type.parameter.txt',
+    #    'rename.type.txt'
+    #]
+    #for f in oppfiles:
+    #    with open(oppcache / f, 'a'):
+    #        pass
 
 def get_name_from_project_coordinate(coord):
     return coord.replace(':', '-').replace('.', '_')
@@ -308,8 +308,7 @@ def create_workspace_in_location(project, location):
     return location
 
 def refactor(workspace_location, data_location, refactoring_config, proc_id):
-    cached_workspace = workspace_location #experiment_location / 'workspace'
-    #data_location    = experiment_location / 'data' / tag
+    cached_workspace = workspace_location
     with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as context:
         workspace = Path(context) / 'workspace'
         print("Using workspace", str(workspace))
@@ -317,7 +316,14 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
         # TODO: Use a symlink for oppcache.
         shutil.copytree(cached_workspace, workspace)
 
-        report_dir           = Path(os.getcwd()) / 'refactoring-reports' / ('report-proc-' + str(proc_id))
+        # TODO: Success tracker is outdated, we should handle this in the
+        #       evaluation script instead since we now have control over
+        #       all descriptors. (Remove 'report' and files.)
+        #
+        # TODO: Also, there is no need for 'proc_id' since each process is working against its own workspace copy.
+        #       (Do we even need multiprocessing now?)
+
+        report_dir           = workspace / 'report'
         report_file          = report_dir / 'refactoring-output.txt'
         success_tracker_file = report_dir / 'successTrackerFile.txt'
         failure_tracker_file = report_dir / 'failureTrackerFile.txt'
@@ -353,7 +359,8 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
             'oppcache',         # <workspace>/oppcache
             '--out',
             'output',           # <workspace>/output
-        ] + [ "{} {}".format(k, v) for k, v in refactoring_config._values.items() ])
+        ] + [ '{} "{}"'.format(k, v) for k, v in refactoring_config.items() ])
+        print("REFACTOR", cmd)
         # TODO: See if we can get the subprocess command to write directly to file instead of explicit redirection.
         subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd + ' > ' + str(workspace / 'output.log')), shell = True)
 
