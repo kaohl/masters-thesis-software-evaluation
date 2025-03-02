@@ -95,8 +95,15 @@ def sdk_run(sdk, command):
 
 def sdk_of_minimum_major_version(major_version):
     min_version = int(major_version)
+    candidate   = None
+    candidate_v = None
     for sdk in get_installed_sdks():
-        if int(sdk[:sdk.find('.')]) >= min_version:
-            return sdk
-    raise ValueError("Could not satisfy SDK minimum major version: {}. Found SDKs: {}".format(min_version, get_installed_sdks()))
+        v = int(sdk[:sdk.find('.')])
+        if v >= min_version:
+            if candidate is None or v < candidate_v:
+                candidate   = sdk
+                candidate_v = v
+    if candidate is None:
+        raise ValueError("Could not satisfy SDK minimum major version: {}. Found SDKs: {}".format(min_version, get_installed_sdks()))
+    return candidate
 
