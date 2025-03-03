@@ -41,6 +41,11 @@ from random import randrange
 # We could set __block_id == Block.startOffset()
 
 class RefactoringDescriptor:
+
+    def load(path):
+        with open(path, 'r') as f:
+            return RefactoringDescriptor(json.dumps(json.load(f), sort_keys = True))
+
     def __init__(self, line):
         self._json = json.loads(line)
         self._args = self._json.get('args')

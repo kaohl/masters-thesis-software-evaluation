@@ -307,9 +307,9 @@ def create_workspace_in_location(project, location):
     prepare_eclipse_workspace(project, location)
     return location
 
-def refactor(workspace_location, data_location, refactoring_config, proc_id):
+def refactor(workspace_location, data_location, descriptor):
     cached_workspace = workspace_location
-    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as context:
+    with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as context:
         workspace = Path(context) / 'workspace'
         print("Using workspace", str(workspace))
 
@@ -359,7 +359,9 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
             'oppcache',         # <workspace>/oppcache
             '--out',
             'output',           # <workspace>/output
-        ] + [ '{} "{}"'.format(k, v) for k, v in refactoring_config.items() ])
+            '--descriptor',
+            '"{}"'.format(descriptor.get_cli_line())
+        ])
         print("REFACTOR", cmd)
         # TODO: See if we can get the subprocess command to write directly to file instead of explicit redirection.
         subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd + ' > ' + str(workspace / 'output.log')), shell = True)
@@ -368,6 +370,9 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
 
         if not data_location.exists():
             data_location.mkdir(parents = True)
+
+        with open(data_location / 'descriptor.txt', 'w') as f:
+            f.write(descriptor.line() + os.linesep)
 
         if is_empty_folder(ws_output):
             # Print refactoring output for immediate visual feedback.

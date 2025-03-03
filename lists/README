@@ -1,0 +1,110 @@
+An experiment applies refactoring opportunities given by a set of
+refactoring descriptor lists and benchmarks the resulting code.
+Each line on such a list is a JSON object representing a refactoring
+descriptor originating from the opportunity cache from an eclipse
+workspace. Before being written onto an opportunity list, default
+and custom parameters are applied to complete the descriptor.
+
+Descriptor lists should be saved together with benchmark configuration
+and results for the sake of reproducibility. They are therefore located
+inside experiment workload folders:
+
+    <experiment-location>/<name>/workloads/<bm>/<workload>/lists/<list ...>/...
+
+Here we describe the layout and formatting of the resources related
+to the construction of these descriptor lists.
+
+A list (of refactoring descriptors) is the union of result sets
+produced by a collection of filtered queries on the eclipse
+workspace opportunity cache.
+
+List resources are organized on disk as follows:
+
+lists/
+   default.args
+   list-0/
+       q0.filter, q0.params, q0.defaults
+       q1.filter, q1.params, q1.defaults
+       ...
+       qn.filter, qn.params, qn.defaults
+   list-1/
+       q0.filter, q0.params, q0.defaults
+       q1.filter, q1.params, q1.defaults
+       ...
+       qm.filter, qm.params, qm.defaults
+   ...
+   list-k/
+       q0.filter, q0.params, q0.defaults
+       q1.filter, q1.params, q1.defaults
+       ...
+       ql.filter, ql.params, ql.defaults
+
+The 'q_x.filter' file is a JSON object representing
+a 'meta' attribute filter that is applied to the
+opportunity cache to produce a list of descriptors.
+
+See implementation for supported object format.
+
+The 'q_x.params' file holds one JSON object per line.
+Each line hold a JSON formatted parameter object.
+Each parameter object is applied to each descriptor
+that matches the associated 'q_x.filter'. I.e.,
+descriptors are multiplied to cover all possible
+parameter configurations.
+
+The 'default.args' file is a text file holding a JSON object
+defining default arguments for each refactoring descriptor
+type that is currently in use. (Update when found incomplete.)
+
+The 'q_x.defaults' files are optional.
+
+The purpose of 'q_x.defaults' is to override 'default.args'
+for the 'q_x' query. It is therefore possible to vary all
+descriptor parameters in experiments.
+
+
+# Custom lists
+If the user wants to use a custom assembled descriptor list
+it can be placed in a file called 'descriptors.txt' placed
+in a workload list folder. It is then simply a pre-computed
+list from the perspective of the framework.
+
+
+# TODO
+- We may want to define queries that make <n> random selections
+  from a computed list before multiplying with parameters
+- We may want to compute unique IDs for descriptors so that
+  a query filter can target a specific descriptor
+  (Not sure this is needed because the user could then just
+   as well simply generate a custom descriptor list for the
+   targeted opportunity.)
+  - The idea at least is to be able to vary a set of parameters
+    for a specific descriptor (e.g. rename the same opportunity
+    with a precomputed list of names for testing name content
+    and content length)
+
+
+# Refactoring Descriptor Parameters
+- Available arguments are listed in eclipse internal refactoring classes
+- Default values of (at least) all required parameters are defined in 'default.args'
+
+org.eclipse.jdt.internal.corext.refactoring.code.InlineConstantRefactoring
+  "replace"
+  "remove"
+  
+org.eclipse.jdt.internal.corext.refactoring.code.ExtractConstantRefactoring
+  "replace"
+  "qualify"
+  "visibility" (package:0, private:2, protected:4, public:1)
+
+org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring
+  "visibility"
+  "destination" (optional; not used yet in our work)
+  "comments"
+  "replace"
+  "exceptions"
+
+org.eclipse.jdt.internal.corext.refactoring.code.InlineMethodRefactoring
+  "mode"   0/1
+  "delete" T/F
+

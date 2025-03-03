@@ -148,11 +148,11 @@ def refactor(args, proc_id):
                     continue
                 print("Refactor", bm, workload, lst.parent.name, str(i), line)
                 descriptor = opportunity_cache.RefactoringDescriptor(line)
-                options    = { '--descriptor' : descriptor.get_cli_line() }
+                # options    = { '--descriptor' : descriptor.get_cli_line() }
                 try:
-                    ws_script.refactor(workspace, data / str(i), options, proc_id)
+                    ws_script.refactor(workspace, data / str(i), descriptor)
                     j = j + 1
-                    if i >= args.n:
+                    if j >= args.n:
                         break
                 except ValueError as e:
                     print("ERROR", str(e))
@@ -219,7 +219,7 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
 
     try:
         clean = True
-        with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as location:
+        with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as location:
             import_dir    = Path(location)
             deploy_dir    = Path(location) / 'deployment'
             jfr_file      = Path(location) / 'flight.jfr'
@@ -284,15 +284,15 @@ def get_benchmark_execution_plan(args):
     plan = []
     for (bm, workload, configuration) in get_valid_configurations(args):
         location = x_folder(args) / 'data' / bm / workload
-        for dir, folders, files in os.walk(location):
-            for list in folders:
-                for dir, folders, files in os.walk(Path(dir) / list):
-                    for index in folders:
-                        if (Path(index) / 'FAILURE').exists():
+        for dir1, folders1, files1 in os.walk(location):
+            for list in folders1:
+                for dir2, folders2, files2 in os.walk(Path(dir1) / list):
+                    for index in folders2:
+                        if (Path(dir2) / index / 'FAILURE').exists():
                             continue # The refactoring could not be applied.
-                        for dir, folders, files in os.walk(Path(dir) / index):
-                            for refactoring in folders:
-                                stats_c = Path(dir) / refactoring / 'stats' / configuration.id()
+                        for dir3, folders3, files3 in os.walk(Path(dir2) / index):
+                            for refactoring in folders3:
+                                stats_c = Path(dir3) / refactoring / 'stats' / configuration.id()
                                 if not stats_c.exists():
                                     plan.append((bm, workload, list, index, refactoring, configuration))
                             break
@@ -314,29 +314,30 @@ def benchmark(args):
         raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
 
     for (bm, workload, list, index, refactoring, configuration) in get_benchmark_execution_plan(args):
+        print("Benchmark", bm, workload, list, index, refactoring, configuration)
         data_location = Path(os.getcwd()) / x_folder(args) / 'data' / bm / workload / list / index / refactoring
         build_and_benchmark(args, configuration, data_location)
         i = i + 1
         if i >= n:
             break
 
+# Print result objects to stdout.
+# See 'results.py' for CSV files and statistics.
 def report(args):
     for (bm, workload) in get_workloads(args):
-        for dir, lists, files in os.walk(x_folder(args) / 'data' / bm / workload):
+        for dir1, lists, files1 in os.walk(x_folder(args) / 'data' / bm / workload):
             for list in lists:
                 print("---", bm, workload, list, "---")
-                for dir, indices, files in os.walk(Path(dir) / list):
+                for dir2, indices, files2 in os.walk(Path(dir1) / list):
                     for index in indices:
-                        for dir, refactorings, files in os.walk(Path(dir) / index):
+                        for dir3, refactorings, files3 in os.walk(Path(dir2) / index):
                             for refactoring in refactorings:
-                                for dir, ids, files in os.walk(Path(dir) / refactoring / 'stats'):
+                                for dir4, ids, files4 in os.walk(Path(dir3) / refactoring / 'stats'):
                                     for id in ids:
-                                        # TODO: Investigate how input should be formatted for statistics tools.
-                                        #       Consider letting the user specify the column headers (keys as CSV) and then print CSV rows.
-                                        if (Path(dir) / id / 'FAILURE').exists():
+                                        if (Path(dir4) / id / 'FAILURE').exists():
                                             continue
-                                        config  = configuration.Configuration().load(Path(dir) / id / 'configuration.txt')
-                                        metrics = configuration.Metrics().load(Path(dir) / id / 'metrics.txt')
+                                        config  = configuration.Configuration().load(Path(dir4) / id / 'configuration.txt')
+                                        metrics = configuration.Metrics().load(Path(dir4) / id / 'metrics.txt')
                                         print({ **{ 'data' : list + '/' + index }, **config._values, **metrics._values })
                                     break
                             break
