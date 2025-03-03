@@ -24,6 +24,17 @@ export DAIVY_HOME=...
 ./evaluation.py --x y --show-execution-plan
 ```
 
+Example of descriptor attribute filter matching (for debugging):
+```
+./opportunity_cache.py \
+    --cache experiments/jacop/workspaces/jacop/default/workspace/oppcache \
+    --filter "{\"id\":\"org.eclipse.jdt.ui.extract.method\"}" | wc -l
+```
+The evaluation script uses the stream variant to write matching descriptors
+directly to the target file inside the experiment configuration.
+Currently, only meta attribute filtering is supported. But easy to extend
+to args filtering as well if/when needed.
+
 # Troubleshooting
 ## Missing data
 If you get the following error, make sure that the linked in

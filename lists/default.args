@@ -1,0 +1,23 @@
+{
+    "org.eclipse.jdt.ui.inline.constant" : {
+        "replace" : "false",
+        "remove"  : "false"
+    },
+    "org.eclipse.jdt.ui.extract.constant" : {
+        "replace"    : "false",
+        "qualify"    : "false",
+        "visibility" : "2",
+        "name"       : "_x_"
+    },
+    "org.eclipse.jdt.ui.extract.method" : {
+	    "visibility" : "2",
+        "comments"   : "false",
+        "replace"    : "true",
+        "exceptions" : "false",
+        "name"       : "_x_"
+    },
+    "org.eclipse.jdt.ui.inline.method" : {
+        "mode"   : "0",
+        "delete" : "false"
+    }
+}

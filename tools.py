@@ -54,13 +54,17 @@ def get_installed_sdks(refresh = False):
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT
     )
-    p    = re.compile('\\| installed  \\| ([\\d.\\w-]+)')
+    p1   = re.compile('\\| installed  \\| ([\\d.\\w-]+)')
+    p2   = re.compile('\\| local only \\| ([\\d.\\w-]+)')
     sdks = []
     for line in result.stdout.decode('utf-8').split(os.linesep):
-        matches = p.findall(line)
-        if len(matches) > 0:
-            for sdk in matches:
-                sdks.append(sdk)
+        matches = p1.findall(line)
+        sdks.extend(matches)
+        #if len(matches) > 0:
+        #    for sdk in matches:
+        #        sdks.append(sdk)
+        matches = p2.findall(line)
+        sdks.extend(matches)
     _installed_sdks_cache = sdks
     return sdks
 

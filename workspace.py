@@ -325,23 +325,23 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
 
         report_dir           = workspace / 'report'
         report_file          = report_dir / 'refactoring-output.txt'
-        success_tracker_file = report_dir / 'successTrackerFile.txt'
-        failure_tracker_file = report_dir / 'failureTrackerFile.txt'
+        #success_tracker_file = report_dir / 'successTrackerFile.txt'
+        #failure_tracker_file = report_dir / 'failureTrackerFile.txt'
 
         if not report_dir.exists():
             report_dir.mkdir()
         
         # Clear file between invocations.
-        with open(report_file, 'w'):
-            pass
-
+        #with open(report_file, 'w'):
+        #    pass
+        #
         # Create if not already exists. (Accumulate over multiple runs.)
-        with open(success_tracker_file, 'a'):
-            pass
-
+        #with open(success_tracker_file, 'a'):
+        #    pass
+        #
         # Create if not already exists. (Accumulate over multiple runs.)
-        with open(failure_tracker_file, 'a'):
-            pass
+        #with open(failure_tracker_file, 'a'):
+        #    pass
 
         cmd = " ".join([
             './refactoring-framework/eclipse/eclipse',
@@ -350,7 +350,7 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
             #'--compliance',                        # TODO: Compliance should not be needed here... make optional.
             #_project_compliance[project],
             '--report',
-            str(report_dir),
+            'report',           # str(report_dir),
             '--src',
             'assets/src',       # <workspace>/assets/src
             '--lib',
@@ -366,12 +366,24 @@ def refactor(workspace_location, data_location, refactoring_config, proc_id):
 
         ws_output = workspace / 'output'
 
-        if is_empty_folder(ws_output):
-            raise ValueError("Refactoring failed. No output available.")
-
         if not data_location.exists():
             data_location.mkdir(parents = True)
 
+        if is_empty_folder(ws_output):
+            # Print refactoring output for immediate visual feedback.
+            print("*** Refactoring failed ***") 
+            with open(report_file, 'r') as f:
+                for line in f:
+                    print(line)
+            print("**************************")
+            # Register that the refactoring failed.
+            with open(data_location / 'FAILURE', 'w'):
+                pass
+            # Store the refactoring output for later reference.
+            shutil.copy2(report_file, data_location / 'refactoring-output.txt')
+            raise ValueError("Refactoring failed.")
+
+        # Create a temporary directory for each run to be able to re-run descriptors if needed.
         with tempfile.TemporaryDirectory(delete = False, dir = data_location) as data_dir:
             data = Path(data_dir)
             

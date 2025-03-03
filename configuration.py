@@ -132,11 +132,11 @@ class Configuration(ConfigurationBase):
             return Configuration._compare_units[(x.upper(), y.upper())]
 
     def test_size_option(opt, val, test):
-        opt_a, opt_u = size_option_pattern.findall(opt)[0]
-        val_a, val_u = size_option_pattern.findall(val)[0]
+        opt_a, opt_u = Configuration.size_option_pattern.findall(opt)[0]
+        val_a, val_u = Configuration.size_option_pattern.findall(val)[0]
         opt_a        = int(opt_a)
         val_a        = int(val_a)
-        c            = compare_size_units(val_u, opt_u)
+        c            = Configuration.compare_size_units(val_u, opt_u)
         # Change to the smaller unit unless units are equal.
         if c < 0:
             while c < 0:
@@ -183,7 +183,7 @@ class Configuration(ConfigurationBase):
         is_valid_option           = lambda k: not self.has_option_constraints(k) or self._clobber(k) in self.get_option_constraints(k)
         is_valid_option_test      = lambda k, test: not self.has_option_constraints(k) or len({ x for x in self.get_option_constraints(k) if test(x, self._clobber(k)) }) > 0
         is_valid_size_option_test = lambda k, test: not self.has_option_constraints(k) or len({ x for x in self.get_option_constraints(k) if test(x, self._clobber(k)) }) > 0
-        bad_option_message        = "Bad '{}' option: \"{}\". Constraint: {}."
+        bad_option_message        = "Option '{}'=\"{}\" does not satisfy constraint: {}"
         errors                    = []
         if not is_valid_option(Configuration.BM):
             errors.append(bad_option_message.format(

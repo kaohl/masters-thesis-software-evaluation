@@ -76,10 +76,16 @@ def add_workspace_configuration(args, bm, workload, workspace):
         for file in files:
             shutil.copy2(Path(dir) / file, src / file)
 
+def generate_descriptor_lists(args, bm, workload):
+    cache_location = x_folder(args) / 'workspaces' / bm / workload / 'workspace' / 'oppcache'
+    lists_location = x_folder(args) / 'workloads' / bm / workload / 'lists'
+    opportunity_cache.ListsGenerator.generate_lists(cache_location, lists_location)
+
 def create_workspace(args, bm, workload):
     workspace = x_folder(args) / 'workspaces' / bm / workload / 'workspace'
     add_workspace_configuration(args, bm, workload, workspace)
     ws_script.create_workspace_in_location("dacapo:{}:1.0".format(bm), workspace)
+    generate_descriptor_lists(args, bm, workload)
 
 def create_workspaces(args):
     for bm, workload in get_workloads(args):
@@ -122,25 +128,39 @@ def refactor(args, proc_id):
 
     lists = []
     for dir, folders, files in os.walk(x_folder(args) / 'workloads' / bm / workload / 'lists'):
-        for file in files:
-            if file.endswith('.list'):
-                lists.append(Path(dir) / file)
+        for folder in folders:
+            lists.append(Path(dir) / folder / 'descriptors.txt')
+        #for file in files:
+        #    if file.endswith('.list'):
+        #        lists.append(Path(dir) / file)
         break
 
     if len(lists) == 0:
         raise ValueError("There are no descriptor lists defined for", bm, workload)
 
+    j = 0
     for lst in lists:
-        data = x_folder(args) / 'data' / bm / workload / lst.name
+        data = x_folder(args) / 'data' / bm / workload / lst.parent.name
         with open(lst, 'r') as f:
             for i, line in enumerate(f):
                 line = line.strip()
-                if line == "" or (data / str(i)).exists():
+                if line == "" or (data / str(i)).exists(): # TODO: Make it possible to re-run descriptors. (Each run is stored in its own tmp folder inside data/<i>/: data/<i>/<tmp>
                     continue
-                print("Refactor", lst.name, str(i), line)
+                print("Refactor", bm, workload, lst.parent.name, str(i), line)
                 descriptor = opportunity_cache.RefactoringDescriptor(line)
                 options    = { '--descriptor' : descriptor.get_cli_line() }
-                ws_script.refactor(workspace, data / str(i), options, proc_id)
+                try:
+                    ws_script.refactor(workspace, data / str(i), options, proc_id)
+                    j = j + 1
+                    if i >= args.n:
+                        break
+                except ValueError as e:
+                    print("ERROR", str(e))
+                    # Create empty folder to avoid processing the
+                    # failing refactoring every time we run the
+                    # script.
+                    #if not (data / str(i)).exists():
+                    #    (data / str(i)).mkdir(parents = True)
 
     #oppcache = opportunity_cache.OppCache(workspace / 'oppcache')
     #i = 0
@@ -232,7 +252,8 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
     except TypeError as e:
         raise e
     except Exception as e:
-        log.warning("Benchmark failure: {}", configuration._values)
+        log.warning("Benchmark failure")
+        log.warning(configuration._values)
         with open(failure, 'w') as f:
             f.write(str(e))
         return False
@@ -264,10 +285,18 @@ def get_benchmark_execution_plan(args):
     for (bm, workload, configuration) in get_valid_configurations(args):
         location = x_folder(args) / 'data' / bm / workload
         for dir, folders, files in os.walk(location):
-            for refactoring in folders:
-                stats_c = Path(dir) / refactoring / 'stats' / configuration.id()
-                if not stats_c.exists():
-                    plan.append((bm, workload, refactoring, configuration))
+            for list in folders:
+                for dir, folders, files in os.walk(Path(dir) / list):
+                    for index in folders:
+                        if (Path(index) / 'FAILURE').exists():
+                            continue # The refactoring could not be applied.
+                        for dir, folders, files in os.walk(Path(dir) / index):
+                            for refactoring in folders:
+                                stats_c = Path(dir) / refactoring / 'stats' / configuration.id()
+                                if not stats_c.exists():
+                                    plan.append((bm, workload, list, index, refactoring, configuration))
+                            break
+                    break
             break
     return plan
 
@@ -284,8 +313,8 @@ def benchmark(args):
     if n <= 0:
         raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
 
-    for (bm, workload, refactoring, configuration) in get_benchmark_execution_plan(args):
-        data_location = Path(os.getcwd()) / x_folder(args) / 'data' / bm / workload / refactoring
+    for (bm, workload, list, index, refactoring, configuration) in get_benchmark_execution_plan(args):
+        data_location = Path(os.getcwd()) / x_folder(args) / 'data' / bm / workload / list / index / refactoring
         build_and_benchmark(args, configuration, data_location)
         i = i + 1
         if i >= n:
@@ -293,18 +322,26 @@ def benchmark(args):
 
 def report(args):
     for (bm, workload) in get_workloads(args):
-        print("---", bm, workload, "---")
-        for dir, refactorings, files in os.walk(x_folder(args) / 'data' / bm / workload):
-            for refactoring in refactorings:
-                for dir_2, ids, files_2 in os.walk(Path(dir) / refactoring / 'stats'):
-                    for id in ids:
-                        # TODO: Investigate how input should be formatted for statistics tools.
-                        #       Consider letting the user specify the column headers (keys as CSV) and then print CSV rows.
-                        config  = configuration.Configuration().load(Path(dir) / refactoring / 'stats' / id / 'configuration.txt')
-                        metrics = configuration.Metrics().load(Path(dir) / refactoring / 'stats' / id / 'metrics.txt')
-                        print({ **config._values, **metrics._values })
+        for dir, lists, files in os.walk(x_folder(args) / 'data' / bm / workload):
+            for list in lists:
+                print("---", bm, workload, list, "---")
+                for dir, indices, files in os.walk(Path(dir) / list):
+                    for index in indices:
+                        for dir, refactorings, files in os.walk(Path(dir) / index):
+                            for refactoring in refactorings:
+                                for dir, ids, files in os.walk(Path(dir) / refactoring / 'stats'):
+                                    for id in ids:
+                                        # TODO: Investigate how input should be formatted for statistics tools.
+                                        #       Consider letting the user specify the column headers (keys as CSV) and then print CSV rows.
+                                        if (Path(dir) / id / 'FAILURE').exists():
+                                            continue
+                                        config  = configuration.Configuration().load(Path(dir) / id / 'configuration.txt')
+                                        metrics = configuration.Metrics().load(Path(dir) / id / 'metrics.txt')
+                                        print({ **{ 'data' : list + '/' + index }, **config._values, **metrics._values })
+                                    break
+                            break
                     break
-            print("-------------------------------------")
+                print("-------------------------------------")
             break
 
 def print_configurations(args):
@@ -312,8 +349,8 @@ def print_configurations(args):
         print(bm, workload, configuration._values)
 
 def print_execution_plan(args):
-    for (bm, workload, refactoring, configuration) in get_benchmark_execution_plan(args):
-        print(bm, workload, refactoring, configuration._values)
+    for (bm, workload, list, index, refactoring, configuration) in get_benchmark_execution_plan(args):
+        print(bm, workload, list, index, refactoring, configuration._values)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -343,7 +380,13 @@ if __name__ == '__main__':
         help = "Print all valid configurations to standard out")
     parser.add_argument('--show-execution-plan', required = False, action = 'store_true',
         help = "Print all pending benchmark executions")
+    parser.add_argument('--generate-lists', required = False, action = 'store_true',
+        help = "Generate lists on existing workspace")
     args = parser.parse_args()
+
+    if args.generate_lists:
+        generate_descriptor_lists(args, args.bm, args.workload)
+        exit(0)
 
     if args.show_configurations:
         print_configurations(args)
