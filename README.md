@@ -4,22 +4,42 @@ Master's thesis software evaluation
 # Create an experiment, refactor, and benchmark refactorings
 ## Prerequisites
 - Requires SDKMAN! to be installed, including at least one SDK
-- Update the parameter file after copying it to the specified experiment directory with valid SDK options (jdk; jre)
-  (see procedure below)
+- Create experiments/<name>/workloads/<bm>/<workload>/parameters.txt
+  - See 'examples/'
+  - WARNING: If additional parameters are added after after an experiment
+             is started the parameter files in all existing data will be
+             incomplete, and the generated results may be incomplete or
+             simply fail because values are missing.
+             
+             *** Take care to add all parameters from start... ***
+
+- Create experiments/<name>/workloads/<bm>/<workload>/lists/<list i name>/{q_j.filters,q_j.params,q_j.defaults}
+  - See 'lists/' for examples
+- Create experiments/<name>/workloads/<bm>/<workload>/views/{<view name k>.json}
+  - See 'views/' for examples
+
 ## Procedure
 Note that the `--x-location' argument is optional and defaults to 'experiments'.
 ```
-mkdir -p experiments/x/batik/small
-cp examples/batik.small.parameters.txt experiments/x/batik/small/parameters.txt
+mkdir -p experiments/<name>/<bm>/<workload>/{lists,views}
+cp examples/<bm>.<workload>.parameters.txt experiments/<name>/<bm>/<workload>/parameters.txt
 
-<adapt parameter file: experiments/x/batik/small/parameters.txt>
+<adapt experiments/x/batik/small/parameters.txt>
+<create/copy/adapt lists and views>
 
 export DAIVY_HOME=...
 ./evaluation.py --x y --create
-./evaluation.py --x y --refactor --bm batik --workload small
-./evaluation.py --x y --benchmark
+./evaluation.py --x y --refactor --bm batik --workload small --n <number of runs>
+./evaluation.py --x y --benchmark --n <number of runs>
+./results.py --x jacop --bm jacop --workload default
+
+# Dump result objects to stdout. (Precursor to 'results.py'.)
 ./evaluation.py --x y --report
 
+# Helpers for estimating size and time.
+# Use in conjunction with 'wc -l' to find appropriate values for the --n parameter to --benchmark and --refactor.
+# Multiply by two times the average EXECUTION_TIME of a given workload to get an upper estimate for the time it
+# takes to run all remaining configurations for all created refactorings.
 ./evaluation.py --x y --show-configurations
 ./evaluation.py --x y --show-execution-plan
 ```
