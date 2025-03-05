@@ -126,54 +126,47 @@ def refactor(args, proc_id):
     # per list (data/<listname>/{1,2,3,4, ...}) so that it is easy
     # to go from descriptor list index to the data folder.
 
-    lists = []
+    lists = dict()
     for dir, folders, files in os.walk(x_folder(args) / 'workloads' / bm / workload / 'lists'):
-        for folder in folders:
-            lists.append(Path(dir) / folder / 'descriptors.txt')
-        #for file in files:
-        #    if file.endswith('.list'):
-        #        lists.append(Path(dir) / file)
+        for name in folders:
+            lists[name] = Path(dir) / name / 'descriptors.txt'
         break
 
     if len(lists) == 0:
         raise ValueError("There are no descriptor lists defined for", bm, workload)
 
+    descriptors   = dict()
+    list_position = dict()
+    working_set   = set(lists.keys())
     j = 0
-    for lst in lists:
-        data = x_folder(args) / 'data' / bm / workload / lst.parent.name
-        with open(lst, 'r') as f:
-            for i, line in enumerate(f):
-                line = line.strip()
-                if line == "" or (data / str(i)).exists(): # TODO: Make it possible to re-run descriptors. (Each run is stored in its own tmp folder inside data/<i>/: data/<i>/<tmp>
-                    continue
-                print("Refactor", bm, workload, lst.parent.name, str(i), line)
-                descriptor = opportunity_cache.RefactoringDescriptor(line)
-                # options    = { '--descriptor' : descriptor.get_cli_line() }
-                try:
-                    ws_script.refactor(workspace, data / str(i), descriptor)
-                    j = j + 1
-                    if j >= args.n:
-                        break
-                except ValueError as e:
-                    print("ERROR", str(e))
-                    # Create empty folder to avoid processing the
-                    # failing refactoring every time we run the
-                    # script.
-                    #if not (data / str(i)).exists():
-                    #    (data / str(i)).mkdir(parents = True)
+    while j < args.n and len(working_set) > 0:
+        lst  = [name for name in working_set][randrange(len(working_set))]
+        data = x_folder(args) / 'data' / bm / workload / lst
+        if not lst in descriptors:
+            with open(lists[lst], 'r') as f:
+                descriptors[lst]   = [ line for line in f if line.strip() != "" ]
+                list_position[lst] = 0
+        if list_position[lst] >= len(descriptors[lst]):
+            working_set.remove(lst)
+            continue
+        i    = list_position[lst]
+        line = descriptors[lst][i]
+        list_position[lst] = list_position[lst] + 1
 
-    #oppcache = opportunity_cache.OppCache(workspace / 'oppcache')
-    #i = 0
-    #n = args.n
-    #while i < n:
-    #    # TODO: Allow user to specify refactoring options on command line.
-    #    #options = configuration.get_random_refactoring_configuration()
-    #    # TODO: The user should prepare files with descriptors to run. Don't use random unless specified.
-    #    descriptor = oppcache.get_random_descriptor()
-    #    # descriptor.update({ 'name' : 'TODO' }) # TODO: Generate name based on element type.
-    #    options = { '--descriptor' : descriptor.get_cli_line() }
-    #    ws_script.refactor(workspace, data, options, proc_id)
-    #    i = i + 1
+        if (data / str(i)).exists():
+            # TODO: Make it possible to re-run descriptors.
+            #       Each run is stored in its own tmp folder inside data/<i>/: data/<i>/<tmp>
+            continue
+
+        print("Refactor", bm, workload, lst, str(i), line)
+        descriptor = opportunity_cache.RefactoringDescriptor(line)
+        try:
+            ws_script.refactor(workspace, data / str(i), descriptor)
+            j = j + 1
+            if j >= args.n:
+                break
+        except ValueError as e:
+            print("ERROR", str(e))
 
 def prime_import_location(args, configuration, location, data):
     # Assume that we have workspaces available.

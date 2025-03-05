@@ -83,28 +83,3 @@ list from the perspective of the framework.
     with a precomputed list of names for testing name content
     and content length)
 
-
-# Refactoring Descriptor Parameters
-- Available arguments are listed in eclipse internal refactoring classes
-- Default values of (at least) all required parameters are defined in 'default.args'
-
-org.eclipse.jdt.internal.corext.refactoring.code.InlineConstantRefactoring
-  "replace"
-  "remove"
-  
-org.eclipse.jdt.internal.corext.refactoring.code.ExtractConstantRefactoring
-  "replace"
-  "qualify"
-  "visibility" (package:0, private:2, protected:4, public:1)
-
-org.eclipse.jdt.internal.corext.refactoring.code.ExtractMethodRefactoring
-  "visibility"
-  "destination" (optional; not used yet in our work)
-  "comments"
-  "replace"
-  "exceptions"
-
-org.eclipse.jdt.internal.corext.refactoring.code.InlineMethodRefactoring
-  "mode"   0/1
-  "delete" T/F
-

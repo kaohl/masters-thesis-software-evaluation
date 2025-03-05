@@ -98,7 +98,8 @@ def anova(i_vars, d_vars, csv_path):
     df['jdk']            = df['jdk'].astype(str)
     df['jre']            = df['jre'].astype(str)
     df['source_version'] = df['source_version'].astype(str)
-    df['stack_size']     = df['stack_size'].astype(str)
+    if 'stack_size' in df:
+        df['stack_size']     = df['stack_size'].astype(str)
     df['target_version'] = df['target_version'].astype(str)    
     #df[''] = df[''].astype(str)
     print(df.dtypes)
