@@ -309,7 +309,7 @@ def create_workspace_in_location(project, location):
 
 def refactor(workspace_location, data_location, descriptor):
     cached_workspace = workspace_location
-    with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as context:
+    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as context:
         workspace = Path(context) / 'workspace'
         print("Using workspace", str(workspace))
 
@@ -349,8 +349,8 @@ def refactor(workspace_location, data_location, descriptor):
             str(workspace),     # Workspace root.
             #'--compliance',                        # TODO: Compliance should not be needed here... make optional.
             #_project_compliance[project],
-            '--report',
-            'report',           # str(report_dir),
+            #'--report',
+            #'report',           # str(report_dir),
             '--src',
             'assets/src',       # <workspace>/assets/src
             '--lib',

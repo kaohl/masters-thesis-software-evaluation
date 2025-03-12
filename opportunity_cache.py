@@ -3,6 +3,7 @@
 import argparse
 import io
 import json
+import hashlib
 import os
 
 from pathlib import Path
@@ -59,6 +60,7 @@ class RefactoringDescriptor:
     def refactoring_id(self):
         return self._meta['id']
 
+    # Unique ID based on the 'args' portion of the descriptor.
     def id(self):
         # ATTENTION
         # The checksum ID produced here is not necessarily EQ with
@@ -69,7 +71,7 @@ class RefactoringDescriptor:
         #
         # The ID produced here should be used for naming data.
         #
-        text = json.dumps(self._json, sort_keys=True)
+        text = json.dumps(self._args, sort_keys=True)
         return hashlib.md5(bytes(text, encoding = 'utf-8')).hexdigest()
 
     def line(self):

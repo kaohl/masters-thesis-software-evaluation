@@ -23,14 +23,14 @@ def get_harness_options(configuration):
     options = [ '-size', configuration.bm_workload() ]
     return options
 
-def deploy_benchmark(args, configuration, clean, context = None, import_dir = None):
+def deploy_benchmark(configuration, clean, context = None, import_dir = None):
     if not context:
         context = Path(os.getcwd()) / 'deployments'
 
     options = [
         "./build.py",
         "--project",
-        "dacapo:@BM:1.0".replace("@BM", configuration.bm()), # TODO: Add project coordinate as a derived attribute on configuration?
+        f"dacapo:{configuration.bm()}:1.0",
         "--context",
         str(context),
         ("--clean" if clean else ""),
@@ -45,7 +45,7 @@ def deploy_benchmark(args, configuration, clean, context = None, import_dir = No
     if result.returncode != 0:
         raise ValueError("Benchmark deployment failed")
 
-def run_benchmark(args, configuration, deployment, jfr, jfr_file):
+def run_benchmark(configuration, deployment, jfr, jfr_file):
 
     bm         = configuration.bm()
     workload   = configuration.bm_workload()
@@ -79,7 +79,7 @@ def run_benchmark(args, configuration, deployment, jfr, jfr_file):
     options.extend(features)
     options.extend([
         "-jar",
-        str(deployment / "@BM-1.0.jar @BM".replace("@BM", bm))
+        str(deployment / f"{bm}-1.0.jar {bm}")
     ])
     options.extend(get_harness_options(configuration))
 

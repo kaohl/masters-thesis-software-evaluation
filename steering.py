@@ -9,18 +9,30 @@ import tempfile
 import run_benchmark as bm_script
 import collect_hot_methods as jfr
 
-def get_all_sampled_methods(bm, workload):
-    return [m for (m,_,_) in _filter_methods(bm, workload, 0.0)]
+def get_all_sampled_methods(configuration):
+    return [m for (m,_,_) in _filter_methods(configuration, 0.0)]
 
 def decimals(num):
     s = str(num)
     n = len(s[s.rfind('.')+1:])
     return n
 
+def get_cache_location(configuration):
+    return Path('steering') / configuration.id()
+
+def get_cache_stem(configuration):
+    return '-'.join([configuration.bm(), configuration.bm_workload()])
+
+def get_cache_methods(configuration):
+    return get_cache_location(configuration) / (get_cache_stem(configuration) + '.methods.summary.txt')
+
+def get_cache_jfr(configuration):
+    return get_cache_location(configuration) / (get_cache_stem(configuration) + '.jfr')
+
 # Return list of methods with a sample count
 # above or equal to the specified threshold.
-def _filter_methods(bm, workload, sample_threshold):
-    total, methods = _load_method_samples(bm, workload)
+def _filter_methods(configuration, sample_threshold):
+    total, methods = _load_method_samples(configuration)
     filtered_methods = []
     n                = decimals(sample_threshold)
     for m, c in methods:
@@ -30,12 +42,14 @@ def _filter_methods(bm, workload, sample_threshold):
             filtered_methods.append((m, c, frac2))
     return filtered_methods
 
-def _load_method_samples(bm, workload):
+def _load_method_samples(configuration):
+    bm       = configuration.bm()
+    workload = configuration.bm_workload()
     name     = '-'.join([bm, workload])
     steering = Path('steering')
-    summary  = steering / (name + '.methods.summary.txt')
+    summary  = get_cache_methods(configuration) # steering / (name + '.methods.summary.txt')
     if not summary.exists():
-        _generate_steering_for_workload(bm, workload)
+        _generate_steering_for_workload(configuration)
 
     total   = 0
     methods = []
@@ -49,40 +63,34 @@ def _load_method_samples(bm, workload):
             methods.append((method.strip(), samples))
     return total, methods
 
-def _save_method_samples(bm, workload, method__count):
-    name     = '-'.join([bm, workload])
-    steering = Path('steering')
-    summary  = steering / (name + '.methods.summary.txt')
+def _save_method_samples(configuration, method__count):
+    summary = get_cache_methods(configuration) # steering / (name + '.methods.summary.txt')
     with open(summary, 'w') as f:
         for m, c in reversed(sorted(method__count.items(), key = lambda it: it[1])):
             f.write('{},{}'.format(m, c) + os.linesep)
 
-def _generate_steering_for_workload(bm, workload):
-    name = '-'.join([bm, workload])
-    steering = Path('steering')
+def _generate_steering_for_workload(configuration):
+    location = get_cache_location(configuration)
+    if not location.exists():
+        location.mkdir(parents = True)
 
-    if not steering.exists():
-        steering.mkdir()
-
-    #methods  = steering / (name + '.methods.txt')
-    #table    = steering / (name + '.methods.table.txt')
-    summary  = steering / (name + '.methods.summary.txt')
-    jfr_save = steering / (name + '.jfr')
+    summary  = get_cache_methods(configuration) #steering / (name + '.methods.summary.txt')
+    jfr_save = get_cache_jfr(configuration)     #steering / (name + '.jfr')
     clean    = True
     with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as location:
         temp_location = Path(location)
         deploy_dir    = temp_location / 'deployment'
         jfr_file      = temp_location / 'flight.jfr'
         deploy_dir.mkdir()
-        bm_script.deploy_benchmark(bm, clean, deploy_dir)
-        bm_script.run_benchmark(bm, deploy_dir, { '-size' : workload }, True, str(jfr_file))
+        bm_script.deploy_benchmark(configuration, clean, deploy_dir)
+        bm_script.run_benchmark(configuration, deploy_dir, True, str(jfr_file))
 
         # Save the jfr file used to compute steering.
         shutil.copy2(jfr_file, jfr_save)
 
         method__count = jfr.get_method_samples(str(jfr_file))
 
-        _save_method_samples(bm, workload, method__count)
+        _save_method_samples(configuration, method__count)
 
 def _main(args):
     bm        = args.bm

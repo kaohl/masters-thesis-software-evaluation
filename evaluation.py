@@ -9,6 +9,7 @@ from random import randrange
 import shutil
 import tempfile
 
+from executor import load_state, save_state, do_files
 import opportunity_cache
 import patch
 import run_benchmark as bm_script
@@ -27,22 +28,52 @@ _method_filters = {
     'xalan'    : ['xalan']
 }
 
-def x_folder(args):
-    return Path(args.x_location) / args.x
+def x_location(args):
+    return Path(args.x_location)
 
-def get_workloads(args):
+def x_folder(args):
+    return x_location(args) / args.x
+
+def get_experiments(args):
+    xs = []
+    for dir, folders, files in os.walk(x_location(args)):
+        for x in folders:
+            xs.append(x)
+        break
+    return xs
+
+def get_x_workloads(args, x):
     bmwl = []
-    for dir_1, bms, files_1 in os.walk(x_folder(args) / 'workloads'):
+    for dir_1, bms, files_1 in os.walk(x_location(args) / x / 'workloads'):
         for bm in bms:
-            for dir_2, workloads, files_2 in os.walk(x_folder(args) / 'workloads' / bm):
+            for dir_2, workloads, files_2 in os.walk(x_location(args) / x / 'workloads' / bm):
                 for workload in workloads:
                     bmwl.append((bm, workload))
                 break
         break
     return bmwl
 
-def get_workload_configuration(args, bm, workload):
-    config = configuration.Configuration().load(x_folder(args) / 'workloads' / bm / workload / 'parameters.txt')
+def get_x_bm_wl_lists(args, x, bm, workload):
+    lists = dict()
+    for dir, folders, files in os.walk(x_location(args) / x / 'workloads' / bm / workload / 'lists'):
+        for name in folders:
+            lists[name] = Path(dir) / name / 'descriptors.txt'
+        break
+    return lists
+
+#def get_workloads(args):
+#    bmwl = []
+#    for dir_1, bms, files_1 in os.walk(x_folder(args) / 'workloads'):
+#        for bm in bms:
+#            for dir_2, workloads, files_2 in os.walk(x_folder(args) / 'workloads' / bm):
+#                for workload in workloads:
+#                    bmwl.append((bm, workload))
+#                break
+#        break
+#    return bmwl
+#
+def get_x_workload_configuration(args, x, bm, workload):
+    config = configuration.Configuration().load(x_location(args) / x / 'workloads' / bm / workload / 'parameters.txt')
     # Add default values given by resource organisation.
     if config.bm() is None:
         config.bm(bm)
@@ -55,66 +86,102 @@ def get_workload_configuration(args, bm, workload):
 
     return config
 
-def add_workload_steering(args, bm, workload, workspace_src):
+def add_x_workload_steering(configuration, workspace_src):
     target  = workspace_src / 'methods.config'
     if target.exists():
         return
-    methods = steering.get_all_sampled_methods(bm, workload)
+    methods = steering.get_all_sampled_methods(configuration)
     with open(target, 'w') as f:
         for method in methods:
-            for filter_text in _method_filters[bm]:
+            for filter_text in _method_filters[configuration.bm()]:
                 if method.find(filter_text) != -1:
                     f.write(method + os.linesep)
                     break
 
-def add_workspace_configuration(args, bm, workload, workspace):
-    src    = workspace / 'assets/src'
-    config = x_folder(args) / 'workloads' / bm / workload / 'config'
+def add_x_workspace_configuration(args, x, bm, workload, workspace):
+    src           = workspace / 'assets/src'
+    config        = x_location(args) / x / 'workloads' / bm / workload / 'config'
+    configuration = get_x_workload_configuration(args, x, bm, workload)
     src.mkdir(parents = True, exist_ok = True)
-    add_workload_steering(args, bm, workload, src)
+    add_x_workload_steering(configuration, src)
+    # Copy workspace configuration for top-level targeted refactoring
+    # (not always provided; lists of packages and units).
     for dir, folders, files in os.walk(config):
         for file in files:
             shutil.copy2(Path(dir) / file, src / file)
 
-def generate_descriptor_lists(args, bm, workload):
-    cache_location = x_folder(args) / 'workspaces' / bm / workload / 'workspace' / 'oppcache'
-    lists_location = x_folder(args) / 'workloads' / bm / workload / 'lists'
+def generate_descriptor_lists(args, x, bm, workload):
+    cache_location = x_location(args) / x / 'workspaces' / bm / workload / 'workspace' / 'oppcache'
+    lists_location = x_location(args) / x / 'workloads' / bm / workload / 'lists'
     opportunity_cache.ListsGenerator.generate_lists(cache_location, lists_location)
 
-def create_workspace(args, bm, workload):
-    workspace = x_folder(args) / 'workspaces' / bm / workload / 'workspace'
-    add_workspace_configuration(args, bm, workload, workspace)
-    ws_script.create_workspace_in_location("dacapo:{}:1.0".format(bm), workspace)
-    generate_descriptor_lists(args, bm, workload)
+def create_workspace(args, x, bm, workload):
+    workspace = x_location(args) / x / 'workspaces' / bm / workload / 'workspace'
+    add_x_workspace_configuration(args, x, bm, workload, workspace)
+    ws_script.create_workspace_in_location(f"dacapo:{bm}:1.0", workspace)
+    generate_descriptor_lists(args, x, bm, workload)
+
+def get_arg_experiments(args):
+    xs = set()
+    if not args.x is None:
+        xs.add(args.x)
+    if not args.xs is None:
+        for x in args.xs:
+            xs.add(x)
+    return xs
 
 def create_workspaces(args):
-    for bm, workload in get_workloads(args):
-        create_workspace(args, bm, workload)
+    for x in get_arg_experiments(args):
+        for bm, workload in get_x_workloads(args, x):
+            create_workspace(args, x, bm, workload)
 
 # Usage:
-#  ./evaluation.py --x <ex> --create
+#  ./evaluation.py --x <x> --create
 #
 def create(args):
     create_workspaces(args)
 
+# ATTENTION: This function will execute in a worker process. 
+def _refactor_proxy(workspace, data, descriptor):
+    if data.exists():
+        print("EXISTS", descriptor.id())
+        return # Nothing to do.
+    print("REFACTOR", descriptor.id(), data)
+    ws_script.refactor(workspace, data, descriptor)
+
+def _create_refactor_task(workspace, data, line, counter):
+    # Note: If line parsing fails, try removing the persisted
+    #       file state written in the data folder. The issue
+    #       is likely that there is state preserved from a
+    #       previous workspace setup that is no longer valid.
+    descriptor = opportunity_cache.RefactoringDescriptor(line)
+    data       = data / descriptor.id()
+    if data.exists():
+        return None
+
+    # We count here, before going into the worker.
+    counter['count'] = counter['count'] + 1
+
+    func = _refactor_proxy
+    argv = (workspace, data, descriptor)
+    return (func, argv)
+
 # Usage:
 #  ./evaluation.py --bm <bm> --x <ex> --tag <tag> --refactor --type <refactoring type> [ refactoring options ]
 #
-def refactor(args, proc_id):
-    if args.bm is None:
-        raise ValueError("Please specify a benchmark.")
-
-    if args.workload is None:
-        raise ValueError("Please specify a workload.")
-
-    if args.n <= 0:
-        raise ValueError("Please specify the number of refactorings to generate using a positive integer.")
-        return
-
-    bm        = args.bm
-    workload  = args.workload
-    workspace = x_folder(args) / 'workspaces' / bm / workload / 'workspace'
-    data      = x_folder(args) / 'data' / bm / workload
+def refactor(args):
+    #if args.bm is None:
+    #raise ValueError("Please specify a benchmark.")
+    #
+    #if args.workload is None:
+    #raise ValueError("Please specify a workload.")
+    #
+    #if args.n <= 0:
+    #raise ValueError("Please specify the number of refactorings to generate using a positive integer.")
+    #return
+    #
+    #bm        = args.bm
+    #workload  = args.workload
 
     # Note
     # Because duplications should be remove when assembling the
@@ -126,47 +193,76 @@ def refactor(args, proc_id):
     # per list (data/<listname>/{1,2,3,4, ...}) so that it is easy
     # to go from descriptor list index to the data folder.
 
-    lists = dict()
-    for dir, folders, files in os.walk(x_folder(args) / 'workloads' / bm / workload / 'lists'):
-        for name in folders:
-            lists[name] = Path(dir) / name / 'descriptors.txt'
-        break
+    #lists = dict()
+    #for dir, folders, files in os.walk(x_folder(args) / 'workloads' / bm / workload / 'lists'):
+    #for name in folders:
+    #lists[name] = Path(dir) / name / 'descriptors.txt'
+    #break
+    #
+    #if len(lists) == 0:
+    #raise ValueError("There are no descriptor lists defined for", bm, workload)
+    #
 
-    if len(lists) == 0:
-        raise ValueError("There are no descriptor lists defined for", bm, workload)
+    lists = []
+    for x in get_arg_experiments(args):
+        for bm, workload in get_x_workloads(args, x):
+            workspace = x_location(args) / x / 'workspaces' / bm / workload / 'workspace'
+            for name, path in get_x_bm_wl_lists(args, x, bm, workload).items():
+                lists.append((x, bm, workload, name, path))
 
-    descriptors   = dict()
-    list_position = dict()
-    working_set   = set(lists.keys())
-    j = 0
-    while j < args.n and len(working_set) > 0:
-        lst  = [name for name in working_set][randrange(len(working_set))]
-        data = x_folder(args) / 'data' / bm / workload / lst
-        if not lst in descriptors:
-            with open(lists[lst], 'r') as f:
-                descriptors[lst]   = [ line for line in f if line.strip() != "" ]
-                list_position[lst] = 0
-        if list_position[lst] >= len(descriptors[lst]):
-            working_set.remove(lst)
-            continue
-        i    = list_position[lst]
-        line = descriptors[lst][i]
-        list_position[lst] = list_position[lst] + 1
+    data       = x_location(args) / 'data'
+    counter    = {'count' : 0}
+    limit      = args.n if args.n > 1 else 1
+    while counter['count'] < limit:
+        for x, bm, workload, name, path in lists:
 
-        if (data / str(i)).exists():
-            # TODO: Make it possible to re-run descriptors.
-            #       Each run is stored in its own tmp folder inside data/<i>/: data/<i>/<tmp>
-            continue
-
-        print("Refactor", bm, workload, lst, str(i), line)
-        descriptor = opportunity_cache.RefactoringDescriptor(line)
-        try:
-            ws_script.refactor(workspace, data / str(i), descriptor)
-            j = j + 1
-            if j >= args.n:
+            # TODO: Add CLI option to include/exclude experiments and benchmarks
+            # TODO: Also, consider whether it is better to use a bash script to run
+            #       each experiment or whether we should run all here... perhaps both strategies should be allowed?
+            
+            data_bm              = x_location(args) / 'data' / bm
+            state_file           = data_bm / 'state.json'
+            files                = [str(path)]
+            tell                 = load_state(state_file, files)
+            parse_task_from_line = lambda line: _create_refactor_task(workspace, data_bm, line, counter)
+            do_files(files, tell, parse_task_from_line)
+            save_state(state_file, tell)
+            if counter['count'] >= limit:
                 break
-        except ValueError as e:
-            print("ERROR", str(e))
+
+    # ABC
+    #descriptors   = dict()
+    #list_position = dict()
+    #working_set   = set(lists.keys())
+    #j = 0
+    #while j < args.n and len(working_set) > 0:
+    #lst  = [name for name in working_set][randrange(len(working_set))]
+    #data = x_folder(args) / 'data' / bm / workload / lst
+    #if not lst in descriptors:
+    #with open(lists[lst], 'r') as f:
+    #descriptors[lst]   = [ line for line in f if line.strip() != "" ]
+    #list_position[lst] = 0
+    #if list_position[lst] >= len(descriptors[lst]):
+    #working_set.remove(lst)
+    #continue
+    #i    = list_position[lst]
+    #line = descriptors[lst][i]
+    #list_position[lst] = list_position[lst] + 1
+    #
+    #if (data / str(i)).exists():
+    ## TODO: Make it possible to re-run descriptors.
+    ##       Each run is stored in its own tmp folder inside data/<i>/: data/<i>/<tmp>
+    #continue
+    #
+    #print("Refactor", bm, workload, lst, str(i), line)
+    #descriptor = opportunity_cache.RefactoringDescriptor(line)
+    #try:
+    #ws_script.refactor(workspace, data / str(i), descriptor)
+    #j = j + 1
+    #if j >= args.n:
+    #break
+    #except ValueError as e:
+    #print("ERROR", str(e))
 
 def prime_import_location(args, configuration, location, data):
     # Assume that we have workspaces available.
@@ -218,10 +314,10 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
             jfr_file      = Path(location) / 'flight.jfr'
             deploy_dir.mkdir()
             prime_import_location(args, configuration, import_dir, data_location)
-            bm_script.deploy_benchmark(args, configuration, clean, deploy_dir, import_dir)
+            bm_script.deploy_benchmark(configuration, clean, deploy_dir, import_dir)
 
             # Capture execution time with flight recording disabled.
-            exectime = bm_script.run_benchmark(args, configuration, deploy_dir, False, None)
+            exectime = bm_script.run_benchmark(configuration, deploy_dir, False, None)
 
             with open(metrics_save, 'w') as f:
                 f.write("EXECUTION_TIME=" + str(exectime) + os.linesep)
@@ -234,7 +330,7 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
 
             if capture_flight_recording:
                 print("Running again to capture flight recording")
-                bm_script.run_benchmark(args, configuration, deploy_dir, True, str(jfr_file))
+                bm_script.run_benchmark(configuration, deploy_dir, True, str(jfr_file))
                 shutil.copy2(jfr_file, jfr_save)
 
             with open(success, 'w'):
@@ -348,8 +444,12 @@ def print_execution_plan(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--x', required = True,
-        help = "The experiment name.")
+    parser.add_argument('--x', required = False,
+        help = "A specific experiment name")
+    parser.add_argument('--xs', required = False,
+        help = "Limit operation to specified experiments")
+    parser.add_argument('--ls', required = False,
+        help = "Limit operation to specified lists")
     parser.add_argument('--x-location', required = False, default = 'experiments',
         help = "Location where experiments are stored. Defaults to 'experiments'.")
     parser.add_argument('--bm', required = False,
@@ -364,8 +464,8 @@ if __name__ == '__main__':
         help = "A specific refactoring folder name") 
     parser.add_argument('--refactor', required = False, action = 'store_true',
         help = "Refactor specified experiment workspace")
-    parser.add_argument('--type', required = False,
-        help = "Refactoring type")
+    #parser.add_argument('--type', required = False,
+    #    help = "Refactoring type")
     parser.add_argument('--n', required = False, type = int, default = 1,
         help = "The number of refactorings or benchmarks to run.")
     parser.add_argument('--report', required = False, action = 'store_true',
@@ -395,7 +495,7 @@ if __name__ == '__main__':
     elif args.benchmark:
         benchmark(args)
     elif args.refactor:
-        refactor(args, 0)
+        refactor(args)
     elif args.report:
         report(args)
     else:
