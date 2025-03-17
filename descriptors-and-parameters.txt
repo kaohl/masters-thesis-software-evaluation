@@ -1,0 +1,130 @@
+- Preliminary descriptor parameters per refactoring type
+
+  - Inline constant
+    {"replace":"false", "remove":"false"}
+
+  - Extract constant
+    {"replace":"false", "qualify":"false|true", "visibility":"0|1|2|4", "name":"_x_"}
+    * Vary "name"?
+
+  - Extract method
+    {"name":"_x_", "visibility":"0|1|2|4", "comments":"false", "replace":"false", "exceptions": "false"}
+    * Vary "name"?
+    * Vary "exceptions"?
+
+  - Inline method
+    {"mode":"0", "delete":"false"} // mode = SINGLE
+    * Vary "mode"?
+
+  - Inline temp
+    {}
+
+  - Extract temp
+    {"name": "_x_", "replace":"false", "replaceAllInThisFile":"false", "final":"true|false", "varType":"false"}
+    * Vary "name"?
+
+  - Introduce indirection
+    {"name":"_x_", "references":"true"}
+
+  - Rename compilation unit
+    {"name":"X"}
+
+  - Rename field
+    {"name":"_x_", "references":"true", "textual":"false", "getter":"false", "setter":"false", "delegate":"false", "deprecate":"false"}
+    * Vary "getter" and "setter"?
+
+  - Rename enum const
+    *** Not used, or?
+
+  - Rename local variable
+    {"name":"_x_", "references":"true"}
+
+  - Rename method
+    {"name":"_x_", "delegate":"false", "deprecate":"false"}
+
+  - Rename package
+    {"name":"_x_", "references":"true", "qualified":"false", "textual":"false", "hierarchical":"false", "patterns":""}
+
+  - Rename type-parameter
+    {"name":"_x_", "references":"true"}
+    * Validate that the "input" and "parameter" attributes are set in eclipse
+      when generating these opportunities
+
+  - Rename type
+    {"name":"_x_", "patterns":"", "references":"false", "textual":"false", "qualified":"false", "similarDeclarations":"false", "matchStrategy": ??? }
+
+- Potential name variations
+  Method|Field|Local|Package...    Type
+  x                                X
+  xx                               Xx
+  xxxx                             Xxxx
+  xxxxxxxx                         ...
+  xxxxxxxxxxxxxxxx                 ...
+  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ...
+
+*** It makes some sense to not vary the name when
+    extracting fields and methods because that
+    would be the same thing as renaming an existing
+    member after the extraction. However, it also
+    makes sense to vary the name since the name is
+    given by user input and is considered part of
+    the refactoring.
+
+*** Add an opportunity checksum attribute to the 'meta'
+    object so that we can 'grep' for all descriptors
+    originating from the same opportunity.
+
+ATTENTION: Parameterized arguments should not be
+part of the checksum computed to map meta data to
+args objects because all opportunities originating
+from the same descriptor should be mapped to the
+same 'meta' object.
+- However, we should include all arguments when
+  computing the checkum used for naming refactoring
+  directories in the data folder
+
+<fixed args> <variable args (params)> <meta>
+
+Fixed args are what the refactoring framework generates for 'args'
+and includes the 'input' and 'element' (and possibly more) parameters
+found by browsing the AST.
+ - Add 'id' to 'args' instead of 'meta' unless eclipse throws exception
+   because it is an unknown parameter name or something...
+
+Variable args (params) are the descriptor arguments that we apply on
+top of the fixed args to create variations of a given opportunity and
+type.
+
+ID_opp = checksum(<fixed args including 'id'>)
+ID_ref = checksum(<fixed args> + <variable args (params)>)
+
+Meta attributes add non-variable information depending
+on the type ('id'). These attributes are non-variable
+categorical experimental parameters and are therefore
+fixed for each opportunity. These can also be included
+in analysis to look for correlation between different
+occassions of the same type of opportunities.
+ - For example,
+     'visibility' ({"private", "protected", "public"}),
+     'scope'      ({"class", "instance"}), and
+     'nlocals'    (number of local variables)
+     'nparams'    (number of method parameters)
+     'generic'    (is generic?)
+     'final'      (is final?)
+     'returntype' (method return type)
+     'size'       (number of bytecode instructions)
+     'cc'         (cyclomatic complexity)
+     ...
+   could all be meta attributes for hot methods.
+
+The distinction of fixed, variable (params), and meta allows us
+to combine fixed and variable to create unique descriptors and
+then add additional meta info later, if we desire.
+ - We can map meta attributes to a descriptor based on
+   the ID_opp checksum after benchmarking in case we want
+   to extend the analysis to additional meta attributes
+   that have not yet been computed.
+   - This is also why the 'id' attribute must be moved to
+     the 'args' object (because there could be cases where
+     different types have otherwise equivalent arguments)
+
