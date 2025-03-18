@@ -1,0 +1,102 @@
+
+Two benchmarks show signs of non-determinism.
+
+Checksum 0x3b74e0ddf9ea1386275725c6b56248b2e6d7b5bd means stack overflow.
+See output of 'cat scratch/stdout.log' further down in this file.
+
+
+size mzc18_5 args "${DATA}/jacop/test-scheduling/t30m10r10-5.fzn"
+  output stdout digest 0x98d7cf6fc428bf5e149544a1691c434e42108640,
+         stderr digest 0xda39a3ee5e6b4b0d3255bfef95601890afd80709;
+
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_5 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+Digest validation failed for stdout.log, expecting 0x98d7cf6fc428bf5e149544a1691c434e42108640 found 0x3b74e0ddf9ea1386275725c6b56248b2e6d7b5bd
+===== DaCapo unknown jacop FAILED =====
+Validation FAILED for jacop mzc18_5
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_5 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+Digest validation failed for stdout.log, expecting 0x98d7cf6fc428bf5e149544a1691c434e42108640 found 0x3b74e0ddf9ea1386275725c6b56248b2e6d7b5bd
+===== DaCapo unknown jacop FAILED =====
+Validation FAILED for jacop mzc18_5
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_5 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2365 msec =====
+
+
+size mzc18_6 args "${DATA}/jacop/test-scheduling/t30m10r3-15.fzn"
+  output stdout digest 0x11ad23287256dad21194a45a8dbbd7fc44e34060,
+         stderr digest 0xda39a3ee5e6b4b0d3255bfef95601890afd80709;
+
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2243 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2493 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2687 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2425 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2487 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2564 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2650 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2537 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2790 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2978 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2367 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2684 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2800 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2366 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+===== DaCapo unknown jacop PASSED in 2578 msec =====
+y@x:~/mopt/alfine-repos/daivy$ java -Xss3M -jar context/jacop-1.0.jar jacop --size mzc18_6 --preserve
+Version: 4.10.0 (use -p to print nominal benchmark stats)
+===== DaCapo unknown jacop starting =====
+Digest validation failed for stdout.log, expecting 0x11ad23287256dad21194a45a8dbbd7fc44e34060 found 0x3b74e0ddf9ea1386275725c6b56248b2e6d7b5bd
+===== DaCapo unknown jacop FAILED =====
+Validation FAILED for jacop mzc18_6
+y@x:~/mopt/alfine-repos/daivy$ cat scratch/stdout.log 
+%% Stack overflow exception error; consider option -Xss... for JVM
+
