@@ -16,7 +16,8 @@ def compute_results(args):
     x_location     = Path(args.x_location) / args.x
     bm             = args.bm
     workload       = args.workload
-    views_location = Path(x_location) / 'workloads' / bm / workload / 'views'
+    views_location = x_location / 'workloads' / bm / workload / 'views'
+    lists_location = x_location / 'workloads' / bm / workload / 'lists'
     views          = []
     if not views_location.exists():
         print("No views to compute", str(views_location))
@@ -25,42 +26,65 @@ def compute_results(args):
             with open(Path(dir) / file, 'r') as f:
                 views.append((Path(file).stem, json.load(f)))
         break
-    variables                     = set() # All.
-    results_independent_variables = set() # See 'parameters.txt'.
-    results_dependent_variables   = set() # See 'metrics.txt'.
-    results_location = Path(x_location) / 'results'
     for name, queries in views:
-        results = []
+        variables                     = set() # All.
+        results_independent_variables = set() # See 'parameters.txt'.
+        results_dependent_variables   = set() # See 'metrics.txt'.
+        results_location              = Path(x_location) / 'results' / bm / workload
+        results                       = []
         for lst, filters in queries.items(): # [{ "<list>": [<filter>], ... }]
-            data_list_location = Path(x_location) / 'data' / bm / workload / lst
-            if not data_list_location.exists():
-                raise ValueError("No such list", lst)
-            for dir1, folders1, files1 in os.walk(data_list_location):
-                for index in folders1:
-                    if (Path(dir1) / index / 'FAILURE').exists():
-                        continue # Refactoring failed.
-                    descriptor = RefactoringDescriptor.load(Path(dir1) / index / 'descriptor.txt')
-                    found_match = False
-                    for filter in filters:
-                        if descriptor.is_match(filter):
-                            found_match = True
-                            break
-                    if not found_match:
-                        continue
-                    for dir2, folders2, files2 in os.walk(Path(dir1) / index):
-                        for execution in folders2:
-                            stats_location = Path(dir2) / execution / 'stats'
-                            if not stats_location.exists():
+            list_location = lists_location / lst
+            list_file     = list_location / 'descriptors.txt'
+            if not list_location.exists():
+                raise ValueError("No such list", str(list_location))
+            with open(list_file, 'r') as f:
+                for line, index in enumerate(f):
+                    descriptor    = RefactoringDescriptor(line)
+                    data_location = x_location / 'data' / bm / descriptor.opportunity_id() / descriptor.id()
+                    if not data_location.exists():
+                        # We have not yet created the corresponding refactoring.
+                        # Since lists are processed sequentially from start to
+                        # end there is nothing more to add from this list.
+                        break
+
+                    # Validate the stored descriptor.
+                    stored_id = RefactoringDescriptor.load(data_location / 'descriptor.txt').id()
+                    if stored_id != descriptor.id():
+                        raise ValueError(
+                            f"The ID of the stored descriptor '{stored_id}' does not match the expected value '{descriptor.id()}'"
+                        )
+
+                    for dir1, executions, files1 in os.walk(data_location):
+                        for execution in executions:
+                            if (Path(dir1) / execution / 'FAILURE').exists():
+                                continue # Refactoring failed.
+                            found_match = False
+                            for filter in filters:
+                                if descriptor.is_match(filter):
+                                    found_match = True
+                                    break
+                            if not found_match:
                                 continue
-                            for dir3, folders3, files3 in os.walk(stats_location):
-                                for id in folders3:
-                                    if (Path(dir3) / id / 'FAILURE').exists():
-                                        continue
-                                    config  = configuration.Configuration().load(Path(dir3) / id / 'configuration.txt')
-                                    metrics = configuration.Metrics().load(Path(dir3) / id / 'metrics.txt')
-                                    results.append({ **{ 'data' : lst + '/' + index + '/' + execution }, **config._values, **metrics._values })
+                            stats_location = Path(dir1) / execution / 'stats'
+                            if not stats_location.exists():
+                                continue # Not benchmarked yet.
+                            for dir2, configuration_ids, files2 in os.walk(stats_location):
+                                for id in configuration_ids:
+                                    if (Path(dir2) / id / 'FAILURE').exists():
+                                        continue # Benchmark failed.
+                                    #
+                                    # TODO: Consider which parameters and meta attributes are of interest in the analysis. (If any.)
+                                    #
+                                    config   = configuration.Configuration().load(Path(dir2) / id / 'configuration.txt')
+                                    metrics  = configuration.Metrics().load(Path(dir2) / id / 'metrics.txt')
+                                    identity = { 'data' : '/'.join([descriptor.opportunity_id(), descriptor.id(), execution, 'stats', id]) }
+                                    results.append({ **identity, **config._values, **metrics._values })
                                     if len(variables) == 0:
                                         # All configurations and metrics contain the same variables.
+                                        #
+                                        # TODO: This will not be true when we involve meta attributes
+                                        #       or mix refactorings of different types.
+                                        #
                                         for k, v in config._values.items():
                                             results_independent_variables.add(k)
                                             variables.add(k)
@@ -69,7 +93,6 @@ def compute_results(args):
                                             variables.add(k)
                                 break
                         break
-                break
         results_location.mkdir(exist_ok = True)
         with open(results_location / (name + '.results'), 'w') as f:
             for result in results:
@@ -108,15 +131,9 @@ def anova(i_vars, d_vars, csv_path):
         ## https://www.statsmodels.org/stable/gettingstarted.html
         ## https://patsy.readthedocs.io/en/latest/formulas.html
         formula = '{} ~ {}'.format(d_var, ' + '.join(sorted(i_vars)))
-        #y, X = dmatrices(formula, data=df, return_type='dataframe')
-        #mod = sm.OLS(y, X)
-        #res = mod.fit()
         print("-"*80)
         print("Formula", formula)
         print("-"*80)
-        #print(res.summary())
-        #print(res.params)
-        #print(res.rsquared)
         mod = ols(formula, data = df).fit()
         res = sm.stats.anova_lm(mod)
         print(res)
@@ -124,13 +141,14 @@ def anova(i_vars, d_vars, csv_path):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--x', required = True,
-        help = "The experiment name.")
     parser.add_argument('--x-location', required = False, default = 'experiments',
         help = "Location where experiments are stored. Defaults to 'experiments'.")
+    parser.add_argument('--x', required = True,
+        help = "The experiment name.")
     parser.add_argument('--bm', required = False,
         help = "Benchmark name")
     parser.add_argument('--workload', required = False,
         help = "Benchmark workload")
     args = parser.parse_args()
     compute_results(args)
+

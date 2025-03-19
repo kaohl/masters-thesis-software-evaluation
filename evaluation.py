@@ -31,8 +31,8 @@ _method_filters = {
 def x_location(args):
     return Path(args.x_location)
 
-def x_folder(args):
-    return x_location(args) / args.x
+#def x_folder(args):
+#    return x_location(args) / args.x
 
 def get_experiments(args):
     xs = []
@@ -136,7 +136,7 @@ def create_workspaces(args):
             create_workspace(args, x, bm, workload)
 
 # Usage:
-#  ./evaluation.py --x <x> --create
+#  ./evaluation.py [--data <data=experiments>] --x <x> --create
 #
 def create(args):
     create_workspaces(args)
@@ -155,7 +155,7 @@ def _create_refactor_task(workspace, data, line, counter):
     #       is likely that there is state preserved from a
     #       previous workspace setup that is no longer valid.
     descriptor = opportunity_cache.RefactoringDescriptor(line)
-    data       = data / descriptor.id()
+    data       = data / descriptor.opportunity_id() / descriptor.id()
     if data.exists():
         return None
 
@@ -167,7 +167,7 @@ def _create_refactor_task(workspace, data, line, counter):
     return (func, argv)
 
 # Usage:
-#  ./evaluation.py --bm <bm> --x <ex> --tag <tag> --refactor --type <refactoring type> [ refactoring options ]
+#  ./evaluation.py --data <data> --xs <xs> --bs <bs> --ws <wl> --ls <ls> --n <n>
 #
 def refactor(args):
     #if args.bm is None:
@@ -203,6 +203,9 @@ def refactor(args):
     #raise ValueError("There are no descriptor lists defined for", bm, workload)
     #
 
+    #
+    # TODO: Get experiment location, experiment names, benchmark names, workload names, and list names from args.
+    #
     lists = []
     for x in get_arg_experiments(args):
         for bm, workload in get_x_workloads(args, x):
@@ -210,15 +213,17 @@ def refactor(args):
             for name, path in get_x_bm_wl_lists(args, x, bm, workload).items():
                 lists.append((x, bm, workload, name, path))
 
-    data       = x_location(args) / 'data'
-    counter    = {'count' : 0}
-    limit      = args.n if args.n > 1 else 1
+    data    = x_location(args) / 'data'
+    counter = {'count' : 0}
+    limit   = args.n if args.n > 1 else 1
     while counter['count'] < limit:
         for x, bm, workload, name, path in lists:
 
-            # TODO: Add CLI option to include/exclude experiments and benchmarks
-            # TODO: Also, consider whether it is better to use a bash script to run
-            #       each experiment or whether we should run all here... perhaps both strategies should be allowed?
+            # TODO: Add CLI option to include/exclude experiments, benchmarks, workloads, and lists.
+            #       --xps --bms  --wls --lists
+            # ./evaluation.py --data experiments --xs jacop --bs jacop --ws mzc18_1 --ls list_1 --n 20
+            #
+            # The script will create <n> refactorings per specified list and then terminate.
             
             data_bm              = x_location(args) / 'data' / bm
             state_file           = data_bm / 'state.json'
@@ -264,11 +269,11 @@ def refactor(args):
     #except ValueError as e:
     #print("ERROR", str(e))
 
-def prime_import_location(args, configuration, location, data):
+def prime_import_location(args, x, configuration, location, data):
     # Assume that we have workspaces available.
     # However, at this point we are only interested
     # in the orignal '-build.zip' files and patches.
-    ws = x_folder(args) / 'workspaces' / configuration.bm() / configuration.bm_workload() / 'workspace'
+    ws = x_location(args) / x / 'workspaces' / configuration.bm() / configuration.bm_workload() / 'workspace'
     for root, dirs, files in os.walk(ws):
         for file in files:
             if not file.endswith("-build.zip"):
@@ -347,11 +352,12 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
             f.write(str(e))
         return False
 
-def get_valid_configurations(args):
+def get_valid_configurations(args, x):
     configs    = []
     has_errors = False
-    for (bm, workload) in get_workloads(args):
-        config = get_workload_configuration(args, bm, workload)
+    for (bm, workload) in get_x_workloads(args, x):
+        configs.append(((x, bm, workload), []))
+        config = get_x_workload_configuration(args, x, bm, workload)
         for c in config.get_all_combinations():
             try:
                 if not c.is_valid():
@@ -364,47 +370,52 @@ def get_valid_configurations(args):
                 log.error(str(e))
                 has_errors = True
                 continue
-            configs.append((bm, workload, c))
+            configs[-1][1].append(c)
     if has_errors:
         raise ValueError("Bad configuration")
     return configs
 
 def get_benchmark_execution_plan(args):
+    # Note, sets of refactoring opportunities and configurations for a benchmark
+    # may overlap between experiments and workloads. Therefore, we check so that
+    # we only include each benchmark configuration once per refactoring.
+    keys = set()
     plan = []
-    for (bm, workload, configuration) in get_valid_configurations(args):
-        location = x_folder(args) / 'data' / bm / workload
-        for dir1, folders1, files1 in os.walk(location):
-            for list in folders1:
-                for dir2, folders2, files2 in os.walk(Path(dir1) / list):
-                    for index in folders2:
-                        if (Path(dir2) / index / 'FAILURE').exists():
-                            continue # The refactoring could not be applied.
-                        for dir3, folders3, files3 in os.walk(Path(dir2) / index):
-                            for refactoring in folders3:
-                                stats_c = Path(dir3) / refactoring / 'stats' / configuration.id()
-                                if not stats_c.exists():
-                                    plan.append((bm, workload, list, index, refactoring, configuration))
-                            break
-                    break
-            break
+    for x in get_arg_experiments(args):
+        for (x, bm, workload), configurations in get_valid_configurations(args, x):
+            location = x_location(args) / 'data' / bm
+            for dir1, opportunities, files1 in os.walk(location):
+                for opportunity in opportunities:
+                    for dir2, refactorings, files2 in os.walk(Path(dir1) / opportunity):
+                        for refactoring in refactorings:
+                            for dir3, executions, files3 in os.walk(Path(dir2) / refactoring):
+                                for execution in executions:
+                                    if (Path(dir3) / execution / 'FAILURE').exists():
+                                        continue # The refactoring could not be applied.
+                                    for configuration in configurations:
+                                        stats_c = Path(dir3) / execution / 'stats' / configuration.id()
+                                        key     = (bm, refactoring, execution, configuration.id())
+                                        if not stats_c.exists() and not key in keys:
+                                            plan.append((bm, refactoring, execution, configuration))
+                                            keys.add(key)
+                                break
+                        break
+                break
     return plan
 
 # Usage:
-#   ./evaluation.py --bm <bm> --x <ex> --tag <tag> --benchmark [--data <tmp...>]
+#   ./evaluation.py [--data <data=experiments>] --xs <xs> --bs <bs> --n <n>
 #
 def benchmark(args):
-    #
-    # TODO: Do we need a better strategy to avoid generating duplicates of refactorings?
-    #
     i = 0
     n = args.n
 
     if n <= 0:
         raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
 
-    for (bm, workload, list, index, refactoring, configuration) in get_benchmark_execution_plan(args):
-        print("Benchmark", bm, workload, list, index, refactoring, configuration)
-        data_location = Path(os.getcwd()) / x_folder(args) / 'data' / bm / workload / list / index / refactoring
+    for (bm, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
+        print("Benchmark", bm, refactoring, execution, configuration)
+        data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / refactoring / execution
         build_and_benchmark(args, configuration, data_location)
         i = i + 1
         if i >= n:
@@ -412,35 +423,36 @@ def benchmark(args):
 
 # Print result objects to stdout.
 # See 'results.py' for CSV files and statistics.
-def report(args):
-    for (bm, workload) in get_workloads(args):
-        for dir1, lists, files1 in os.walk(x_folder(args) / 'data' / bm / workload):
-            for list in lists:
-                print("---", bm, workload, list, "---")
-                for dir2, indices, files2 in os.walk(Path(dir1) / list):
-                    for index in indices:
-                        for dir3, refactorings, files3 in os.walk(Path(dir2) / index):
-                            for refactoring in refactorings:
-                                for dir4, ids, files4 in os.walk(Path(dir3) / refactoring / 'stats'):
-                                    for id in ids:
-                                        if (Path(dir4) / id / 'FAILURE').exists():
-                                            continue
-                                        config  = configuration.Configuration().load(Path(dir4) / id / 'configuration.txt')
-                                        metrics = configuration.Metrics().load(Path(dir4) / id / 'metrics.txt')
-                                        print({ **{ 'data' : list + '/' + index }, **config._values, **metrics._values })
-                                    break
-                            break
-                    break
-                print("-------------------------------------")
-            break
+#def report(args):
+#    for (bm, workload) in get_workloads(args):
+#        for dir1, lists, files1 in os.walk(x_folder(args) / 'data' / bm / workload):
+#            for list in lists:
+#                print("---", bm, workload, list, "---")
+#                for dir2, indices, files2 in os.walk(Path(dir1) / list):
+#                    for index in indices:
+#                        for dir3, refactorings, files3 in os.walk(Path(dir2) / index):
+#                            for refactoring in refactorings:
+#                                for dir4, ids, files4 in os.walk(Path(dir3) / refactoring / 'stats'):
+#                                    for id in ids:
+#                                        if (Path(dir4) / id / 'FAILURE').exists():
+#                                            continue
+#                                        config  = configuration.Configuration().load(Path(dir4) / id / 'configuration.txt')
+#                                        metrics = configuration.Metrics().load(Path(dir4) / id / 'metrics.txt')
+#                                        print({ **{ 'data' : list + '/' + index }, **config._values, **metrics._values })
+#                                    break
+#                            break
+#                    break
+#                print("-------------------------------------")
+#            break
 
 def print_configurations(args):
-    for (bm, workload, configuration) in get_valid_configurations(args):
-        print(bm, workload, configuration._values)
+    for x in get_arg_experiments(args):
+        for (_x, bm, workload), configurations in get_valid_configurations(args, x):
+            print(_x, bm, workload, configuration._values)
 
 def print_execution_plan(args):
-    for (bm, workload, list, index, refactoring, configuration) in get_benchmark_execution_plan(args):
-        print(bm, workload, list, index, refactoring, configuration._values)
+    for (bm, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
+        print(x, bm, workload, refactoring, execution, configuration._values)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -464,8 +476,6 @@ if __name__ == '__main__':
         help = "A specific refactoring folder name") 
     parser.add_argument('--refactor', required = False, action = 'store_true',
         help = "Refactor specified experiment workspace")
-    #parser.add_argument('--type', required = False,
-    #    help = "Refactoring type")
     parser.add_argument('--n', required = False, type = int, default = 1,
         help = "The number of refactorings or benchmarks to run.")
     parser.add_argument('--report', required = False, action = 'store_true',
