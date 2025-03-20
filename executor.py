@@ -48,13 +48,14 @@ def run(tasks):
         result = done_queue.get()
         posted = posted - 1
 
-    for id in range(NUMBER_OF_WORKERS):
+    for i in range(NUMBER_OF_WORKERS):
         task_queue.put('STOP')
 
-def run_batch(tasks, do_run):
+def run_batch(tasks, ids, do_run):
     if do_run:
         run([ task for task in tasks ])
         tasks.clear()
+        ids.clear()
 
 def do_files(files, tell, parse_task_from_line, max_size = BATCH_SIZE):
     global BATCH_SIZE
@@ -65,6 +66,7 @@ def do_files(files, tell, parse_task_from_line, max_size = BATCH_SIZE):
     while len(active_files) > 0 and n < max_size:
         active_files = active_files - done_files
         tasks        = []
+        ids          = set() # Track ids to avoid duplications within a batch.
         for name in active_files:
             with open(name, 'r') as f:
                 f.seek(tell[name])
@@ -78,13 +80,14 @@ def do_files(files, tell, parse_task_from_line, max_size = BATCH_SIZE):
                     line = line.strip()
                     if line == "": # Empty line.
                         continue
-                    task = parse_task_from_line(line)
-                    if not task is None:
+                    task, id = parse_task_from_line(line)
+                    if not task is None and not id in ids:
                         tasks.append(task)
+                        ids.add(id)
                         n = n + 1
                 tell[name] = f.tell()
-            run_batch(tasks, len(tasks) >= BATCH_SIZE)
-        run_batch(tasks, len(tasks) > 0)
+            run_batch(tasks, ids, len(tasks) >= BATCH_SIZE)
+        run_batch(tasks, ids, len(tasks) > 0)
 
 def load_state(file, files):
     tell = dict()

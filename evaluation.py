@@ -29,10 +29,7 @@ _method_filters = {
 }
 
 def x_location(args):
-    return Path(args.x_location)
-
-#def x_folder(args):
-#    return x_location(args) / args.x
+    return Path(args.data)
 
 def get_experiments(args):
     xs = []
@@ -117,23 +114,16 @@ def generate_descriptor_lists(args, x, bm, workload):
 
 def create_workspace(args, x, bm, workload):
     workspace = x_location(args) / x / 'workspaces' / bm / workload / 'workspace'
+    if workspace.exists():
+        print("Workspace already exists", '/'.join([x, bm, workload]))
+        return
     add_x_workspace_configuration(args, x, bm, workload, workspace)
     ws_script.create_workspace_in_location(f"dacapo:{bm}:1.0", workspace)
     generate_descriptor_lists(args, x, bm, workload)
 
-def get_arg_experiments(args):
-    xs = set()
-    if not args.x is None:
-        xs.add(args.x)
-    if not args.xs is None:
-        for x in args.xs:
-            xs.add(x)
-    return xs
-
 def create_workspaces(args):
-    for x in get_arg_experiments(args):
-        for bm, workload in get_x_workloads(args, x):
-            create_workspace(args, x, bm, workload)
+    for x, b, w in get_arg_xbw_items(args):
+        create_workspace(args, x, b, w)
 
 # Usage:
 #  ./evaluation.py [--data <data=experiments>] --x <x> --create
@@ -144,9 +134,9 @@ def create(args):
 # ATTENTION: This function will execute in a worker process. 
 def _refactor_proxy(workspace, data, descriptor):
     if data.exists():
-        print("EXISTS", descriptor.id())
-        return # Nothing to do.
-    print("REFACTOR", descriptor.id(), data)
+        # TODO: Would it be safe to use 'log' here when we are in a different process?
+        print(f"WARNING: Refactoring already exists: ID={descriptor.id()}; DATA={str(data)}")
+        return
     ws_script.refactor(workspace, data, descriptor)
 
 def _create_refactor_task(workspace, data, line, counter):
@@ -164,110 +154,26 @@ def _create_refactor_task(workspace, data, line, counter):
 
     func = _refactor_proxy
     argv = (workspace, data, descriptor)
-    return (func, argv)
+    return (func, argv), descriptor.id()
 
 # Usage:
 #  ./evaluation.py --data <data> --xs <xs> --bs <bs> --ws <wl> --ls <ls> --n <n>
 #
 def refactor(args):
-    #if args.bm is None:
-    #raise ValueError("Please specify a benchmark.")
-    #
-    #if args.workload is None:
-    #raise ValueError("Please specify a workload.")
-    #
-    #if args.n <= 0:
-    #raise ValueError("Please specify the number of refactorings to generate using a positive integer.")
-    #return
-    #
-    #bm        = args.bm
-    #workload  = args.workload
-
-    # Note
-    # Because duplications should be remove when assembling the
-    # descriptor lists for experiments, there should be no need
-    # to use the refactoring ID for folder names. We can use
-    # temp folder names and then look at the descriptor to
-    # determine which data folders map to each list after
-    # the experiment. (Consider using sequentially numbered folders
-    # per list (data/<listname>/{1,2,3,4, ...}) so that it is easy
-    # to go from descriptor list index to the data folder.
-
-    #lists = dict()
-    #for dir, folders, files in os.walk(x_folder(args) / 'workloads' / bm / workload / 'lists'):
-    #for name in folders:
-    #lists[name] = Path(dir) / name / 'descriptors.txt'
-    #break
-    #
-    #if len(lists) == 0:
-    #raise ValueError("There are no descriptor lists defined for", bm, workload)
-    #
-
-    #
-    # TODO: Get experiment location, experiment names, benchmark names, workload names, and list names from args.
-    #
-    lists = []
-    for x in get_arg_experiments(args):
-        for bm, workload in get_x_workloads(args, x):
-            workspace = x_location(args) / x / 'workspaces' / bm / workload / 'workspace'
-            for name, path in get_x_bm_wl_lists(args, x, bm, workload).items():
-                lists.append((x, bm, workload, name, path))
-
     data    = x_location(args) / 'data'
-    counter = {'count' : 0}
     limit   = args.n if args.n > 1 else 1
-    while counter['count'] < limit:
-        for x, bm, workload, name, path in lists:
-
-            # TODO: Add CLI option to include/exclude experiments, benchmarks, workloads, and lists.
-            #       --xps --bms  --wls --lists
-            # ./evaluation.py --data experiments --xs jacop --bs jacop --ws mzc18_1 --ls list_1 --n 20
-            #
-            # The script will create <n> refactorings per specified list and then terminate.
-            
-            data_bm              = x_location(args) / 'data' / bm
-            state_file           = data_bm / 'state.json'
-            files                = [str(path)]
-            tell                 = load_state(state_file, files)
-            parse_task_from_line = lambda line: _create_refactor_task(workspace, data_bm, line, counter)
+    lists   = get_arg_xbwlp_items(args)
+    for x, bm, workload, name, path in lists:
+        counter              = {'count' : 0}
+        data_bm              = data / bm
+        state_file           = data_bm / 'state.json'
+        files                = [str(path)]
+        tell                 = load_state(state_file, files)
+        workspace            = x_location(args) / x / 'workspaces' / bm / workload / 'workspace'
+        parse_task_from_line = lambda line: _create_refactor_task(workspace, data_bm, line, counter)
+        while counter['count'] < limit:
             do_files(files, tell, parse_task_from_line)
             save_state(state_file, tell)
-            if counter['count'] >= limit:
-                break
-
-    # ABC
-    #descriptors   = dict()
-    #list_position = dict()
-    #working_set   = set(lists.keys())
-    #j = 0
-    #while j < args.n and len(working_set) > 0:
-    #lst  = [name for name in working_set][randrange(len(working_set))]
-    #data = x_folder(args) / 'data' / bm / workload / lst
-    #if not lst in descriptors:
-    #with open(lists[lst], 'r') as f:
-    #descriptors[lst]   = [ line for line in f if line.strip() != "" ]
-    #list_position[lst] = 0
-    #if list_position[lst] >= len(descriptors[lst]):
-    #working_set.remove(lst)
-    #continue
-    #i    = list_position[lst]
-    #line = descriptors[lst][i]
-    #list_position[lst] = list_position[lst] + 1
-    #
-    #if (data / str(i)).exists():
-    ## TODO: Make it possible to re-run descriptors.
-    ##       Each run is stored in its own tmp folder inside data/<i>/: data/<i>/<tmp>
-    #continue
-    #
-    #print("Refactor", bm, workload, lst, str(i), line)
-    #descriptor = opportunity_cache.RefactoringDescriptor(line)
-    #try:
-    #ws_script.refactor(workspace, data / str(i), descriptor)
-    #j = j + 1
-    #if j >= args.n:
-    #break
-    #except ValueError as e:
-    #print("ERROR", str(e))
 
 def prime_import_location(args, x, configuration, location, data):
     # Assume that we have workspaces available.
@@ -296,7 +202,7 @@ def prime_import_location(args, x, configuration, location, data):
                 tools.zip(temp, location / file)
         break
 
-def build_and_benchmark(args, configuration, data_location, capture_flight_recording = True):
+def build_and_benchmark(args, x, configuration, data_location, capture_flight_recording = True):
     global log
 
     bm                 = configuration.bm()
@@ -318,7 +224,7 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
             deploy_dir    = Path(location) / 'deployment'
             jfr_file      = Path(location) / 'flight.jfr'
             deploy_dir.mkdir()
-            prime_import_location(args, configuration, import_dir, data_location)
+            prime_import_location(args, x, configuration, import_dir, data_location)
             bm_script.deploy_benchmark(configuration, clean, deploy_dir, import_dir)
 
             # Capture execution time with flight recording disabled.
@@ -352,55 +258,84 @@ def build_and_benchmark(args, configuration, data_location, capture_flight_recor
             f.write(str(e))
         return False
 
-def get_valid_configurations(args, x):
+def get_valid_configurations_of(args, x, bm, workload):
     configs    = []
+    config     = get_x_workload_configuration(args, x, bm, workload)
     has_errors = False
-    for (bm, workload) in get_x_workloads(args, x):
-        configs.append(((x, bm, workload), []))
-        config = get_x_workload_configuration(args, x, bm, workload)
-        for c in config.get_all_combinations():
-            try:
-                if not c.is_valid():
-                    continue
-            except TypeError as e:
-                raise e
-            except AttributeError as e:
-                raise e
-            except Exception as e:
-                log.error(str(e))
-                has_errors = True
+    for c in config.get_all_combinations():
+        try:
+            if not c.is_valid():
                 continue
-            configs[-1][1].append(c)
+        except TypeError as e:
+            raise e
+        except AttributeError as e:
+            raise e
+        except Exception as e:
+            log.error(str(e))
+            has_errors = True
+            continue
+        configs.append(c)
     if has_errors:
         raise ValueError("Bad configuration")
     return configs
+
+#def get_valid_configurations(args, x):
+#    configs    = []
+#    has_errors = False
+#    for (bm, workload) in get_x_workloads(args, x):
+#        configs.append(((x, bm, workload), []))
+#        config = get_x_workload_configuration(args, x, bm, workload)
+#        for c in config.get_all_combinations():
+#            try:
+#                if not c.is_valid():
+#                    continue
+#            except TypeError as e:
+#                raise e
+#            except AttributeError as e:
+#                raise e
+#            except Exception as e:
+#                log.error(str(e))
+#                has_errors = True
+#                continue
+#            configs[-1][1].append(c)
+#    if has_errors:
+#        raise ValueError("Bad configuration")
+#    return configs
 
 def get_benchmark_execution_plan(args):
     # Note, sets of refactoring opportunities and configurations for a benchmark
     # may overlap between experiments and workloads. Therefore, we check so that
     # we only include each benchmark configuration once per refactoring.
-    keys = set()
-    plan = []
-    for x in get_arg_experiments(args):
-        for (x, bm, workload), configurations in get_valid_configurations(args, x):
-            location = x_location(args) / 'data' / bm
-            for dir1, opportunities, files1 in os.walk(location):
-                for opportunity in opportunities:
-                    for dir2, refactorings, files2 in os.walk(Path(dir1) / opportunity):
-                        for refactoring in refactorings:
-                            for dir3, executions, files3 in os.walk(Path(dir2) / refactoring):
-                                for execution in executions:
-                                    if (Path(dir3) / execution / 'FAILURE').exists():
-                                        continue # The refactoring could not be applied.
-                                    for configuration in configurations:
-                                        stats_c = Path(dir3) / execution / 'stats' / configuration.id()
-                                        key     = (bm, refactoring, execution, configuration.id())
-                                        if not stats_c.exists() and not key in keys:
-                                            plan.append((bm, refactoring, execution, configuration))
-                                            keys.add(key)
-                                break
-                        break
-                break
+    plan           = []
+    keys           = set()
+    configurations = dict()
+    for x, b, w, l_name, l_path in get_arg_xbwlp_items(args):
+        if not (x, b, w) in configurations:
+            # All lists in the same (x,b,w)-tuple share the configuration set.
+            # All refactorings on all lists in the same (x,b,w)-tuple should be benchmarked with these configurations.
+            configurations[(x, b, w)] = get_valid_configurations_of(args, x, b, w)
+        with open(l_path, 'r') as f:
+            for line in f:
+                descriptor  = opportunity_cache.RefactoringDescriptor(line)
+                opportunity = descriptor.opportunity_id()
+                refactoring = descriptor.id()
+                data        = x_location(args) / 'data' / b / opportunity / refactoring
+                if not data.exists():
+                    break # No more refactorings available from this list.
+                for dir1, executions, files1 in os.walk(data):
+                    for execution in executions:
+                        if (Path(dir1) / execution / 'FAILURE').exists():
+                            continue # The refactoring could not be applied.
+                        for configuration in configurations[(x, b, w)]:
+                            stats_c = Path(dir1) / execution / 'stats' / configuration.id()
+                            key     = (b, opportunity, refactoring, execution, configuration.id())
+                            # NOTE: 'key' MUST NOT include 'x' or 'w' because refactorings of a
+                            #        benchmark can be shared between experiments and workloads.
+                            if not stats_c.exists() and not key in keys:
+                                # Here we can include 'x' in the result. ('w' is not needed.)
+                                plan.append((x, b, opportunity, refactoring, execution, configuration))
+                                keys.add(key)
+                    break
     return plan
 
 # Usage:
@@ -413,10 +348,12 @@ def benchmark(args):
     if n <= 0:
         raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
 
-    for (bm, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
-        print("Benchmark", bm, refactoring, execution, configuration)
-        data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / refactoring / execution
-        build_and_benchmark(args, configuration, data_location)
+    for (x, bm, opportunity, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
+        print()
+        print(f"Benchmark ({i+1}/{n}) {'/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.id()])}")
+        print()
+        data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / opportunity / refactoring / execution
+        build_and_benchmark(args, x, configuration, data_location)
         i = i + 1
         if i >= n:
             break
@@ -446,50 +383,110 @@ def benchmark(args):
 #            break
 
 def print_configurations(args):
-    for x in get_arg_experiments(args):
-        for (_x, bm, workload), configurations in get_valid_configurations(args, x):
-            print(_x, bm, workload, configuration._values)
+    for x, b, w in get_arg_xbw_items(args):
+        for configuration in get_valid_configurations_of(args, x, b, w):
+            print(x, b, w, configuration._values)
 
 def print_execution_plan(args):
-    for (bm, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
-        print(x, bm, workload, refactoring, execution, configuration._values)
+    for (x, bm, opportunity, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
+        print(bm, opportunity, refactoring, execution, configuration._values)
+
+# Return [(x, b, w, l, p)] filtered by specified arguments.
+def get_arg_xbwlp_items(args):
+    # An empty set means "include all".
+    xs    = set(get_arg_experiments(args))
+    bs    = set(get_arg_benchmarks(args))
+    ws    = set(get_arg_workloads(args))
+    ls    = set(get_arg_lists(args))
+    items = []
+    for x in get_experiments(args):
+        if len(xs) > 0 and not x in xs:
+            continue
+        for b, w in get_x_workloads(args, x):
+            if len(bs) > 0 and not b in bs:
+                continue
+            if len(ws)> 0  and not w in ws:
+                continue
+            for l, path in get_x_bm_wl_lists(args, x, b, w).items():
+                if len(ls) > 0 and not l in ls:
+                    continue
+                items.append((x, b, w, l, path))
+    return items
+
+# Return [(x, b, w)] filtered by specified arguments.
+def get_arg_xbw_items(args):
+    # An empty set means "include all".
+    xs    = set(get_arg_experiments(args))
+    bs    = set(get_arg_benchmarks(args))
+    ws    = set(get_arg_workloads(args))
+    items = []
+    for x in get_experiments(args):
+        if len(xs) > 0 and not x in xs:
+            continue
+        for b, w in get_x_workloads(args, x):
+            if len(bs) > 0 and not b in bs:
+                continue
+            if len(ws)> 0  and not w in ws:
+                continue
+            items.append((x, b, w))
+    return items
+
+def get_arg_experiments(args):
+    return args.xs
+
+def get_arg_benchmarks(args):
+    return args.bs
+
+def get_arg_workloads(args):
+    return args.ws
+
+def get_arg_lists(args):
+    return args.ls
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--x', required = False,
-        help = "A specific experiment name")
-    parser.add_argument('--xs', required = False,
+
+    # Experiments, Benchmarks, Workloads, and Lists.
+    parser.add_argument('--xs', nargs = '+', default = [], required = False,
         help = "Limit operation to specified experiments")
-    parser.add_argument('--ls', required = False,
+    parser.add_argument('--bs', nargs = '+', default = [], required = False,
+        help = "Limit operation to specified benchmarks")
+    parser.add_argument('--ws', nargs = '+', default = [], required = False,
+        help = "Limit operation to specified workloads")
+    parser.add_argument('--ls', nargs = '+', default = [], required = False,
         help = "Limit operation to specified lists")
-    parser.add_argument('--x-location', required = False, default = 'experiments',
+    parser.add_argument('--data', required = False, default = 'experiments',
         help = "Location where experiments are stored. Defaults to 'experiments'.")
-    parser.add_argument('--bm', required = False,
-        help = "Benchmark name")
-    parser.add_argument('--workload', required = False,
-        help = "Benchmark workload")
+
+    # Operation options.
     parser.add_argument('--create', required = False, action = 'store_true',
         help = "Create experiment workspace from specified template")
-    parser.add_argument('--benchmark', required = False, action = 'store_true',
-        help = "Benchmark refactoring(s)")
-    parser.add_argument('--data', required = False,
-        help = "A specific refactoring folder name") 
     parser.add_argument('--refactor', required = False, action = 'store_true',
         help = "Refactor specified experiment workspace")
+    parser.add_argument('--benchmark', required = False, action = 'store_true',
+        help = "Benchmark refactoring(s)")
     parser.add_argument('--n', required = False, type = int, default = 1,
         help = "The number of refactorings or benchmarks to run.")
-    parser.add_argument('--report', required = False, action = 'store_true',
-        help = "Print statistics")
+
+    # Print/Show options.
     parser.add_argument('--show-configurations', required = False, action = 'store_true',
         help = "Print all valid configurations to standard out")
     parser.add_argument('--show-execution-plan', required = False, action = 'store_true',
         help = "Print all pending benchmark executions")
+    #parser.add_argument('--report', required = False, action = 'store_true',
+    #    help = "Print statistics")
+
+    # Generators.
     parser.add_argument('--generate-lists', required = False, action = 'store_true',
         help = "Generate lists on existing workspace")
+
     args = parser.parse_args()
 
     if args.generate_lists:
-        generate_descriptor_lists(args, args.bm, args.workload)
+        bms = set(args.bs)
+        wls = set(args.ws)
+        for x, b, w in get_arg_xbw_items(args):
+            generate_descriptor_lists(args, x, b, w)
         exit(0)
 
     if args.show_configurations:

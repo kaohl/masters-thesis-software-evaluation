@@ -38,9 +38,9 @@ def compute_results(args):
             if not list_location.exists():
                 raise ValueError("No such list", str(list_location))
             with open(list_file, 'r') as f:
-                for line, index in enumerate(f):
+                for index, line in enumerate(f):
                     descriptor    = RefactoringDescriptor(line)
-                    data_location = x_location / 'data' / bm / descriptor.opportunity_id() / descriptor.id()
+                    data_location = Path(args.x_location) / 'data' / bm / descriptor.opportunity_id() / descriptor.id()
                     if not data_location.exists():
                         # We have not yet created the corresponding refactoring.
                         # Since lists are processed sequentially from start to
@@ -73,7 +73,7 @@ def compute_results(args):
                                     if (Path(dir2) / id / 'FAILURE').exists():
                                         continue # Benchmark failed.
                                     #
-                                    # TODO: Consider which parameters and meta attributes are of interest in the analysis. (If any.)
+                                    # TODO: Consider which parameters and meta attributes are of interest in the analysis, if any.
                                     #
                                     config   = configuration.Configuration().load(Path(dir2) / id / 'configuration.txt')
                                     metrics  = configuration.Metrics().load(Path(dir2) / id / 'metrics.txt')
@@ -93,7 +93,7 @@ def compute_results(args):
                                             variables.add(k)
                                 break
                         break
-        results_location.mkdir(exist_ok = True)
+        results_location.mkdir(exist_ok = True, parents = True)
         with open(results_location / (name + '.results'), 'w') as f:
             for result in results:
                 f.write(str(result) + os.linesep)

@@ -40,10 +40,16 @@ def deploy_benchmark(configuration, clean, context = None, import_dir = None):
     ]
     cmd        = " ".join(options)
     DAIVY_HOME = os.environ['DAIVY_HOME']
-    result     = subprocess.run(tools.sdk_run(configuration.jdk(), cmd), shell = True, cwd = DAIVY_HOME)
+    result     = subprocess.run(
+        tools.sdk_run(configuration.jdk(), cmd),
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT,
+        shell = True,
+        cwd = DAIVY_HOME
+    )
 
     if result.returncode != 0:
-        raise ValueError("Benchmark deployment failed")
+        raise ValueError(result.stdout.decode('utf-8'))
 
 def run_benchmark(configuration, deployment, jfr, jfr_file):
 
@@ -53,8 +59,12 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
     options  = []
     features = []
 
-    # TODO: I belive this works only for java 8.
-    #       Need other options with later versions. 
+    # TODO
+    # I belive this works only for java 8.
+    # Need other options with later versions.
+    #
+    # Seems to be working for java 17 (tem and oracle) as well but get a deprecation warning.
+    #
 
     if jfr:
         jfr_options = [

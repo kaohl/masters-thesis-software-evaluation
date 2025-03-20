@@ -84,12 +84,22 @@ class ConfigurationBase:
             for key, value in sorted(self._values.items(), key = lambda it: it[0]):
                 f.write('='.join([key, value]) + os.linesep)
 
+# Experimental build and runtime parameters.
+#
+# NOTE
+# It appears newer JDKs phase out target compatibility with
+# older versions so the set of allowed target versions
+# depends both on the source version and on the JDK.
+# No validation is currently performed for these implementation
+# specific constraints so please consult the JDK documentation
+# to find what works.
+#
 class Configuration(ConfigurationBase):
     BM             = 'bm'
     BM_VERSION     = 'bm_version'     # The benchmark version. Not the version of the benchmarked library.
     BM_WORKLOAD    = 'bm_workload'
     SOURCE_VERSION = 'source_version' # Used to constrain target_version.
-    TARGET_VERSION = 'target_version' # Any version compatible with source_version.
+    TARGET_VERSION = 'target_version' # Any version compatible with source_version and JDK.
     JDK            = 'jdk'
     JRE            = 'jre'
     HEAP_SIZE      = 'heap_size'
@@ -109,7 +119,7 @@ class Configuration(ConfigurationBase):
         'jacop:1.0' : {
             'bm'             : { 'jacop' },                     # Values
             'bm_version'     : { '1.0' },                       # Values
-            'bm_workload'    : { 'default' },                   # Values
+            'bm_workload'    : { 'mzc18_1','mzc18_2','mzc18_3','mzc18_4' }, # Values
             'source_version' : { '8' },                         # Values
             'stack_size'     : { '4M' },                        # Lower limit
             'jre'            : set(tools.get_installed_sdks()), # Values
