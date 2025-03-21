@@ -23,7 +23,7 @@ org.eclipse.jdt.internal.corext.refactoring.code.InlineConstantRefactoring
   "remove"    : boolean; "fRemoveDeclaration"
   
 org.eclipse.jdt.internal.corext.refactoring.code.ExtractConstantRefactoring
-  "input"      : IJavaElement(type = IJaveElement.COMPILATION_UNIT)
+  "input"      : IJavaElement(type = IJavaElement.COMPILATION_UNIT)
   "selection"  : String; Format "offset length"
   "replace"    : boolean; "fReplaceAllOccurrences"
   "qualify"    : boolean; "fQualifyReferencesWithDeclaringClassName"

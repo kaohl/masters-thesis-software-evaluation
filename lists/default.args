@@ -19,5 +19,51 @@
     "org.eclipse.jdt.ui.inline.method" : {
         "mode"   : "0",
         "delete" : "false"
+    },
+    "org.eclipse.jdt.ui.inline.temp" : {
+
+    },
+    "org.eclipse.jdt.ui.extract.temp" : {
+        "name"                 : "_x_",
+        "replace"              : "false",
+        "replaceAllInThisFile" : "false",
+        "final"                : "true",
+        "varType"              : "false"
+    },
+    "org.eclipse.jdt.ui.introduce.indirection" : {
+        "name"       : "_x_",
+        "references" : "true"
+    },
+    "org.eclipse.jdt.ui.rename.field" : {
+        "name"       : "_x_",
+        "references" : "true",
+        "textual"    : "false",
+        "getter"     : "false",
+        "setter"     : "false",
+        "delegate"   : "false",
+        "deprecate"  : "false"
+    },
+    "org.eclipse.jdt.ui.rename.local.variable" : {
+        "name"       : "_x_",
+        "references" : "true"
+    },
+    "org.eclipse.jdt.ui.rename.method" : {
+        "name"      : "_x_",
+        "delegate"  : "false",
+        "deprecate" : "false"
+    },
+    "org.eclipse.jdt.ui.rename.type" : {
+        "name"                : "X",
+        "patterns"            : "",
+        "references"          : "true",
+        "textual"             : "false",
+        "qualified"           : "false",
+        "similarDeclarations" : "false",
+        "matchStrategy"       : "1"
+    },
+    "org.eclipse.jdt.ui.rename.type.parameter" : {
+        "name"       : "_x_",
+        "references" : "true"
     }
 }
+
