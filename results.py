@@ -124,20 +124,27 @@ def anova(i_vars, d_vars, csv_path):
     if 'stack_size' in df:
         df['stack_size']     = df['stack_size'].astype(str)
     df['target_version'] = df['target_version'].astype(str)    
-    #df[''] = df[''].astype(str)
-    print(df.dtypes)
+
+    #print(df.dtypes)
+
+    # TODO: I suspect this is not how we should handle multiple
+    #       independent dependent variables. Skip loop and join
+    #       on left-hand side as well?
 
     for d_var in d_vars:
         ## https://www.statsmodels.org/stable/gettingstarted.html
         ## https://patsy.readthedocs.io/en/latest/formulas.html
         formula = '{} ~ {}'.format(d_var, ' + '.join(sorted(i_vars)))
-        print("-"*80)
-        print("Formula", formula)
-        print("-"*80)
+        #print("-"*80)
+        #print("Formula", formula)
+        #print("-"*80)
         mod = ols(formula, data = df).fit()
         res = sm.stats.anova_lm(mod)
-        print(res)
-        print("-"*80)
+        #print(res)
+        table_path = csv_path.parent / f"{csv_path.stem}.{d_var}.table"
+        with open(table_path, 'w') as f:
+            f.write(str(res))
+        #print("-"*80)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

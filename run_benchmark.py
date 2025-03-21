@@ -105,10 +105,10 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
         stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT
     )
-    if result.returncode != 0:
-        raise ValueError("Benchmark failed")
-    p    = re.compile('PASSED in (\\d+) msec')
     text = result.stdout.decode('utf-8')
+    if result.returncode != 0:
+        raise ValueError("Benchmark failed", text)
+    p    = re.compile('PASSED in (\\d+) msec')
     execution_time = p.findall(text)[0]
     print("--- BENCHMARK OUTPUT ---")
     print(text)

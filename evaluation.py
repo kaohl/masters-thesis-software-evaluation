@@ -483,8 +483,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.generate_lists:
-        bms = set(args.bs)
-        wls = set(args.ws)
         for x, b, w in get_arg_xbw_items(args):
             generate_descriptor_lists(args, x, b, w)
         exit(0)
