@@ -73,6 +73,14 @@ def export_project_sources(coord):
             tempdir,
             '--clean'
         ])
-        subprocess.run(cmd, shell = True, cwd = DAIVY_HOME)
+        result = subprocess.run(
+            cmd,
+            stdout = subprocess.PIPE,
+            stderr = subprocess.STDOUT,
+            shell  = True,
+            cwd    = DAIVY_HOME
+        )
+        if result.returncode != 0:
+            raise ValueError("Export failed", result.stdout.decode('utf-8'))
     return export_dir
 
