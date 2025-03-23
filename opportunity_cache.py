@@ -200,6 +200,18 @@ class ListsGenerator:
                 ListsGenerator._generate_list(cache, default_args, Path(dir) / folder)
             break
 
+    #def _generate_params(config, params):
+    #    print(f"Create {str(params)}")
+    #    combinations = []
+    #    if config.exists():
+    #        combinations.extend(RefactoringConfiguration().load(config).get_all_combinations())
+    #    if len(combinations) == 0:
+    #         # Add default empty mapping to leave the input opportunity unmodified.
+    #        combinations.append(RefactoringConfiguration())
+    #    with open(params, 'w') as f:
+    #        for combination in combinations:
+    #            f.write(json.dumps(combination._values, sort_keys = True) + os.linesep)
+
     def _generate_list(cache, default_args, list):
         with open(list / 'descriptors.txt', 'w') as descriptors:
             for dir, folders, files in os.walk(list):
@@ -208,8 +220,10 @@ class ListsGenerator:
                     fp = Path(file)
                     if file.endswith('.filter'):
                         filter             = dp / file
+                        config             = dp / (fp.stem + '.config')
                         params             = dp / (fp.stem + '.params')
                         local_default_args = dp / (fp.stem + '.defaults')
+                        # ListsGenerator._generate_params(config, params)
                         Query(cache, filter, params, local_default_args, default_args).run(descriptors)
                 break
 

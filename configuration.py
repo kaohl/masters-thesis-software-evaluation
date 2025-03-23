@@ -2,15 +2,18 @@ import io
 import os
 import re
 import hashlib
-from random import randrange
 import sys
+
+from functools import reduce
+from random    import randrange
 
 import tools
 
 class ConfigurationBase:
-    def __init__(self):
-        self._values  = dict()
-        self._options = dict()
+    def __init__(self, configuration_type):
+        self._values             = dict()
+        self._options            = dict()
+        self._configuration_type = configuration_type
 
     def id(self):
         with io.StringIO() as text:
@@ -42,14 +45,18 @@ class ConfigurationBase:
 
     def get_all_combinations(self):
         parameters = [ (key, options) for key, options in self._options.items() ]
-        return [ Configuration().init_from_dict(dict(value_list)) for value_list in self._all_rec(parameters) ]
+        return [ self._configuration_type().init_from_dict(dict(value_list)) for value_list in self._all_rec(parameters) ]
 
     def _clobber(self, key, value = None):
         if not value is None:
+            options = None
             if isinstance(value, list):
-                self._options[key] = value
-                value = value[0]
-            self._values[key] = value
+                options = value
+                value   = value[0]
+            else:
+                options = [value]
+            self._options[key] = options
+            self._values[key]  = value
             return self
         return self._values.get(key)
 
@@ -81,8 +88,15 @@ class ConfigurationBase:
 
     def store(self, file):
         with open(file, 'w') as f:
+            largest_n, _ = reduce(lambda a, b: a if a[0] > b[0] else b, [ (len(x), x) for x in self._values.keys() ], (0, ''))
             for key, value in sorted(self._values.items(), key = lambda it: it[0]):
-                f.write('='.join([key, value]) + os.linesep)
+                f.write((' '*(largest_n - len(key)) + ' = ').join([key, value]) + os.linesep)
+
+    def store_options(self, file):
+        with open(file, 'w') as f:
+            largest_n, _ = reduce(lambda a, b: a if a[0] > b[0] else b, [ (len(x), x) for x in self._options.keys() ], (0, ''))
+            for key, options in sorted(self._options.items(), key = lambda it: it[0]):
+                f.write((' '*(largest_n - len(key)) + ' = ').join([key, ', '.join(options)]) + os.linesep)
 
 # Experimental build and runtime parameters.
 #
@@ -271,7 +285,7 @@ class Configuration(ConfigurationBase):
         return self._check_constraints()
 
     def __init__(self):
-        super().__init__()
+        super().__init__(Configuration)
 
     def bm(self, value = None):
         return self._clobber(Configuration.BM, value)
@@ -307,88 +321,95 @@ class Metrics(ConfigurationBase):
         return key in { Metrics.EXECUTION_TIME }
 
     def __init__(self):
-        super().__init__()
+        super().__init__(Metrics)
 
     def execution_time(self, value = None):
         return self._clobber(Metrics.EXECUTION_TIME, value)
 
 class RefactoringConfiguration(ConfigurationBase):
-    LIMIT   = '--limit'
-    TYPE    = '--type'
-    SEED    = '--seed'
-    SHUFFLE = '--shuffle'
-    SELECT  = '--select'
-
-    def __init__(self, type):
-        super().__init__()
-        defaults = {
-            RefactoringConfiguration.LIMIT   : '1000', # Number of opportunities to try before failing.
-            RefactoringConfiguration.TYPE    : type,
-            RefactoringConfiguration.SEED    : '0',
-            RefactoringConfiguration.SHUFFLE : '0',
-            RefactoringConfiguration.SELECT  : '0'
-        }
-        self._values = { **self._values, **defaults }
-
-    def limit(self, value = None):
-        return self._clobber(RefactoringConfiguration.LIMIT, value)
-
-    def type(self, value = None):
-        return self._clobber(RefactoringConfiguration.TYPE, value)
-
-    def seed(self, value = None):
-        return self._clobber(RefactoringConfiguration.SEED, value)
-
-    def shuffle(self, value = None):
-        return self._clobber(RefactoringConfiguration.SHUFFLE, value)
-
-    def select(self, value = None):
-        return self._clobber(RefactoringConfiguration.SELECT, value)
-
-class Rename(RefactoringConfiguration):
-    LENGTH = '--length'
-
-    def __init__(self, length = 0):
-        super().__init__('rename')
-        defaults = {
-            Rename.LENGTH : str(length)
-        }
-        self._values = { **self._values, **defaults }
-
-    def length(self, value = None):
-        return self._clobber(Rename.LENGTH, value)
-
-class InlineMethod(RefactoringConfiguration):
     def __init__(self):
-        super().__init__('inline-method')
+        super().__init__(RefactoringConfiguration)
 
-class ExtractMethod(RefactoringConfiguration):
-    def __init__(self):
-        super().__init__('extract-method')
+    def is_valid_key(self, key):
+        return True # We don't have dedicated classes for all different types so accept all for now.
 
-class InlineConstant(RefactoringConfiguration):
-    def __init__(self):
-        super().__init__('inline-constant')
-
-class ExtractConstant(RefactoringConfiguration):
-    def __init__(self):
-        super().__init__('extract-constant')
-
-def get_random_refactoring_configuration():
-    configs = [
-        Rename,
-        InlineMethod,
-        ExtractMethod,
-        InlineConstant,
-        ExtractConstant
-    ]
-    config = configs[randrange(len(configs))]()
-    config.seed   (randrange(sys.maxsize))
-    config.shuffle(randrange(sys.maxsize))
-    config.select (randrange(sys.maxsize))
-
-    if isinstance(config, Rename):
-        config.length(str(randrange(100))) # Arbitrary range.
-
-    return config
+#class RefactoringConfiguration(ConfigurationBase):
+#    LIMIT   = '--limit'
+#    TYPE    = '--type'
+#    SEED    = '--seed'
+#    SHUFFLE = '--shuffle'
+#    SELECT  = '--select'
+#
+#    def __init__(self, type):
+#        super().__init__()
+#        defaults = {
+#            RefactoringConfiguration.LIMIT   : '1000', # Number of opportunities to try before failing.
+#            RefactoringConfiguration.TYPE    : type,
+#            RefactoringConfiguration.SEED    : '0',
+#            RefactoringConfiguration.SHUFFLE : '0',
+#            RefactoringConfiguration.SELECT  : '0'
+#        }
+#        self._values = { **self._values, **defaults }
+#
+#    def limit(self, value = None):
+#        return self._clobber(RefactoringConfiguration.LIMIT, value)
+#
+#    def type(self, value = None):
+#        return self._clobber(RefactoringConfiguration.TYPE, value)
+#
+#    def seed(self, value = None):
+#        return self._clobber(RefactoringConfiguration.SEED, value)
+#
+#    def shuffle(self, value = None):
+#        return self._clobber(RefactoringConfiguration.SHUFFLE, value)
+#
+#    def select(self, value = None):
+#        return self._clobber(RefactoringConfiguration.SELECT, value)
+#
+#class Rename(RefactoringConfiguration):
+#    LENGTH = '--length'
+#
+#    def __init__(self, length = 0):
+#        super().__init__('rename')
+#        defaults = {
+#            Rename.LENGTH : str(length)
+#        }
+#        self._values = { **self._values, **defaults }
+#
+#    def length(self, value = None):
+#        return self._clobber(Rename.LENGTH, value)
+#
+#class InlineMethod(RefactoringConfiguration):
+#    def __init__(self):
+#        super().__init__('inline-method')
+#
+#class ExtractMethod(RefactoringConfiguration):
+#    def __init__(self):
+#        super().__init__('extract-method')
+#
+#class InlineConstant(RefactoringConfiguration):
+#    def __init__(self):
+#        super().__init__('inline-constant')
+#
+#class ExtractConstant(RefactoringConfiguration):
+#    def __init__(self):
+#        super().__init__('extract-constant')
+#
+#def get_random_refactoring_configuration():
+#    configs = [
+#        Rename,
+#        InlineMethod,
+#        ExtractMethod,
+#        InlineConstant,
+#        ExtractConstant
+#    ]
+#    config = configs[randrange(len(configs))]()
+#    config.seed   (randrange(sys.maxsize))
+#    config.shuffle(randrange(sys.maxsize))
+#    config.select (randrange(sys.maxsize))
+#
+#    if isinstance(config, Rename):
+#        config.length(str(randrange(100))) # Arbitrary range.
+#
+#    return config
     
