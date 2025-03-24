@@ -74,10 +74,10 @@ def _generate_steering_for_workload(configuration):
     if not location.exists():
         location.mkdir(parents = True)
 
-    summary  = get_cache_methods(configuration) #steering / (name + '.methods.summary.txt')
-    jfr_save = get_cache_jfr(configuration)     #steering / (name + '.jfr')
+    summary  = get_cache_methods(configuration)
+    jfr_save = get_cache_jfr(configuration)
     clean    = True
-    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as location:
+    with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as location:
         temp_location = Path(location)
         deploy_dir    = temp_location / 'deployment'
         jfr_file      = temp_location / 'flight.jfr'

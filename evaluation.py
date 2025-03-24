@@ -147,7 +147,7 @@ def _create_refactor_task(workspace, data, line, counter):
     descriptor = opportunity_cache.RefactoringDescriptor(line)
     data       = data / descriptor.opportunity_id() / descriptor.id()
     if data.exists():
-        return None
+        return None, None
 
     # We count here, before going into the worker.
     counter['count'] = counter['count'] + 1
@@ -164,6 +164,7 @@ def refactor(args):
     limit   = args.n if args.n > 1 else 1
     lists   = get_arg_xbwlp_items(args)
     for x, bm, workload, name, path in lists:
+        print("Refactor", x, bm, workload, name, path)
         counter              = {'count' : 0}
         data_bm              = data / bm
         state_file           = data_bm / 'state.json'
@@ -172,7 +173,9 @@ def refactor(args):
         workspace            = x_location(args) / x / 'workspaces' / bm / workload / 'workspace'
         parse_task_from_line = lambda line: _create_refactor_task(workspace, data_bm, line, counter)
         while counter['count'] < limit:
+            print("Select refactorings from file: ", path)
             do_files(files, tell, parse_task_from_line)
+            print("Save file state:", path)
             save_state(state_file, tell)
 
 def prime_import_location(args, x, configuration, location, data):

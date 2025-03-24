@@ -60,6 +60,8 @@ def run_batch(tasks, ids, do_run):
 def do_files(files, tell, parse_task_from_line, max_size = BATCH_SIZE):
     global BATCH_SIZE
 
+    print("Executor: Process files: " + os.linesep + os.linesep.join([str(f) for f in files]))
+
     active_files = set(files)
     done_files   = set()
     n            = 0
@@ -93,7 +95,13 @@ def load_state(file, files):
     tell = dict()
     if file.exists():
         with open(file, 'r') as f:
-            tell = json.loads(f.readline())
+            try:
+                tell = json.loads(f.readline())
+            except Exception as e:
+                print("Failed to load state")
+                print(str(e))
+                print("Resuming with reset read state.")
+                tell = dict()
     for name in files:
         if not name in tell:
             tell[name] = 0

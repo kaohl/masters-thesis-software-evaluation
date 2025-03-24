@@ -237,7 +237,7 @@ def main(args):
         'heap_size'      : ['1G'],
         'stack_size'     : ['32M']
     }
-    create_workload(args, 'jacop-2', jacop_mzc18_1_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'jacop', jacop_mzc18_1_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     jacop_mzc18_2_parameters = {
         'bm'             : 'jacop',
@@ -250,7 +250,7 @@ def main(args):
         'heap_size'      : ['1G'],
         'stack_size'     : ['32M']
     }
-    create_workload(args, 'jacop-2', jacop_mzc18_2_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'jacop', jacop_mzc18_2_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     jacop_mzc18_3_parameters = {
         'bm'             : 'jacop',
@@ -263,7 +263,7 @@ def main(args):
         'heap_size'      : ['1G'],
         'stack_size'     : ['32M']
     }
-    create_workload(args, 'jacop-2', jacop_mzc18_3_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'jacop', jacop_mzc18_3_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     jacop_mzc18_4_parameters = {
         'bm'             : 'jacop',
@@ -276,7 +276,7 @@ def main(args):
         'heap_size'      : ['1G'],
         'stack_size'     : ['32M']
     }
-    create_workload(args, 'jacop-2', jacop_mzc18_4_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'jacop', jacop_mzc18_4_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     #
     # batik
@@ -293,7 +293,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'batik-2', batik_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'batik', batik_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     batik_default_parameters = {
         'bm'             : 'batik',
@@ -306,7 +306,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'batik-2', batik_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'batik', batik_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     #
     # xalan
@@ -323,7 +323,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'xalan-2', xalan_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'xalan', xalan_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     xalan_default_parameters = {
         'bm'             : 'xalan',
@@ -336,7 +336,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'xalan-2', xalan_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'xalan', xalan_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     #
     # lusearch
@@ -353,7 +353,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'lusearch-2', lusearch_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'lusearch', lusearch_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     lusearch_default_parameters = {
         'bm'             : 'lusearch',
@@ -366,7 +366,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'lusearch-2', lusearch_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'lusearch', lusearch_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     #
     # luindex
@@ -383,7 +383,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'luindex-2', luindex_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'luindex', luindex_small_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     luindex_default_parameters = {
         'bm'             : 'luindex',
@@ -396,7 +396,7 @@ def main(args):
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
-    create_workload(args, 'luindex-2', luindex_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+    create_workload(args, 'luindex', luindex_default_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

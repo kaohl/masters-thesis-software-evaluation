@@ -309,7 +309,7 @@ def create_workspace_in_location(project, location):
 
 def refactor(workspace_location, data_location, descriptor):
     cached_workspace = workspace_location
-    with tempfile.TemporaryDirectory(delete = False, dir = 'temp') as context:
+    with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as context:
         workspace = Path(context) / 'workspace'
         print("Using workspace", str(workspace))
 
