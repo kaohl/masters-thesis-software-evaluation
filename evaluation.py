@@ -174,9 +174,21 @@ def refactor(args):
         parse_task_from_line = lambda line: _create_refactor_task(workspace, data_bm, line, counter)
         while counter['count'] < limit:
             print("Select refactorings from file: ", path)
+            count_before = counter['count']
             do_files(files, tell, parse_task_from_line)
+            count_after  = counter['count']
+            # Note, progress could have been made even if we created no new tasks.
+            # For example, shared descriptors between experiments and workloads.
+            # This would make the read state progress for this file but no new
+            # refactorings created. Therefore, we always save the state even
+            # if it appears we made no progress. However, we should still break,
+            # because, if no new tasks were created then we have reached the end
+            # of the current list.
             print("Save file state:", path)
             save_state(state_file, tell)
+            if count_after == count_before:
+                print("Reached the end of list: ", path)
+                break # Could not make any progress. List is done.
 
 def prime_import_location(args, x, configuration, location, data):
     # Assume that we have workspaces available.
