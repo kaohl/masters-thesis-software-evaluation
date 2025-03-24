@@ -192,7 +192,7 @@ def create_workload(args, x, parameters, lists_and_views):
 
     for name, filter, config, view in lists_and_views:
 
-        (w_lists / name).mkdir(parents = True)
+        (w_lists / name).mkdir(parents = True, exist_ok = True)
 
         q_filter = w_lists / name / 'q.filter'
         q_config = w_lists / name / 'q.config'
@@ -234,8 +234,8 @@ def main(args):
         'target_version' : ['17'],
         'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
         'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'heap_size'      : ['1G'],
-        'stack_size'     : ['32M']
+        'heap_size'      : ['2G'],
+        'stack_size'     : ['1M']
     }
     create_workload(args, 'jacop', jacop_mzc18_1_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
@@ -247,8 +247,8 @@ def main(args):
         'target_version' : ['17'],
         'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
         'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'heap_size'      : ['1G'],
-        'stack_size'     : ['32M']
+        'heap_size'      : ['2G'],
+        'stack_size'     : ['1M']
     }
     create_workload(args, 'jacop', jacop_mzc18_2_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
@@ -260,8 +260,8 @@ def main(args):
         'target_version' : ['17'],
         'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
         'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'heap_size'      : ['1G'],
-        'stack_size'     : ['32M']
+        'heap_size'      : ['2G'],
+        'stack_size'     : ['1M']
     }
     create_workload(args, 'jacop', jacop_mzc18_3_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
@@ -273,10 +273,30 @@ def main(args):
         'target_version' : ['17'],
         'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
         'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'heap_size'      : ['1G'],
-        'stack_size'     : ['32M']
+        'heap_size'      : ['2G'],
+        'stack_size'     : ['1M']
     }
     create_workload(args, 'jacop', jacop_mzc18_4_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
+
+    # ATTENTION: mzc18_5 can be shown to be non-deterministic using a simple test.
+    #            Therefore, we exclude it from start. See test script.
+    #
+    # mzc18_6 has shown signs of non-determinism but very difficult to reproduce using our test.
+    # Most of the times the test succeeds with a stack size of 4M.
+    # Consider including mzc18_6, if time permits.
+    #
+    #jacop_mzc18_6_parameters = {
+    #    'bm'             : 'jacop',
+    #    'bm_version'     : '1.0',
+    #    'bm_workload'    : 'mzc18_6',
+    #    'source_version' : '8',
+    #    'target_version' : ['17'],
+    #    'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
+    #    'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+    #    'heap_size'      : ['2G'],
+    #    'stack_size'     : ['4M']
+    #}
+    #create_workload(args, 'jacop', jacop_mzc18_6_parameters, default_lists_and_views(REFACTORING_PARAMETERS))
 
     #
     # batik
