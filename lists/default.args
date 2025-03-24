@@ -3,6 +3,13 @@
         "replace" : "false",
         "remove"  : "false"
     },
+    "org.eclipse.jdt.ui.inline.method" : {
+        "mode"   : "0",
+        "delete" : "false"
+    },
+    "org.eclipse.jdt.ui.inline.temp" : {
+
+    },
     "org.eclipse.jdt.ui.extract.constant" : {
         "replace"    : "false",
         "qualify"    : "false",
@@ -15,13 +22,6 @@
         "replace"    : "true",
         "exceptions" : "false",
         "name"       : "_x_"
-    },
-    "org.eclipse.jdt.ui.inline.method" : {
-        "mode"   : "0",
-        "delete" : "false"
-    },
-    "org.eclipse.jdt.ui.inline.temp" : {
-
     },
     "org.eclipse.jdt.ui.extract.temp" : {
         "name"                 : "_x_",
