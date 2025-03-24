@@ -111,3 +111,13 @@ def sdk_of_minimum_major_version(major_version):
         raise ValueError("Could not satisfy SDK minimum major version: {}. Found SDKs: {}".format(min_version, get_installed_sdks()))
     return candidate
 
+def sdk_current():
+    result = subprocess.run(
+        sdkman_command('sdk current java'),
+        shell  = True,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT
+    )
+    sdk = result.stdout.decode('utf-8').strip().split(' ')[3].strip()
+    return sdk
+
