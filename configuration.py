@@ -120,7 +120,9 @@ class Configuration(ConfigurationBase):
     STACK_SIZE     = 'stack_size'
 
     size_option_pattern = re.compile("(\\d+)([KkMmGg])")
-    
+
+    # TODO: Configuration constraints should be loaded from file.
+
     _constraints = {
         'batik:1.0' : {
             'bm'             : { 'batik' },                     # Values
@@ -136,6 +138,30 @@ class Configuration(ConfigurationBase):
             'bm_workload'    : { 'mzc18_1','mzc18_2','mzc18_3','mzc18_4' }, # Values
             'source_version' : { '8' },                         # Values
             'stack_size'     : { '4M' },                        # Lower limit
+            'jre'            : set(tools.get_installed_sdks()), # Values
+            'jdk'            : set(tools.get_installed_sdks())  # Values
+        },
+        'xalan:1.0' : {
+            'bm'             : { 'xalan' },                     # Values
+            'bm_version'     : { '1.0' },                       # Values
+            'bm_workload'    : { 'small', 'default', 'large' }, # Values
+            'source_version' : { '8' },                         # Values
+            'jre'            : set(tools.get_installed_sdks()), # Values
+            'jdk'            : set(tools.get_installed_sdks())  # Values
+        },
+        'lusearch:1.0' : {
+            'bm'             : { 'lusearch' },                  # Values
+            'bm_version'     : { '1.0' },                       # Values
+            'bm_workload'    : { 'small', 'default', 'large' }, # Values
+            'source_version' : { '11' },                        # Values
+            'jre'            : set(tools.get_installed_sdks()), # Values
+            'jdk'            : set(tools.get_installed_sdks())  # Values
+        },
+        'luindex:1.0' : {
+            'bm'             : { 'luindex' },                   # Values
+            'bm_version'     : { '1.0' },                       # Values
+            'bm_workload'    : { 'small', 'default', 'large' }, # Values
+            'source_version' : { '11' },                        # Values
             'jre'            : set(tools.get_installed_sdks()), # Values
             'jdk'            : set(tools.get_installed_sdks())  # Values
         }
