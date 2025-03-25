@@ -135,9 +135,8 @@ class Configuration(ConfigurationBase):
         'jacop:1.0' : {
             'bm'             : { 'jacop' },                     # Values
             'bm_version'     : { '1.0' },                       # Values
-            'bm_workload'    : { 'mzc18_1','mzc18_2','mzc18_3','mzc18_4' }, # Values
+            'bm_workload'    : { 'mzc18_1','mzc18_2','mzc18_3','mzc18_4','mzc18_5','mzc18_6' }, # Values
             'source_version' : { '8' },                         # Values
-            'stack_size'     : { '4M' },                        # Lower limit
             'jre'            : set(tools.get_installed_sdks()), # Values
             'jdk'            : set(tools.get_installed_sdks())  # Values
         },
