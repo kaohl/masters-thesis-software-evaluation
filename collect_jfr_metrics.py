@@ -56,9 +56,10 @@ def get_compilations(jfr_file):
     ])
     result = subprocess.run(
         cmd,
-        shell = True,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT
+        shell      = True,
+        executable = '/bin/bash',
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT
     )
     compilations = dict() # method => dict(<attributes>)
     compilation  = None

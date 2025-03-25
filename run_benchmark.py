@@ -42,10 +42,11 @@ def deploy_benchmark(configuration, clean, context = None, import_dir = None):
     DAIVY_HOME = os.environ['DAIVY_HOME']
     result     = subprocess.run(
         tools.sdk_run(configuration.jdk(), cmd),
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT,
-        shell = True,
-        cwd = DAIVY_HOME
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT,
+        shell      = True,
+        executable = '/bin/bash',
+        cwd        = DAIVY_HOME
     )
 
     if result.returncode != 0:
@@ -101,9 +102,10 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
     print("-" * 27)
     result = subprocess.run(
         tools.sdk_run(configuration.jre(), code),
-        shell  = True,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT
+        shell      = True,
+        executable = '/bin/bash',
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT
     )
     text = result.stdout.decode('utf-8')
     if result.returncode != 0:

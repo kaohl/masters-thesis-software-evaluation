@@ -22,7 +22,12 @@ def resolve_classpath(coord, confs):
                 '--confs',
                 ",".join(confs)
             ])
-            subprocess.run(cmd, shell = True, cwd = DAIVY_HOME)
+            subprocess.run(
+                cmd,
+                shell      = True,
+                executable = '/bin/bash',
+                cwd        = DAIVY_HOME
+            )
 
             with open(classpath_file.name, 'r') as cpf:
                 classpath.extend([ x.strip() for x in cpf.readlines()])
@@ -48,7 +53,12 @@ def get_project_info(coord):
             '--info',
             tempdir
         ])
-        subprocess.run(cmd, shell = True, cwd = DAIVY_HOME)
+        subprocess.run(
+            cmd,
+            shell      = True,
+            executable = '/bin/bash',
+            cwd        = DAIVY_HOME
+        )
         with open(Path(tempdir) / 'build-order.txt', 'r') as f:
             build_order.extend([x.strip() for x in f.readlines()])
         with open(Path(tempdir) / 'source-projects.txt', 'r') as f:
@@ -75,10 +85,11 @@ def export_project_sources(coord):
         ])
         result = subprocess.run(
             cmd,
-            stdout = subprocess.PIPE,
-            stderr = subprocess.STDOUT,
-            shell  = True,
-            cwd    = DAIVY_HOME
+            stdout     = subprocess.PIPE,
+            stderr     = subprocess.STDOUT,
+            shell      = True,
+            executable = '/bin/bash',
+            cwd        = DAIVY_HOME
         )
         if result.returncode != 0:
             raise ValueError("Export failed", result.stdout.decode('utf-8'))

@@ -44,7 +44,7 @@ class ConfigurationBase:
         return next_value_lists
 
     def get_all_combinations(self):
-        parameters = [ (key, options) for key, options in self._options.items() ]
+        parameters = [ (key, options) for key, options in sorted(self._options.items(), key = lambda it: it[0]) ]
         return [ self._configuration_type().init_from_dict(dict(value_list)) for value_list in self._all_rec(parameters) ]
 
     def _clobber(self, key, value = None):

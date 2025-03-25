@@ -11,9 +11,10 @@ class TestSDK(unittest.TestCase):
             with self.subTest(sdk = sdk):
                 result = subprocess.run(
                     tools.sdk_run(sdk, 'java -version'),
-                    shell  = True,
-                    stdout = subprocess.PIPE,
-                    stderr = subprocess.STDOUT
+                    shell      = True,
+                    executable = '/bin/bash',
+                    stdout     = subprocess.PIPE,
+                    stderr     = subprocess.STDOUT
                 )
                 self.assertTrue(result.stdout.decode(encoding = 'utf-8').find(text) != -1)
 

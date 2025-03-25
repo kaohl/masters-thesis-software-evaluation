@@ -50,9 +50,10 @@ def get_installed_sdks(refresh = False):
         return _installed_sdks_cache
     result = subprocess.run(
         sdkman_command('sdk list java'),
-        shell = True,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT
+        shell      = True,
+        executable = '/bin/bash',
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT
     )
     p1   = re.compile('\\| installed  \\| ([\\d.\\w-]+)')
     p2   = re.compile('\\| local only \\| ([\\d.\\w-]+)')
@@ -73,7 +74,8 @@ def sdk_install(sdk):
         return
     result = subprocess.run(
         sdkman_command('sdk install java {}'.format(sdk)),
-        shell = True
+        shell      = True,
+        executable = '/bin/bash'
     )
     if not result.returncode == 0:
         raise ValueError("Could not install specified sdk: " + sdk)
@@ -81,9 +83,10 @@ def sdk_install(sdk):
 def sdk_home(sdk):
     result = subprocess.run(
         sdkman_command('sdk home java {}'.format(sdk)),
-        shell = True,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT
+        shell      = True,
+        executable = '/bin/bash',
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT
     )
     if result.returncode != 0:
         raise ValueError("Could not resolve home for sdk {}".format(sdk))
@@ -114,9 +117,10 @@ def sdk_of_minimum_major_version(major_version):
 def sdk_current():
     result = subprocess.run(
         sdkman_command('sdk current java'),
-        shell  = True,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT
+        shell      = True,
+        executable = '/bin/bash',
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT
     )
     sdk = result.stdout.decode('utf-8').strip().split(' ')[3].strip()
     return sdk

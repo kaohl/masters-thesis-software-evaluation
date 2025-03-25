@@ -249,7 +249,11 @@ def prepare_eclipse_workspace(project, path):
         '--out',
         'output',           # <workspace>/output
     ])
-    subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd), shell = True)
+    subprocess.run(
+        tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd),
+        shell      = True,
+        executable = '/bin/bash'
+    )
 
     ## TODO: All cache files may not be generated if the refactoring scope is small.
     ##       This is a temporary fix to create them as empty files if that happens.
@@ -364,7 +368,11 @@ def refactor(workspace_location, data_location, descriptor):
         ])
         print("REFACTOR", cmd)
         # TODO: See if we can get the subprocess command to write directly to file instead of explicit redirection.
-        subprocess.run(tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd + ' > ' + str(workspace / 'output.log')), shell = True)
+        subprocess.run(
+            tools.sdk_run(tools.sdk_of_minimum_major_version(21), cmd + ' > ' + str(workspace / 'output.log')),
+            shell      = True,
+            executable = '/bin/bash'
+        )
 
         ws_output = workspace / 'output'
 

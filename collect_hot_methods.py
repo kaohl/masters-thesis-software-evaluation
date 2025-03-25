@@ -36,9 +36,10 @@ def get_method_line_count(jfr_file):
     ])
     result = subprocess.run(
         cmd,
-        shell = True,
-        stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT
+        shell      = True,
+        executable = '/bin/bash',
+        stdout     = subprocess.PIPE,
+        stderr     = subprocess.STDOUT
     )
     methods = dict() # (name, lino) => count
     for line in result.stdout.decode('utf-8').split(os.linesep):

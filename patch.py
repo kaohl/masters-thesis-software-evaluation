@@ -12,7 +12,12 @@ def apply_patch(patch, target_dir):
             "<",
             str(patch)
         ])
-        subprocess.run(cmd, shell = True, cwd = str(target_dir))
+        subprocess.run(
+            cmd,
+            shell      = True,
+            executable = '/bin/bash',
+            cwd        = str(target_dir)
+        )
 
 def create_patch(old, new, out):
     # We use the /tmp directory as root here
@@ -37,4 +42,9 @@ def create_patch(old, new, out):
             ">",
             str(out)
         ])
-        subprocess.run(diff_cmd, shell = True)
+        subprocess.run(
+            diff_cmd,
+            shell      = True,
+            executable = '/bin/bash'
+        )
+
