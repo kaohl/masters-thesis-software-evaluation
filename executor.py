@@ -8,7 +8,16 @@ from multiprocessing import Process, Queue
 # Example adapted from here:
 # https://docs.python.org/3/library/multiprocessing.html
 
-NUMBER_OF_WORKERS = 4
+def get_number_of_cores():
+    result = subprocess.run(
+        "nproc --all",
+        shell  = True,
+        stdout = subprocess.PIPE,
+        stderr = subprocess.STDOUT
+    )
+    return int(result.stdout.decode('utf-8').strip())
+
+NUMBER_OF_WORKERS = get_number_of_cores()
 BATCH_SIZE        = NUMBER_OF_WORKERS
 
 def worker(input, output):
