@@ -1,0 +1,9 @@
+bm             = luindex
+bm_version     = 1.0
+bm_workload    = small
+heap_size      = 2G
+jdk            = 17.0.12-oracle, 17.0.14-tem
+jre            = 17.0.12-oracle, 17.0.14-tem
+source_version = 11
+stack_size     = 1M
+target_version = 17
