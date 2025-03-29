@@ -1,6 +1,9 @@
 *~
 *.jfr
-experiments
+experiments/data
+experiments/**/workspaces
+experiments/**/results
+experiments/**/descriptors.txt
 deployments
 workspaces
 temp
