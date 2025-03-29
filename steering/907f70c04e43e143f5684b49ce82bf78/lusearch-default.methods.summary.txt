@@ -1,0 +1,662 @@
+org.apache.lucene.util.compress.LZ4.decompress(DataInput, int, byte[], int),4135
+java.nio.ByteBuffer.getArray(int, byte[], int, int),2754
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader$BlockState.doReset(int),1307
+org.apache.lucene.store.ByteBufferGuard.ensureValid(),1012
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.jjCheckNAddStates(int, int),550
+jdk.internal.misc.ScopedMemoryAccess.getByteInternal(ScopedMemoryAccess$Scope, Object, long),507
+org.apache.lucene.codecs.lucene90.compressing.StoredFieldsInts.readInts8(IndexInput, int, long[], int),491
+java.nio.Buffer.nextGetIndex(),438
+java.nio.Buffer.position(),368
+jdk.internal.util.Preconditions.checkFromIndexSize(int, int, int, BiFunction),315
+java.nio.Buffer.position(int),310
+org.apache.lucene.util.PriorityQueue.downHeap(int),251
+org.apache.lucene.store.ByteBufferIndexInput.readByte(),211
+java.nio.Buffer.nextGetIndex(int),207
+org.apache.lucene.store.ByteBufferGuard.getByte(ByteBuffer),196
+jdk.internal.misc.Unsafe.copyMemory(Object, long, Object, long, long),194
+org.apache.lucene.store.ByteBufferIndexInput.readShort(),183
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.<init>(SegmentTermsEnum, int),175
+java.util.DualPivotQuicksort.sort(DualPivotQuicksort$Sorter, int[], int, int, int),165
+org.apache.lucene.codecs.lucene90.LZ4WithPresetDictCompressionMode$LZ4WithPresetDictDecompressor.readCompressedLengths(DataInput, int, int, int),149
+java.nio.Buffer.scope(),144
+java.util.Arrays.fill(long[], int, int, long),144
+java.nio.Buffer.checkIndex(int),139
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.jjMoveNfa_2(int, int),128
+java.nio.DirectByteBuffer.ix(int),118
+org.dacapo.lusearch.Search$QueryProcessor.doPagingSearch(Query),108
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.getNextToken(),99
+java.nio.ByteBuffer.get(byte[], int, int),99
+org.apache.lucene.search.HitQueue.lessThan(Object, Object),92
+org.apache.lucene.store.ByteBufferGuard.getShort(ByteBuffer),91
+jdk.internal.util.ArraysSupport.mismatch(byte[], int, byte[], int, int),82
+org.apache.lucene.search.HitQueue.lessThan(ScoreDoc, ScoreDoc),77
+org.apache.lucene.codecs.lucene90.LZ4WithPresetDictCompressionMode$LZ4WithPresetDictDecompressor.decompress(DataInput, int, int, int, BytesRef),76
+org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector$1.collect(int),73
+org.apache.lucene.search.TaskExecutor$TaskGroup.lambda$createTask$0(AtomicBoolean, Callable),72
+org.dacapo.harness.LatencyReporter.partition(int, int),67
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.getFrame(int),64
+org.apache.lucene.util.compress.LowercaseAsciiCompression.decompress(DataInput, byte[], int),64
+org.apache.lucene.search.similarities.BM25Similarity$BM25Scorer.score(float, long),61
+org.apache.lucene.queryparser.charstream.FastCharStream.refill(),57
+org.apache.lucene.store.ByteArrayDataInput.readVLong(),56
+java.lang.String.<init>(byte[], int, int, Charset),54
+org.apache.lucene.util.PriorityQueue.<init>(int, Supplier),54
+org.apache.lucene.search.similarities.BM25Similarity.idfExplain(CollectionStatistics, TermStatistics),52
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.jjCheckNAdd(int),51
+org.apache.lucene.store.ByteArrayDataInput.readVInt(),49
+org.apache.lucene.util.PriorityQueue.pop(),49
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.seekExact(BytesRef),49
+org.apache.lucene.util.fst.ReverseRandomAccessReader.readBytes(byte[], int, int),47
+org.apache.lucene.document.FieldType.<init>(IndexableFieldType),46
+org.apache.lucene.util.fst.FST.findTargetArc(int, FST$Arc, FST$Arc, FST$BytesReader),46
+org.apache.lucene.search.TopScoreDocCollector.updateMinCompetitiveScore(Scorable),44
+org.dacapo.harness.LatencyReporter.smoothedStartTime(int),42
+org.apache.lucene.store.ByteBufferIndexInput.readLongs(long[], int, int),42
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.decodeMetaData(),38
+java.lang.String.equals(Object),35
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum$OutputAccumulator.<init>(),35
+org.apache.lucene.search.TermScorer.score(),35
+org.apache.lucene.codecs.lucene90.Lucene90NormsProducer$3.longValue(),33
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.loadBlock(),32
+org.apache.lucene.search.Weight$DefaultBulkScorer.scoreAll(LeafCollector, DocIdSetIterator, TwoPhaseIterator, Bits),32
+java.lang.String.length(),32
+org.apache.lucene.search.TopDocsCollector.topDocs(int, int),31
+org.apache.lucene.util.BytesRef.<init>(int),30
+org.apache.lucene.backward_codecs.lucene90.ForUtil.<init>(),30
+java.nio.Buffer.<init>(int, int, int, int, MemorySegmentProxy),30
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader.decodeTerm(DataInput, FieldInfo, BlockTermState, boolean),29
+java.util.ArrayList.<init>(int),29
+org.apache.lucene.util.fst.ReverseRandomAccessReader.readByte(),29
+org.apache.lucene.store.ByteBufferIndexInput.buildSlice(ByteBuffer[], long, long),28
+jdk.internal.misc.Unsafe.convEndian(boolean, short),28
+org.apache.lucene.store.DataInput.readVInt(),28
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.document(int, StoredFieldVisitor),28
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.reset(Lucene90PostingsFormat$IntBlockTermState, int),28
+java.io.BufferedWriter.write(String, int, int),27
+org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.readByte(long),27
+org.apache.lucene.search.similarities.BM25Similarity.scorer(float, CollectionStatistics, TermStatistics[]),27
+org.apache.lucene.util.packed.DirectMonotonicReader.getBounds(long),26
+org.apache.lucene.search.LeafSimScorer.getNormValue(int),26
+org.apache.lucene.store.DataInput.readString(),26
+java.util.Arrays.compareUnsigned(byte[], int, int, byte[], int, int),25
+org.apache.lucene.util.fst.FST.readArcByDirectAddressing(FST$Arc, FST$BytesReader, int, int),25
+java.lang.ThreadLocal$ThreadLocalMap.getEntry(ThreadLocal),25
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.scanToTermLeaf(BytesRef, boolean),25
+org.apache.lucene.util.packed.DirectMonotonicReader.get(long),25
+org.apache.lucene.util.fst.FST.readArc(FST$Arc, FST$BytesReader),24
+java.util.HashMap.getNode(Object),23
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.initIndexInput(),22
+java.io.PrintWriter.write(String, int, int),22
+java.io.PrintWriter.println(String),22
+org.apache.lucene.search.TopDocs.mergeAux(Sort, int, int, TopDocs[], Comparator),22
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader$BlockState.document(int),22
+jdk.internal.misc.Unsafe.getShortUnaligned(Object, long, boolean),20
+org.apache.lucene.search.TopDocsCollector.populateResults(ScoreDoc[], int),20
+java.io.BufferedReader.readLine(boolean, boolean[]),20
+org.dacapo.harness.LatencyReporter.swap(int, int),19
+org.apache.lucene.search.Explanation.<init>(boolean, Number, String, Collection),19
+java.io.PrintWriter.newLine(),19
+org.apache.lucene.util.BytesRefBuilder.grow(int),18
+java.lang.ThreadLocal.get(),18
+org.apache.lucene.codecs.lucene90.compressing.StoredFieldsInts.readInts(IndexInput, int, long[], int),18
+org.dacapo.lusearch.Search$QueryProcessor.run(),18
+java.util.ArrayList$Itr.next(),17
+org.apache.lucene.search.TaskExecutor$TaskGroup.invokeAll(Executor),17
+java.util.DualPivotQuicksort.mixedInsertionSort(int[], int, int, int),16
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.<init>(FieldReader),16
+org.apache.lucene.search.TopScoreDocCollectorManager.<init>(int, ScoreDoc, int, boolean),15
+java.nio.Buffer.limit(int),15
+org.apache.lucene.store.ByteBufferIndexInput.newCloneInstance(String, ByteBuffer[], int, long),15
+java.lang.ThreadLocal$ThreadLocalMap.set(ThreadLocal, Object),15
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.getArc(int),15
+java.nio.MappedByteBuffer.<init>(int, int, int, int, FileDescriptor, boolean, MemorySegmentProxy),14
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.pushFrame(FST$Arc, int),14
+org.apache.lucene.index.SegmentInfo.maxDoc(),14
+java.util.Arrays.rangeCheck(int, int, int),14
+java.util.ArrayList.add(Object),14
+java.util.Arrays.copyOfRange(byte[], int, int),13
+org.apache.lucene.util.CloseableThreadLocal.maybePurge(),13
+org.apache.lucene.search.IndexSearcher.search(Weight, CollectorManager, Collector),13
+org.apache.lucene.util.fst.BitTableUtil.readUpTo8Bytes(int, FST$BytesReader),13
+org.apache.lucene.store.ByteArrayDataInput.reset(byte[], int, int),13
+org.apache.lucene.codecs.lucene90.Lucene90NormsProducer.getNorms(FieldInfo),13
+org.dacapo.harness.LatencyReporter.meteredLatency(int[], int, boolean),12
+org.dacapo.harness.LatencyReporter.reportLatency(String, boolean, boolean, boolean, int),12
+java.io.StringReader.read(char[], int, int),12
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum$OutputAccumulator.readByte(),12
+org.apache.lucene.util.ArrayUtil.oversize(int, int),12
+org.apache.lucene.index.FieldInfos.fieldInfo(int),12
+org.apache.lucene.index.IndexReader.ensureOpen(),12
+org.apache.lucene.document.FieldType.checkIfFrozen(),12
+java.lang.String.coder(),12
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.refillDocs(),11
+java.lang.StringConcatHelper.newString(byte[], long),11
+java.nio.LongBuffer.getArray(int, long[], int, int),11
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockImpactsDocsEnum.advance(int),11
+jdk.internal.misc.Unsafe.checkOffset(Object, long),11
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.ReInitRounds(),11
+org.apache.lucene.store.DataInput.readVLong(boolean),11
+java.util.TreeMap.getEntry(Object),10
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.scanToTermNonLeaf(BytesRef, boolean),10
+java.util.ArrayList.add(Object, Object[], int),10
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader.readVIntBlock(IndexInput, long[], long[], int, boolean),10
+sun.security.provider.SHA.implCompress0(byte[], int),9
+org.apache.lucene.util.fst.FST.getFirstArc(FST$Arc),9
+java.util.ArrayList.grow(),9
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum$OutputAccumulator.setFloorData(ByteArrayDataInput),9
+org.apache.lucene.store.IndexInput.toString(),9
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum$OutputAccumulator.push(BytesRef),9
+org.apache.lucene.queryparser.charstream.FastCharStream.<init>(Reader),9
+java.util.ArrayList.grow(int),9
+org.apache.lucene.util.packed.DirectMonotonicReader.binarySearch(long, long, long),9
+java.lang.invoke.VarHandleGuards.guard_LI_V(VarHandle, Object, int, VarHandle$AccessDescriptor),9
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.<init>(Lucene90PostingsReader, FieldInfo),9
+org.apache.lucene.search.TermQuery$TermWeight.<init>(TermQuery, IndexSearcher, ScoreMode, float, TermStates),9
+org.apache.lucene.index.CodecReader.terms(String),9
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum$OutputAccumulator.prepareRead(),8
+org.apache.lucene.search.Scorer.<init>(Weight),8
+org.apache.lucene.store.ByteBufferGuard.getByte(ByteBuffer, int),8
+org.apache.lucene.index.SlowImpactsEnum.docID(),8
+org.apache.lucene.index.Term.field(),8
+java.lang.invoke.VarHandleInts$FieldInstanceReadWrite.compareAndSet(VarHandle, Object, int, int),8
+org.apache.lucene.store.ByteBufferGuard.getShort(ByteBuffer, int),8
+org.apache.lucene.util.ArrayUtil.growExact(byte[], int),8
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.serializedDocument(int),7
+java.nio.ByteBuffer.<init>(int, int, int, int, byte[], int, MemorySegmentProxy),7
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.nextDoc(),7
+java.nio.LongBuffer.get(long[], int, int),7
+java.lang.StringLatin1.getChars(byte[], int, int, char[], int),7
+java.nio.DirectByteBufferR.slice(),7
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.pushFrame(FST$Arc, long, int),7
+java.util.concurrent.atomic.AtomicInteger.get(),7
+org.apache.lucene.document.DocumentStoredFieldVisitor.stringField(FieldInfo, String),7
+org.apache.lucene.util.ArrayUtil.growNoCopy(byte[], int),7
+org.apache.lucene.search.TermQuery$TermWeight$2.get(long),7
+org.apache.lucene.document.Document.<init>(),7
+org.apache.lucene.document.DocumentStoredFieldVisitor.getDocument(),7
+org.apache.lucene.index.FieldInfos.fieldInfo(String),7
+org.apache.lucene.util.ArrayUtil.grow(byte[], int),7
+org.apache.lucene.queryparser.charstream.FastCharStream.readChar(),7
+org.apache.lucene.index.BaseCompositeReader.document(int, StoredFieldVisitor),7
+java.lang.String.decodeASCII(byte[], int, char[], int, int),7
+org.apache.lucene.store.ByteBufferIndexInput.buildSlice(String, long, long),6
+java.lang.String.checkBoundsOffCount(int, int, int),6
+java.lang.Byte.toUnsignedInt(byte),6
+org.apache.lucene.util.fst.BitTableUtil.countBitsUpTo(int, FST$BytesReader),6
+java.nio.HeapCharBuffer.<init>(int, int, MemorySegmentProxy),6
+org.apache.lucene.util.fst.ByteSequenceOutputs.read(DataInput),6
+java.nio.DirectByteBufferR.<init>(DirectBuffer, int, int, int, int, int, FileDescriptor, boolean, MemorySegmentProxy),6
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.fillTerm(),6
+java.util.Collections$UnmodifiableCollection$1.hasNext(),6
+org.dacapo.lusearch.Search$QueryThread.run(),6
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader$BlockState.contains(int),6
+org.apache.lucene.queryparser.classic.QueryParser.jj_consume_token(int),6
+jdk.internal.misc.Unsafe.allocateUninitializedArray(Class, int),6
+org.apache.lucene.index.Terms.getTerms(LeafReader, String),6
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.advance(int),6
+org.apache.lucene.search.TaskExecutor$TaskGroup.<init>(Collection),6
+java.lang.StringCoding.implEncodeAsciiArray(char[], int, byte[], int, int),6
+org.apache.lucene.index.TermStates.build(IndexSearcher, Term, boolean),6
+java.nio.DirectByteBuffer.get(),6
+org.dacapo.harness.LatencyReporter.sort(int, int),5
+java.lang.Math.toIntExact(long),5
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.getTermBlockOrd(),5
+org.apache.lucene.util.CloseableThreadLocal.get(),5
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockImpactsDocsEnum.freq(),5
+java.util.Collections.unmodifiableList(List),5
+org.dacapo.harness.LatencyReporter.endIdx(int),5
+org.apache.lucene.search.HitQueue.lambda$new$0(boolean),5
+org.apache.lucene.util.packed.DirectReader$DirectPackedReader12.get(long),5
+org.apache.lucene.search.ImpactsDISI.advance(int),5
+org.apache.lucene.search.ImpactsDISI.nextDoc(),5
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader.findFirstGreater(long[], int, int),5
+org.apache.lucene.search.ImpactsDISI.advanceTarget(int),5
+java.nio.DirectByteBufferR.duplicate(),5
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader.prefixSum(long[], int, long),5
+org.apache.lucene.search.IndexSearcher.search(List, Weight, Collector),5
+org.apache.lucene.backward_codecs.lucene90.PForUtil.expand32(long[]),5
+org.apache.lucene.util.PriorityQueue.top(),5
+java.util.Collections$UnmodifiableCollection$1.<init>(Collections$UnmodifiableCollection),5
+org.dacapo.harness.LatencyReporter.startIdx(int, int),5
+java.lang.StringConcatHelper.mix(long, int),5
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.readField(DataInput, StoredFieldVisitor, FieldInfo, int),5
+java.nio.DirectByteBuffer.<init>(DirectBuffer, int, int, int, int, int, FileDescriptor, boolean, MemorySegmentProxy),5
+org.apache.lucene.queryparser.classic.QueryParser.Query(String),5
+org.apache.lucene.index.ReaderUtil.subIndex(int, int[]),5
+org.apache.lucene.index.CodecReader.getNormValues(String),5
+org.apache.lucene.document.Document.add(IndexableField),5
+org.apache.lucene.search.TopDocs$ScoreMergeSortQueue.<init>(TopDocs[], Comparator),5
+java.lang.StringConcatHelper.prepend(long, byte[], String),5
+java.lang.String.isLatin1(),5
+org.apache.lucene.document.FieldType.setIndexOptions(IndexOptions),4
+jdk.internal.misc.Unsafe.checkSize(long),4
+org.dacapo.harness.LatencyReporter.end(int),4
+org.apache.lucene.backward_codecs.lucene90.PForUtil.prefixSum32(long[], long),4
+java.util.ArrayList.iterator(),4
+org.apache.lucene.codecs.perfield.PerFieldPostingsFormat$FieldsReader.terms(String),4
+org.apache.lucene.store.IndexInput.getFullSliceDescription(String),4
+java.nio.MappedByteBuffer.fileDescriptor(),4
+org.apache.lucene.store.ByteArrayDataInput.readBytes(byte[], int, int),4
+java.io.BufferedReader.<init>(Reader, int),4
+org.apache.lucene.search.TermStatistics.<init>(BytesRef, long, long),4
+org.apache.lucene.store.ByteBufferIndexInput.setCurBuf(ByteBuffer),4
+org.apache.lucene.search.CollectionStatistics.<init>(String, long, long, long, long),4
+java.lang.String.checkBoundsBeginEnd(int, int, int),4
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.jjMoveStringLiteralDfa0_2(),4
+org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.<init>(String, ByteBuffer, long, int, ByteBufferGuard),4
+java.util.concurrent.FutureTask.set(Object),4
+java.util.Arrays.fill(long[], long),4
+java.lang.String.compareTo(String),4
+org.dacapo.harness.LatencyReporter.start(int),4
+org.apache.lucene.search.ScoreMode.needsScores(),4
+org.apache.lucene.analysis.CachingTokenFilter.incrementToken(),4
+org.apache.lucene.queryparser.classic.QueryParser.jj_3R_MultiTerm_383_3_3(),4
+java.util.Collections$UnmodifiableCollection$1.next(),4
+org.apache.lucene.search.TermQuery$TermWeight.scorerSupplier(LeafReaderContext),4
+java.lang.StringConcatHelper.stringOf(Object),4
+org.apache.lucene.search.TopDocsCollector.topDocsSize(),4
+org.apache.lucene.codecs.lucene90.compressing.FieldsIndexReader.getStartPointer(int),4
+org.apache.lucene.index.TermStates.<init>(Term, IndexReaderContext),4
+java.lang.StringCoding.hasNegatives(byte[], int, int),4
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.scanToFloorFrame(BytesRef),4
+org.apache.lucene.queryparser.classic.QueryParser.Clause(String),4
+org.dacapo.harness.LatencyReporter.start(),4
+java.lang.invoke.VarHandleInts$FieldInstanceReadWrite.setRelease(VarHandle, Object, int),4
+org.apache.lucene.search.TermScorer.<init>(Weight, ImpactsEnum, LeafSimScorer, boolean),4
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockImpactsDocsEnum.advanceShallow(int),4
+org.apache.lucene.util.fst.FST.readArcByDirectAddressing(FST$Arc, FST$BytesReader, int),4
+java.lang.StringLatin1.inflate(byte[], int, char[], int, int),4
+java.lang.StringLatin1.indexOf(byte[], int, byte[], int, int),4
+java.lang.StringConcatHelper.mix(long, String),3
+org.apache.lucene.util.BytesRefBuilder.setByteAt(int, byte),3
+org.apache.lucene.search.TopScoreDocCollector.newTopDocs(ScoreDoc[], int),3
+org.apache.lucene.codecs.MultiLevelSkipListReader.<init>(IndexInput, int, int, int),3
+org.apache.lucene.queryparser.classic.QueryParserBase.parse(String),3
+org.apache.lucene.index.IndexReader.document(int),3
+org.apache.lucene.document.Document.get(String),3
+org.apache.lucene.search.Weight$DefaultBulkScorer.score(LeafCollector, Bits, int, int),3
+org.apache.lucene.store.ByteArrayDataInput.readByte(),3
+org.apache.lucene.search.TopScoreDocCollector.<init>(int, HitsThresholdChecker, MaxScoreAccumulator),3
+java.nio.charset.CharsetDecoder.replaceWith(String),3
+sun.nio.cs.UTF_8.updatePositions(Buffer, int, Buffer, int),3
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsFormat$IntBlockTermState.copyFrom(TermState),3
+java.lang.Integer.valueOf(int),3
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader.newTermState(),3
+org.apache.lucene.document.Field.<init>(String, CharSequence, IndexableFieldType),3
+java.lang.String.getBytes(byte[], int, byte),3
+org.apache.lucene.codecs.lucene90.Lucene90NormsProducer$DenseNormsIterator.advanceExact(int),3
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.freq(),3
+org.apache.lucene.util.fst.FST.readLabel(DataInput),3
+org.apache.lucene.search.TermQuery.createWeight(IndexSearcher, ScoreMode, float),3
+org.apache.lucene.search.LeafSimScorer.score(int, float),3
+java.nio.charset.CharsetDecoder.decode(ByteBuffer),3
+org.apache.lucene.codecs.lucene90.blocktree.FieldReader.readVLongOutput(DataInput),3
+java.util.concurrent.FutureTask.run(),3
+org.apache.lucene.util.AttributeSource.addAttribute(Class),3
+org.apache.lucene.store.ByteBufferIndexInput.<init>(String, ByteBuffer[], long, int, ByteBufferGuard),3
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.ReInit(CharStream),3
+sun.nio.cs.StreamDecoder.readBytes(),3
+org.apache.lucene.search.TermScorer.<init>(Weight, PostingsEnum, LeafSimScorer),3
+org.apache.lucene.search.TermQuery$TermWeight.getTermsEnum(LeafReaderContext),3
+sun.nio.cs.UTF_8$Decoder.decodeArrayLoop(ByteBuffer, CharBuffer),3
+org.apache.lucene.util.BytesRefBuilder.append(byte[], int, int),3
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader.postings(FieldInfo, BlockTermState, PostingsEnum, int),3
+org.apache.lucene.analysis.standard.StandardTokenizerImpl.getNextToken(),3
+org.apache.lucene.store.ByteBufferGuard.getLongs(LongBuffer, long[], int, int),3
+org.apache.lucene.util.AttributeSource.clearAttributes(),3
+org.apache.lucene.queryparser.classic.QueryParser.ReInit(CharStream),3
+org.apache.lucene.search.IndexSearcher.collectionStatistics(String),3
+java.lang.invoke.VarHandle.checkExactAccessMode(VarHandle$AccessDescriptor),3
+java.util.WeakHashMap$HashIterator.hasNext(),3
+org.apache.lucene.util.PriorityQueue.add(Object),3
+org.apache.lucene.util.fst.FST.readFirstArcInfo(long, FST$Arc, FST$BytesReader),3
+java.io.BufferedReader.readLine(),3
+org.apache.lucene.search.IndexSearcher.searchAfter(ScoreDoc, Query, int),3
+java.lang.StringConcatHelper.newArray(long),3
+java.lang.ThreadLocal.set(Object),3
+org.apache.lucene.search.IndexSearcher.termStatistics(Term, int, long),3
+java.nio.ByteBuffer.position(int),3
+java.util.ArrayList.<init>(Collection),3
+org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.getFilePointer(),3
+java.lang.StringConcatHelper.newArrayWithSuffix(String, long),3
+java.util.Objects.requireNonNull(Object),3
+jdk.internal.misc.ScopedMemoryAccess.getByte(ScopedMemoryAccess$Scope, Object, long),3
+sun.net.www.ParseUtil.firstEncodeIndex(String),3
+sun.security.provider.DigestBase.engineUpdate(byte[], int, int),2
+org.dacapo.harness.FileDigest.getText(File, boolean, File),2
+java.lang.invoke.VarHandleGuards.guard_LI_I(VarHandle, Object, int, VarHandle$AccessDescriptor),2
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockImpactsDocsEnum.docID(),2
+java.nio.Buffer.checkIndex(int, int),2
+java.util.ArrayList$Itr.checkForComodification(),2
+org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(String),2
+java.nio.charset.CoderResult.isOverflow(),2
+org.apache.lucene.util.BytesRefBuilder.setLength(int),2
+org.dacapo.harness.LatencyReporter.end(),2
+org.apache.lucene.analysis.tokenattributes.CharTermAttributeImpl.clone(),2
+org.apache.lucene.backward_codecs.lucene90.PForUtil.decodeAndPrefixSum(DataInput, long, long[]),2
+java.lang.Long.valueOf(long),2
+org.apache.lucene.backward_codecs.lucene90.PForUtil.innerPrefixSum32(long[]),2
+java.io.FileOutputStream.write(byte[], int, int),2
+java.util.ArrayList$Itr.hasNext(),2
+org.apache.lucene.util.BytesRef.compareTo(BytesRef),2
+org.apache.lucene.search.TopScoreDocCollector$ScorerLeafCollector.setScorer(Scorable),2
+java.io.PrintWriter.write(String),2
+org.apache.lucene.search.Weight$DefaultBulkScorer.<init>(Scorer),2
+org.apache.lucene.index.FieldInfo.getIndexOptions(),2
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.setFloorData(SegmentTermsEnum$OutputAccumulator),2
+org.apache.lucene.util.ArrayUtil.growNoCopy(int[], int),2
+java.nio.Buffer.limit(),2
+org.apache.lucene.util.fst.ReverseRandomAccessReader.skipBytes(long),2
+org.apache.lucene.search.Explanation.match(Number, String, Explanation[]),2
+java.nio.Buffer.markValue(),2
+java.lang.System$2.encodeASCII(char[], int, byte[], int, int),2
+org.apache.lucene.search.TermQuery$TermWeight$2.<init>(TermQuery$TermWeight, LeafReaderContext, TermsEnum, int),2
+java.io.BufferedWriter.<init>(Writer, int),2
+org.apache.lucene.index.SlowImpactsEnum.freq(),2
+org.apache.lucene.util.VirtualMethod.getImplementationDistance(Class),2
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.termState(),2
+org.apache.lucene.util.fst.FST$Arc.nextFinalOutput(),2
+org.apache.lucene.index.SegmentReader.getThreadLocalFieldsReader(),2
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.postings(PostingsEnum, int),2
+java.util.Arrays$ArrayList.iterator(),2
+java.util.Objects.checkIndex(int, int),2
+java.lang.String.<init>(char[], int, int, Void),2
+org.apache.lucene.search.TopScoreDocCollectorManager.newCollector(),2
+org.apache.lucene.analysis.standard.StandardTokenizerImpl.yyreset(Reader),2
+org.apache.lucene.util.AttributeSource.<init>(AttributeSource),2
+java.io.UnixFileSystem.normalize(String),2
+org.apache.lucene.codecs.BlockTermState.copyFrom(TermState),2
+org.apache.lucene.queryparser.classic.QueryParser.jj_2_3(int),2
+java.io.PrintWriter.println(),2
+org.apache.lucene.search.Weight.bulkScorer(LeafReaderContext),2
+java.io.FileInputStream.<init>(File),2
+org.apache.lucene.index.TermStates$TermStateInfo.<init>(TermState, int, int, long),2
+org.apache.lucene.queryparser.classic.QueryParserBase.addClause(List, int, int, Query),2
+org.apache.lucene.backward_codecs.lucene90.ForUtil.decodeTo32(int, DataInput, long[]),2
+org.apache.lucene.index.TermStates.lambda$build$0(LeafReaderContext, Term),2
+org.apache.lucene.backward_codecs.lucene90.ForUtil.shiftLongs(long[], int, long[], int, int, long),2
+java.nio.Buffer.hasRemaining(),2
+org.apache.lucene.util.BytesRefBuilder.<init>(),2
+java.util.HashMap.hash(Object),2
+org.apache.lucene.search.TopDocs.<init>(TotalHits, ScoreDoc[]),2
+java.lang.Class.cast(Object),2
+java.lang.StringConcatHelper.prepend(long, byte[], int, String),2
+org.apache.lucene.analysis.TokenFilter.close(),2
+sun.nio.cs.UTF_8$Encoder.encodeArrayLoop(CharBuffer, ByteBuffer),2
+java.lang.StringUTF16.compress(char[], int, int),2
+org.apache.lucene.util.PriorityQueue.upHeap(int),2
+org.apache.lucene.index.TermStates.register(TermState, int),2
+org.apache.lucene.analysis.TokenStream.<init>(AttributeSource),2
+org.apache.lucene.store.IndexInput.<init>(String),2
+java.nio.HeapByteBuffer.compact(),2
+org.apache.lucene.analysis.standard.StandardTokenizerImpl.yyResetPosition(),2
+java.io.BufferedWriter.ensureOpen(),2
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.scanToTerm(BytesRef, boolean),2
+org.apache.lucene.analysis.CharacterUtils.toLowerCase(char[], int, int),2
+java.nio.HeapCharBuffer.toString(int, int),2
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsFormat$IntBlockTermState.<init>(),2
+org.apache.lucene.queryparser.classic.QueryParser.Term(String),2
+org.apache.lucene.util.QueryBuilder.createFieldQuery(TokenStream, BooleanClause$Occur, String, boolean, int),2
+java.io.Reader.<init>(),2
+java.lang.String.getChars(int, int, char[], int),2
+org.apache.lucene.search.ImpactsDISI.docID(),2
+java.nio.CharBuffer.arrayOffset(),2
+org.apache.lucene.queryparser.classic.QueryParserBase.discardEscapeChar(String),2
+org.apache.lucene.index.Term.toString(BytesRef),2
+org.apache.lucene.index.BaseCompositeReader.readerIndex(int),2
+java.net.URL.<init>(URL, String, URLStreamHandler),2
+org.dacapo.parser.ConfigFileTokenManager.jjMoveNfa_0(int, int),2
+java.lang.AbstractStringBuilder.append(String),2
+java.lang.StringLatin1.charAt(byte[], int),2
+java.nio.charset.Charset.defaultCharset(),1
+java.lang.invoke.VarForm.getMemberNameOrNull(int),1
+sun.security.provider.ByteArrayAccess.b2iBig64(byte[], int, int[]),1
+jdk.internal.util.Preconditions.checkIndex(int, int, BiFunction),1
+java.security.MessageDigest.update(byte),1
+java.lang.invoke.VarForm.getMemberName(int),1
+java.lang.String.encodeUTF8(byte, byte[], boolean),1
+java.lang.invoke.InvokerBytecodeGenerator.lookupPregenerated(LambdaForm, MethodType),1
+java.lang.StringLatin1.hashCode(byte[]),1
+org.apache.lucene.document.FieldType.vectorEncoding(),1
+java.nio.charset.CharsetDecoder.onUnmappableCharacter(CodingErrorAction),1
+org.apache.lucene.util.ArrayUtil.growExact(int[], int),1
+org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.seek(long),1
+org.apache.lucene.codecs.lucene90.blocktree.Lucene90BlockTreeTermsReader.terms(String),1
+org.apache.lucene.index.FieldInfo.hasVectors(),1
+org.apache.lucene.queryparser.classic.QueryParser.jj_scan_token(int),1
+java.util.Arrays.asList(Object[]),1
+java.lang.String.decodeUTF8_UTF16(byte[], int, int, byte[], int, boolean),1
+org.apache.lucene.queryparser.classic.QueryParser.jj_2_1(int),1
+java.util.ArrayList$Itr.<init>(ArrayList),1
+org.apache.lucene.search.HitsThresholdChecker.getHitsThreshold(),1
+org.apache.lucene.search.similarities.BM25Similarity.idf(long, long),1
+org.apache.lucene.search.ScoreDoc.<init>(int, float, int),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.docFreq(),1
+org.apache.lucene.store.ByteBufferGuard.isInvalidated(),1
+jdk.jfr.internal.handlers.EventHandler.timestamp(),1
+sun.nio.cs.StreamDecoder.read(char[], int, int),1
+org.dacapo.lusearch.Search.main(String[]),1
+org.apache.lucene.analysis.standard.StandardTokenizer.close(),1
+org.apache.lucene.search.TaskExecutor$TaskGroup$1.<init>(TaskExecutor$TaskGroup, Callable, AtomicBoolean),1
+java.lang.System.lineSeparator(),1
+java.io.File.<init>(String),1
+org.apache.lucene.store.ByteBufferIndexInput.readBytes(byte[], int, int),1
+java.nio.ByteBuffer.order(ByteOrder),1
+org.apache.lucene.analysis.tokenattributes.PackedTokenAttributeImpl.clear(),1
+java.nio.Buffer.discardMark(),1
+org.apache.lucene.util.fst.FST.targetHasArcs(FST$Arc),1
+org.apache.lucene.util.AttributeImpl.clone(),1
+org.apache.lucene.util.fst.FST$Arc.flag(int),1
+java.lang.AbstractStringBuilder.<init>(int),1
+org.apache.lucene.index.TermStates.docFreq(),1
+org.apache.lucene.document.FieldType.vectorSimilarityFunction(),1
+org.apache.lucene.search.MaxScoreCache.<init>(ImpactsSource, Similarity$SimScorer),1
+org.apache.lucene.index.SlowImpactsEnum.advance(int),1
+java.lang.String.trim(),1
+java.lang.String.getBytes(byte[], int, int, byte, int),1
+org.apache.lucene.document.DocumentStoredFieldVisitor.needsField(FieldInfo),1
+org.apache.lucene.backward_codecs.lucene90.ForUtil.expand8To32(long[]),1
+org.apache.lucene.util.fst.FST.flag(int, int),1
+java.nio.DirectByteBuffer.attachment(),1
+org.apache.lucene.search.IndexSearcher.getTopReaderContext(),1
+java.util.HashMap.get(Object),1
+org.apache.lucene.codecs.lucene90.blocktree.FieldReader.iterator(),1
+java.util.Collections$UnmodifiableCollection.iterator(),1
+org.apache.lucene.util.CloseableThreadLocal.<init>(),1
+org.apache.lucene.backward_codecs.lucene90.PForUtil.applyExceptions32(int, int, DataInput, long[]),1
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockImpactsDocsEnum.<init>(Lucene90PostingsReader, FieldInfo, Lucene90PostingsFormat$IntBlockTermState),1
+org.apache.lucene.util.AttributeSource.restoreState(AttributeSource$State),1
+org.apache.lucene.document.FieldType.docValuesType(),1
+sun.nio.cs.StreamEncoder.writeBytes(),1
+java.lang.ClassValue.match(ClassValue$Entry),1
+java.nio.Buffer.remaining(),1
+java.lang.String.hashCode(),1
+jdk.jfr.internal.handlers.EventHandler.isEnabled(),1
+org.apache.lucene.backward_codecs.lucene90.Lucene90ScoreSkipReader$MutableImpactList.<init>(),1
+java.nio.Buffer.capacity(),1
+java.util.AbstractList.<init>(),1
+java.util.AbstractList.iterator(),1
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockImpactsDocsEnum.refillDocs(),1
+org.apache.lucene.document.Field.name(),1
+java.util.TreeMap.get(Object),1
+org.apache.lucene.document.FieldType.getAttributes(),1
+org.apache.lucene.index.TermStates.loadTermsEnum(LeafReaderContext, Term),1
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsFormat$IntBlockTermState.clone(),1
+org.apache.lucene.store.ByteArrayDataInput.skipBytes(long),1
+java.nio.charset.CharsetDecoder.<init>(Charset, float, float, String),1
+java.util.Collections$UnmodifiableCollection.size(),1
+org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector$1.setScorer(Scorable),1
+org.apache.lucene.backward_codecs.lucene90.PForUtil.<init>(ForUtil),1
+org.apache.lucene.index.Term.bytes(),1
+java.lang.ClassValue$ClassValueMap.loadFromCache(ClassValue$Entry[], int),1
+org.apache.lucene.search.TermQuery.toString(String),1
+org.apache.lucene.util.fst.ReverseRandomAccessReader.getPosition(),1
+org.apache.lucene.backward_codecs.lucene90.Lucene90SkipReader.readSkipData(int, IndexInput),1
+org.apache.lucene.index.SegmentReader.getFieldInfos(),1
+java.util.Arrays$ArrayList.toArray(),1
+org.apache.lucene.store.ByteBufferIndexInput.readVInt(),1
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.docID(),1
+sun.nio.cs.StreamDecoder.implRead(char[], int, int),1
+java.nio.charset.CharsetEncoder.flush(ByteBuffer),1
+org.apache.lucene.analysis.Analyzer.<init>(Analyzer$ReuseStrategy),1
+org.apache.lucene.analysis.tokenattributes.CharTermAttributeImpl.growTermBuffer(int),1
+sun.nio.cs.UTF_8$Decoder.decodeLoop(ByteBuffer, CharBuffer),1
+org.apache.lucene.queryparser.classic.QueryParser.jj_3_1(),1
+java.util.AbstractList$Itr.next(),1
+java.lang.ThreadLocal.setInitialValue(),1
+org.apache.lucene.index.PostingsEnum.featureRequested(int, short),1
+org.apache.lucene.search.TermQuery.visit(QueryVisitor),1
+org.apache.lucene.util.ArrayUtil.copyOfSubArray(byte[], int, int),1
+org.apache.lucene.store.ByteBufferGuard.getBytes(ByteBuffer, byte[], int, int),1
+org.apache.lucene.index.Term.<init>(String, BytesRef),1
+org.apache.lucene.util.BytesRefBuilder.copyChars(char[], int, int),1
+java.lang.Math.min(int, int),1
+java.util.WeakHashMap.put(Object, Object),1
+java.util.Arrays.fill(Object[], Object),1
+org.apache.lucene.index.IndexReader.leaves(),1
+java.lang.Math.max(int, int),1
+java.nio.charset.CharsetDecoder.onMalformedInput(CodingErrorAction),1
+org.apache.lucene.queryparser.classic.QueryParser.getToken(int),1
+sun.nio.cs.StreamDecoder.close(),1
+org.apache.lucene.analysis.ReusableStringReader.read(char[], int, int),1
+java.lang.ClassValue.get(Class),1
+org.apache.lucene.search.TopScoreDocCollector.scoreMode(),1
+java.util.WeakHashMap.isEmpty(),1
+org.apache.lucene.analysis.standard.StandardTokenizer.reset(),1
+org.apache.lucene.util.AttributeSource.endAttributes(),1
+java.nio.ByteBuffer.wrap(byte[], int, int),1
+java.io.FileOutputStream.close(),1
+org.apache.lucene.search.BoostAttributeImpl.setBoost(float),1
+sun.nio.cs.UTF_8$Decoder.<init>(Charset),1
+org.apache.lucene.util.AttributeSource.captureState(),1
+java.lang.CharacterDataLatin1.toLowerCase(int),1
+org.apache.lucene.search.IndexSearcher.rewrite(Query, boolean),1
+org.apache.lucene.search.TopScoreDocCollectorManager.reduce(Collection),1
+java.security.AccessController.doPrivileged(PrivilegedAction),1
+org.apache.lucene.index.TermStates.accumulateStatistics(int, long),1
+java.util.Objects.requireNonNull(Object, String),1
+org.apache.lucene.search.HitsThresholdChecker$LocalHitsThresholdChecker.scoreMode(),1
+java.io.FileInputStream.read(byte[], int, int),1
+org.apache.lucene.store.ByteBufferIndexInput.clone(),1
+org.apache.lucene.analysis.TokenFilter.reset(),1
+org.apache.lucene.util.PriorityQueue.<init>(int),1
+java.lang.invoke.DirectMethodHandle.allocateInstance(Object),1
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.jjCheckNAddTwoStates(int, int),1
+org.apache.lucene.analysis.CharArrayMap$EmptyCharArrayMap.containsKey(char[], int, int),1
+org.apache.lucene.index.SegmentReader.maxDoc(),1
+java.util.Arrays$ArrayItr.next(),1
+java.lang.StringConcatHelper.checkOverflow(long),1
+org.apache.lucene.util.BytesRef.<init>(byte[]),1
+java.nio.CharBuffer.position(int),1
+org.apache.lucene.util.PriorityQueue.updateTop(),1
+java.nio.DirectLongBufferU.<init>(DirectBuffer, int, int, int, int, int, MemorySegmentProxy),1
+org.apache.lucene.util.ArrayUtil.growExact(Object[], int),1
+java.util.concurrent.FutureTask.finishCompletion(),1
+org.apache.lucene.store.IndexInput.randomAccessSlice(long, long),1
+org.apache.lucene.analysis.CachingTokenFilter.reset(),1
+java.lang.Character.codePointAt(char[], int, int),1
+org.apache.lucene.search.LeafSimScorer.<init>(Similarity$SimScorer, LeafReader, String, boolean),1
+java.lang.String.valueOf(Object),1
+org.apache.lucene.index.TermStates.totalTermFreq(),1
+org.apache.lucene.search.ScorerSupplier.<init>(),1
+java.lang.StringBuilder.append(String),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.impacts(int),1
+org.apache.lucene.analysis.FilteringTokenFilter.incrementToken(),1
+java.nio.DirectByteBufferR.asLongBuffer(),1
+org.apache.lucene.store.IndexInput.skipBytes(long),1
+org.apache.lucene.search.IndexSearcher.lambda$search$2(LeafReaderContext[], Weight, Collector),1
+org.apache.lucene.util.BytesRef.<init>(byte[], int, int),1
+org.apache.lucene.queryparser.classic.QueryParser.Modifiers(),1
+java.lang.Integer.hashCode(int),1
+java.lang.ref.Reference.refersToImpl(Object),1
+org.apache.lucene.codecs.lucene90.Lucene90NormsProducer.getDataInput(FieldInfo, Lucene90NormsProducer$NormsEntry),1
+org.apache.lucene.util.QueryBuilder.analyzeTerm(String, TokenStream),1
+org.apache.lucene.util.UnicodeUtil.maxUTF8Length(int),1
+org.apache.lucene.store.ByteBufferIndexInput.readVLong(),1
+java.io.BufferedReader.ensureOpen(),1
+org.apache.lucene.analysis.standard.StandardTokenizer.end(),1
+org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector.getLeafCollector(LeafReaderContext),1
+org.apache.lucene.analysis.CachingTokenFilter.fillCache(),1
+org.apache.lucene.queryparser.classic.QueryParser.jj_ntk_f(),1
+org.apache.lucene.util.UnicodeUtil.UTF16toUTF8(char[], int, int, byte[]),1
+java.lang.Character.isHighSurrogate(char),1
+java.lang.Object.<init>(),1
+org.apache.lucene.analysis.ReusableStringReader.close(),1
+org.apache.lucene.store.DataInput.readVLong(),1
+jdk.internal.misc.Unsafe.allocateUninitializedArray0(Class, int),1
+java.nio.charset.CoderResult.isUnderflow(),1
+org.apache.lucene.store.DataInput.readLong(),1
+java.lang.Character.isBmpCodePoint(int),1
+org.apache.lucene.analysis.standard.StandardTokenizer.incrementToken(),1
+java.lang.Long.bitCount(long),1
+org.apache.lucene.util.PriorityQueue.size(),1
+org.apache.lucene.util.AttributeSource.hasAttributes(),1
+java.lang.invoke.MethodType.returnType(),1
+jdk.internal.org.objectweb.asm.MethodVisitor.visitTypeInsn(int, String),1
+java.lang.invoke.InnerClassLambdaMetafactory.generateInnerClass(),1
+jdk.internal.org.objectweb.asm.SymbolTable.addConstantMemberReference(int, String, String, String),1
+java.lang.Class.getName(),1
+jdk.internal.loader.URLClassPath$JarLoader$2.getManifest(),1
+java.lang.ref.Reference.<init>(Object, ReferenceQueue),1
+java.lang.invoke.InvokerBytecodeGenerator.classData(Object),1
+java.util.zip.ZipFile$Source.getEntryPos(String, boolean),1
+java.lang.ClassValue$ClassValueMap.probeBackupLocations(ClassValue$Entry[], ClassValue),1
+java.lang.Module.isNamed(),1
+org.apache.lucene.analysis.standard.StandardTokenizerImpl.zzUnpackcmap_blocks(String, int, int[]),1
+java.lang.CharacterDataLatin1.toUpperCase(int),1
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.<clinit>(),1
+java.util.ArrayList.clear(),1
+java.lang.invoke.InvokerBytecodeGenerator.refKindOpcode(byte),1
+java.lang.invoke.MethodType.invokers(),1
+java.lang.invoke.MemberName.initResolved(boolean),1
+java.lang.ClassLoader.loadClass(String),1
+java.util.jar.JarFile.getJarEntry(String),1
+java.lang.invoke.MethodType.dropParameterTypes(int, int),1
+org.apache.lucene.codecs.CodecUtil.readBEInt(DataInput),1
+java.util.zip.ZipUtils.LG(byte[], int),1
+java.lang.invoke.InvokerBytecodeGenerator.isStaticallyInvocable(MemberName),1
+java.net.URLStreamHandler.toExternalForm(URL),1
+java.lang.ClassLoader.preDefineClass(String, ProtectionDomain),1
+java.util.zip.ZipEntry.<init>(String),1
+org.apache.lucene.codecs.lucene90.Lucene90StoredFieldsFormat$Mode.<clinit>(),1
+sun.net.www.protocol.jar.Handler.parseContextSpec(URL, String),1
+java.lang.String.newStringUTF8NoRepl(byte[], int, int),1
+java.util.jar.JarFile.getVersionedEntry(String, JarEntry),1
+java.util.zip.ZipFile$ZipFileInflaterInputStream.<init>(ZipFile, ZipFile$ZipFileInputStream, ZipFile$CleanableResource, int),1
+java.util.logging.Logger.doSetParent(Logger),1
+java.lang.String.substring(int, int),1
+java.lang.invoke.MethodHandleNatives.canBeCalledVirtual(MemberName),1
+java.lang.invoke.MethodType.leadingReferenceParameter(),1
+java.lang.invoke.BootstrapMethodInvoker.invoke(Class, MethodHandle, String, Object, Object, Class),1
+jdk.internal.org.objectweb.asm.MethodWriter.visitEnd(),1
+com.sun.management.internal.PlatformMBeanProviderImpl$3.<init>(PlatformMBeanProviderImpl),1
+java.lang.AbstractStringBuilder.ensureCapacityInternal(int),1
+java.lang.invoke.InvokerBytecodeGenerator.resolveInvokerMember(Class, String, MethodType),1
+java.util.jar.JarFile.checkForSpecialAttributes(),1
+java.lang.invoke.LambdaForm$Name.<init>(LambdaForm$NamedFunction, Object[]),1
+java.lang.invoke.InvokerBytecodeGenerator.clinit(ClassWriter, String, List),1
+java.lang.invoke.InvokerBytecodeGenerator.emitReturn(LambdaForm$Name),1
+java.lang.invoke.MemberName$Factory.resolve(byte, MemberName, Class, int, boolean),1
+java.lang.invoke.StringConcatFactory.mixer(Class),1
+java.lang.invoke.MethodHandles$Lookup.getDirectField(byte, Class, MemberName),1
+jdk.internal.org.objectweb.asm.MethodWriter.visitTypeInsn(int, String),1
+java.lang.invoke.LambdaForm.returnType(),1
+org.dacapo.parser.SimpleCharStream.UpdateLineColumn(char),1
+sun.nio.fs.UnixFileAttributes.toFileTime(long, long),1
+jdk.internal.loader.BuiltinClassLoader.definePackage(String, Manifest, URL),1
+java.lang.ClassLoader.getClassLoadingLock(String),1
+java.util.Objects.equals(Object, Object),1
+java.net.URI$Parser.scan(int, int, long, long),1
+jdk.internal.org.objectweb.asm.SymbolTable.addConstant(Object),1
+jdk.internal.org.objectweb.asm.SymbolTable.hash(int, String, String, String),1
+java.time.zone.ZoneRules.findTransitionArray(int),1
+jdk.internal.org.objectweb.asm.ByteVector.putUTF8(String),1
+java.lang.invoke.MethodType.equals(Object),1
+jdk.internal.org.objectweb.asm.ClassWriter.visit(int, int, String, String, String, String[]),1
+jdk.nio.zipfs.ZipConstants.cenSigAt(byte[], int),1
+java.nio.MappedByteBuffer.position(int),1
+jdk.internal.loader.BuiltinClassLoader.findLoadedModule(String, String),1
+java.net.URLStreamHandler.setURL(URL, String, String, int, String, String, String, String, String),1
+java.lang.System.setProperty(String, String),1
+sun.net.util.URLUtil.urlNoFragString(URL),1
+jdk.internal.org.objectweb.asm.ClassReader.readUtf(int, int, char[]),1

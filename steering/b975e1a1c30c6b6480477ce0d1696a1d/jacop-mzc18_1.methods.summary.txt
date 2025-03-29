@@ -1,0 +1,268 @@
+org.jacop.constraints.netflow.simplex.NetworkSimplex.dualPivot(Arc),405
+org.jacop.constraints.netflow.simplex.Node.computePotentials(),178
+org.jacop.constraints.netflow.Network.modified(ArcCompanion),164
+org.jacop.constraints.netflow.simplex.Arc.reducedCost(),162
+org.jacop.constraints.netflow.simplex.Arc.isInCut(boolean),153
+org.jacop.constraints.netflow.simplex.Arc.tail(),152
+org.jacop.constraints.netflow.simplex.NetworkSimplex.augmentFlow(Node, Node, int),128
+org.jacop.constraints.netflow.simplex.Danzig.next(),100
+org.jacop.constraints.netflow.simplex.NetworkSimplex.decrementDegree(Node),97
+org.jacop.constraints.netflow.simplex.Node.markTree(boolean),91
+org.jacop.constraints.netflow.simplex.NetworkSimplex.updateTree(Arc, Arc),86
+org.jacop.constraints.netflow.simplex.NetworkSimplex.cost(long),65
+org.jacop.constraints.netflow.simplex.NetworkSimplex.removeArc(Arc),58
+org.jacop.constraints.netflow.simplex.Arc.longCost(),58
+org.jacop.constraints.netflow.simplex.NetworkSimplex.treeSwap(Node, Node, Node),57
+org.jacop.constraints.netflow.simplex.Node.predecessorOnThread(),50
+org.jacop.core.Store.recordBooleanChange(BooleanVar),43
+java.util.LinkedHashMap$LinkedHashIterator.nextNode(),42
+org.jacop.constraints.netflow.simplex.Node.rightMostLeaf(),41
+org.jacop.constraints.netflow.simplex.Node.lca(Node),37
+java.util.ArrayList$Itr.next(),37
+org.jacop.constraints.binpacking.Binpacking.consistency(Store),35
+org.jacop.constraints.Sum.consistency(Store),33
+org.jacop.constraints.netflow.simplex.NetworkSimplex.networkSimplex(int),33
+java.util.PriorityQueue.siftDownComparable(int, Object, Object[], int),31
+org.jacop.constraints.netflow.Pruning.analyzeArc(Arc, int),30
+java.util.HashMap$HashIterator.nextNode(),30
+org.jacop.core.Store.addChanged(Var, int, int),29
+org.jacop.constraints.netflow.simplex.Arc.addFlow(int),23
+org.jacop.constraints.netflow.ArcCompanion.compareTo(ArcCompanion),23
+org.jacop.core.Store.consistency(),22
+org.jacop.constraints.netflow.Pruning.analyze(int),21
+java.util.PriorityQueue.poll(),20
+org.jacop.constraints.netflow.ArcCompanion.compareTo(Object),19
+org.jacop.core.SmallDenseDomain.in(int, Var, int, int),19
+java.util.HashMap.putVal(int, Object, Object, boolean, boolean),18
+org.jacop.constraints.netflow.simplex.Arc.getCompanion(),18
+org.jacop.constraints.netflow.NetworkFlow.consistency(Store),18
+org.jacop.constraints.netflow.Pruning$PercentStrategy.next(),17
+java.util.HashMap.getNode(Object),16
+org.jacop.core.IntVar.min(),16
+org.jacop.core.IntVar.max(),14
+org.jacop.core.Store.removeLevel(int),14
+org.jacop.constraints.binpacking.Binpacking.lbBins(int[], int, int),14
+java.util.ArrayList.add(Object, Object[], int),13
+org.jacop.util.SimpleHashSet.hash(Object),13
+org.jacop.constraints.netflow.Pruning$PercentStrategy.init(),13
+org.jacop.constraints.SumInt.pruneLtEq(long),13
+java.util.HashMap$HashIterator.<init>(HashMap),13
+org.jacop.util.SimpleHashSet.add(Object),11
+org.jacop.constraints.netflow.Network.remove(Arc),10
+java.util.LinkedHashMap.linkNodeLast(LinkedHashMap$Entry),10
+org.jacop.constraints.SumInt.computeInit(),10
+org.jacop.core.IntervalDomain.max(),9
+java.util.ArrayList$Itr.checkForComodification(),8
+java.util.LinkedHashMap$LinkedHashIterator.<init>(LinkedHashMap),8
+java.util.HashMap.clear(),8
+org.jacop.constraints.netflow.NetworkFlow.updateGraph(),8
+java.util.PriorityQueue.siftUpComparable(int, Object, Object[]),8
+org.jacop.constraints.netflow.Network.increaseLevel(),8
+org.jacop.constraints.netflow.ArcCompanion.restore(MutableNetwork),8
+java.util.PriorityQueue.offer(Object),7
+org.jacop.core.IntervalDomain.min(),7
+java.util.LinkedHashMap$LinkedKeySet.iterator(),7
+org.jacop.core.SmallDenseDomain.previousValue(int),7
+org.jacop.core.IntervalDomain.inMax(int, Var, int),7
+org.jacop.core.BoundDomain.in(int, Var, int, int),7
+org.jacop.constraints.netflow.Network.backtrack(),7
+java.util.PriorityQueue.siftUp(int, Object),6
+org.jacop.constraints.XmulYeqZ.consistency(Store),6
+java.util.HashSet.iterator(),6
+java.util.HashMap$KeyIterator.next(),6
+java.util.HashMap$Node.<init>(int, Object, Object, HashMap$Node),5
+org.jacop.core.TimeStamp.update(Object),5
+org.jacop.constraints.netflow.Pruning.pruneNodesWithSmallDegree(),5
+org.jacop.constraints.SumInt.pruneGtEq(long),5
+java.util.AbstractQueue.addAll(Collection),5
+org.jacop.core.IntervalBasedBacktrackableManager.removeLevel(int),5
+java.util.Arrays.fill(Object[], Object),5
+org.jacop.constraints.netflow.simplex.NetworkSimplex.addArcWithFlow(Arc),5
+org.jacop.constraints.netflow.Pruning.analyzeArcHelper(Arc, int),5
+java.util.ArrayList.clear(),4
+org.jacop.util.SimpleHashSet.removeFirst(),4
+org.jacop.core.IntervalDomain.inShift(int, Var, IntDomain, int),4
+org.jacop.constraints.ChannelReif.consistency(Store),4
+org.jacop.util.SimpleHashSet.isEmpty(),4
+org.jacop.util.SimpleHashSet$Entry.add(Object),4
+org.jacop.constraints.SumInt.propagate(int),4
+org.jacop.core.IntVar.singleton(int),4
+org.jacop.core.IntervalDomain.removeLevel(int, Var),4
+org.jacop.constraints.Constraint.removeConstraint(),4
+org.jacop.constraints.netflow.simplex.NetworkSimplex.incrementDegree(Node, Arc),4
+org.jacop.search.DepthFirstSearch.label(int),4
+org.jacop.core.IntervalDomain.inMin(int, Var, int),4
+org.jacop.constraints.netflow.simplex.NetworkSimplex.primalStep(Arc),4
+org.jacop.core.TimeStamp.stamp(),3
+java.util.DualPivotQuicksort.insertionSort(int[], int, int),3
+org.jacop.core.IntervalDomain.singleton(),3
+org.jacop.constraints.netflow.Network.cost(long),3
+org.jacop.constraints.CountBounds.consistency(Store),3
+org.jacop.core.IntervalBasedBacktrackableManager.computeIntervals(),3
+org.jacop.core.IntervalDomain.in(int, Var, IntDomain),3
+org.jacop.constraints.binpacking.Binpacking.queueVariable(int, Var),3
+org.jacop.core.TimeStamp.addLast(Object, int),3
+org.jacop.core.SmallDenseDomain.noIntervals(),3
+org.jacop.constraints.XeqY.consistency(Store),3
+org.jacop.core.TimeStamp.value(),3
+org.jacop.constraints.XplusYeqZ.consistency(Store),3
+org.jacop.util.SparseSet.addMember(int),3
+org.jacop.fz.SimpleCharStream.readChar(),3
+org.jacop.core.SmallDenseDomain.min(),2
+org.jacop.core.IntVar.remove(int),2
+org.jacop.constraints.Max.consistency(Store),2
+org.jacop.core.IntervalDomain.<init>(int),2
+org.jacop.core.IntVar.dom(),2
+java.util.ArrayList.fastRemove(Object[], int),2
+java.util.HashSet.clear(),2
+java.util.DualPivotQuicksort.sort(DualPivotQuicksort$Sorter, int[], int, int, int),2
+org.jacop.constraints.netflow.Network.restore(ArcCompanion),2
+java.util.PriorityQueue$Itr.next(),2
+org.jacop.core.IntervalDomain.in(int, Var, int, int),2
+java.util.ArrayList.iterator(),2
+java.util.DualPivotQuicksort.mixedInsertionSort(int[], int, int, int),2
+org.jacop.fz.constraints.Support$3.consistency(Store),2
+org.jacop.core.SmallDenseDomain.inMax(int, Var, int),2
+org.jacop.core.SmallDenseDomain.removeLevel(int, Var),2
+java.lang.Integer.valueOf(int),2
+org.jacop.search.SimpleSelect.getChoiceVariable(int),2
+org.jacop.core.SmallDenseDomain.inComplement(int, Var, int),2
+org.jacop.constraints.netflow.ArcCompanion.processEvent(IntVar, MutableNetwork),2
+org.jacop.core.IntDomain.mulBounds(int, int, int, int),2
+org.jacop.core.SmallDenseDomain.getSize(long),2
+org.jacop.core.TimeStamp.ensureCapacity(int),2
+org.jacop.core.BoundDomain.inValue(int, IntVar, int),2
+org.jacop.constraints.netflow.ArcCompanion.changeMaxCapacity(int),2
+org.jacop.fz.ParserTokenManager.jjMoveNfa_0(int, int),2
+jdk.internal.loader.Resource.getBytes(),2
+java.lang.invoke.TypeConvertingMethodAdapter.descriptorToName(String),2
+java.lang.invoke.LambdaFormEditor$TransformKey.of(byte, int),1
+java.lang.invoke.LambdaForm$Name.<init>(LambdaForm$NamedFunction, Object[]),1
+java.lang.invoke.StringConcatFactory.parseRecipe(MethodType, String, Object[]),1
+java.lang.constant.DirectMethodHandleDescImpl.<init>(DirectMethodHandleDesc$Kind, ClassDesc, String, MethodTypeDesc),1
+java.lang.invoke.VarHandle.<clinit>(),1
+sun.security.util.KnownOIDs.register(KnownOIDs),1
+org.jacop.core.TimeStamp.removeLevel(int),1
+java.util.HashSet.add(Object),1
+java.util.LinkedHashMap.keySet(),1
+java.util.ArrayList.grow(int),1
+org.jacop.constraints.binpacking.Binpacking.merge(int[], int, int[]),1
+org.jacop.constraints.netflow.simplex.Arc.set(int, int),1
+org.jacop.core.IntervalDomain.singleton(int),1
+org.jacop.core.SmallDenseDomain.getInterval(int),1
+java.util.BitSet.initWords(int),1
+org.jacop.constraints.binpacking.Binpacking.lbNumberBins(),1
+java.util.ArrayList.remove(int),1
+java.util.HashMap.put(Object, Object),1
+org.jacop.constraints.Constraint.arguments(),1
+org.jacop.core.Store.addChanged(Constraint),1
+org.jacop.constraints.netflow.Network.needsUpdate(int),1
+org.jacop.core.IntervalDomain.unionAdapt(int, int),1
+org.jacop.constraints.netflow.ArcCompanion.changeMinCapacity(int),1
+org.jacop.core.IntervalBasedBacktrackableManager.addChanged(int),1
+org.jacop.constraints.Constraint.long2int(long),1
+org.jacop.core.BoundDomain.singleton(int),1
+org.jacop.constraints.Max.swap(int, int),1
+java.util.LinkedHashMap.afterNodeRemoval(HashMap$Node),1
+org.jacop.core.Store.getFirstChanged(),1
+java.lang.Math.max(int, int),1
+java.util.LinkedHashMap$LinkedHashIterator.remove(),1
+org.jacop.core.IntervalDomain.unionAdapt(Interval),1
+java.util.Arrays.rangeCheck(int, int, int),1
+org.jacop.core.IntervalDomain.cloneLight(),1
+org.jacop.constraints.netflow.ArcCompanion.setFlow(int),1
+java.util.LinkedHashMap$LinkedKeyIterator.next(),1
+java.util.HashMap.containsKey(Object),1
+java.util.HashMap.removeNode(int, Object, Object, boolean, boolean),1
+org.jacop.core.IntervalDomain.addDom(IntDomain),1
+java.util.ArrayList.add(Object),1
+org.jacop.core.BoundDomain.removeLevel(int, Var),1
+org.jacop.util.SimpleHashSet$Entry.<init>(SimpleHashSet, Object),1
+java.util.PriorityQueue$Itr.<init>(PriorityQueue),1
+java.util.HashMap$KeyIterator.<init>(HashMap),1
+org.jacop.constraints.netflow.Pruning.wVarIn(ArcCompanion, int),1
+org.jacop.core.BooleanVar.dom(),1
+java.lang.Long.bitCount(long),1
+org.jacop.core.SmallDenseDomain.max(),1
+org.jacop.core.IntVar.domainHasChanged(int),1
+java.util.HashMap.keySet(),1
+org.jacop.core.IntervalDomainValueEnumeration.hasMoreElements(),1
+org.jacop.core.IntervalDomain.contains(int),1
+org.jacop.core.Store.recordChange(Var),1
+org.jacop.search.SmallestDomain.metric(Var),1
+org.jacop.core.BooleanVar.singleton(),1
+java.lang.StringBuilder.<init>(String),1
+org.jacop.fz.OutputArrayAnnotation.toString(),1
+java.lang.Integer.toString(int),1
+org.jacop.search.SimpleSolutionListener.executeAfterSolution(Search, SelectChoicePoint),1
+org.jacop.constraints.netflow.Pruning.nVarInShift(ArcCompanion, IntDomain, int),1
+org.jacop.constraints.binpacking.Binpacking.sum(int[]),1
+org.jacop.search.DepthFirstSearch.<init>(),1
+java.net.URL.<init>(URL, String, URLStreamHandler),1
+java.lang.ClassLoader.getClassLoadingLock(String),1
+org.jacop.fz.OutputArrayAnnotation.contains(Var),1
+java.lang.reflect.AccessibleObject.isAccessChecked(Class),1
+java.lang.invoke.CallSite.<init>(MethodHandle),1
+java.util.HashMap$KeySpliterator.forEachRemaining(Consumer),1
+java.util.HashMap.get(Object),1
+java.lang.invoke.Invokers.linkToTargetMethod(MethodType),1
+java.lang.invoke.InvokerBytecodeGenerator.emitImplicitConversion(LambdaForm$BasicType, Class, Object),1
+jdk.internal.org.objectweb.asm.SymbolTable.addConstant(Object),1
+java.lang.invoke.MethodHandles$Lookup.makeHiddenClassDefiner(MethodHandles$Lookup$ClassFile, Set, boolean),1
+java.util.ArrayList.remove(Object),1
+org.jacop.fz.Parser.jj_3_9(),1
+org.jacop.fz.Parser.jj_consume_token(int),1
+org.jacop.fz.ParserTokenManager.jjFillToken(),1
+org.jacop.fz.Parser.ann_expr(),1
+org.jacop.fz.VariablesParameters.getAnnotations(SimpleNode, int),1
+org.jacop.fz.Parser.jj_2_1(int),1
+java.lang.StringLatin1.lastIndexOf(byte[], int, int),1
+org.jacop.fz.Parser.jj_3R_22(),1
+org.jacop.fz.Parser.jj_2_3(int),1
+org.jacop.fz.Parser.jj_3R_16(),1
+java.lang.Integer.parseInt(String, int),1
+java.util.Collections.singletonSpliterator(Object),1
+java.lang.StringUTF16.getChars(byte[], int, int, char[], int),1
+java.util.StringTokenizer.scanToken(int),1
+java.util.StringTokenizer.countTokens(),1
+sun.util.locale.LocaleObjectCache.get(Object),1
+java.lang.AbstractStringBuilder.ensureCapacityInternal(int),1
+java.util.jar.JarFile.getManifestFromReference(),1
+java.util.zip.ZipFile.getInputStream(ZipEntry),1
+java.util.zip.ZipFile.getZipEntry(String, int),1
+sun.net.www.protocol.jar.Handler.canonicalizeString(String, int),1
+java.util.jar.Manifest.getTrustedAttributes(String),1
+java.lang.String.newStringUTF8NoRepl(byte[], int, int),1
+java.util.Objects.requireNonNull(Object, String),1
+jdk.internal.loader.URLClassPath.getResource(String, boolean),1
+java.util.zip.ZipFile$Source.getEntryPos(String, boolean),1
+java.lang.invoke.InvokerBytecodeGenerator.classFilePrologue(),1
+java.util.concurrent.ConcurrentHashMap.computeIfAbsent(Object, Function),1
+java.lang.invoke.MemberName.isProtected(),1
+jdk.internal.org.objectweb.asm.ByteVector.putUTF8(String),1
+java.lang.invoke.LambdaFormEditor.buffer(),1
+java.util.concurrent.ConcurrentHashMap$Traverser.advance(),1
+java.lang.CharacterDataLatin1.toUpperCase(int),1
+org.dacapo.parser.ConfigFileTokenManager.getNextToken(),1
+java.util.zip.ZipFile$InflaterCleanupAction.run(),1
+java.util.zip.ZipUtils.CENSIZ(byte[], int),1
+java.lang.invoke.MemberName.getMethodOrFieldType(),1
+java.lang.invoke.LambdaForm$Name.useCount(LambdaForm$Name),1
+jdk.internal.org.objectweb.asm.MethodWriter.visitCode(),1
+java.lang.invoke.MemberName.<init>(Class, String, MethodType, byte),1
+sun.invoke.util.Wrapper.isNumeric(),1
+org.dacapo.harness.Data.<clinit>(),1
+java.util.stream.AbstractPipeline.<init>(AbstractPipeline, int),1
+jdk.internal.org.objectweb.asm.MethodWriter.<init>(SymbolTable, int, String, String, String, String[], int),1
+java.nio.DirectByteBuffer.ix(int),1
+jdk.internal.jimage.ImageStringsReader.stringFromByteBufferMatches(ByteBuffer, int, String, int),1
+java.lang.PublicMethods$Key.matches(Method, String, Class[]),1
+java.lang.invoke.InvokerBytecodeGenerator.loadMethod(byte[]),1
+java.lang.ThreadLocal.get(),1
+jdk.internal.misc.ScopedMemoryAccess.getIntInternal(ScopedMemoryAccess$Scope, Object, long),1
+org.apache.commons.cli.Util.stripLeadingHyphens(String),1
+java.util.zip.ZipFile$Source.getEntryHash(int),1
+java.lang.String.concat(String),1
+jdk.internal.loader.ClassLoaders$AppClassLoader.defineOrCheckPackage(String, Manifest, URL),1
+java.util.jar.JarFile.getEntry(String),1
+jdk.internal.loader.BuiltinClassLoader.defineClass(String, Resource),1

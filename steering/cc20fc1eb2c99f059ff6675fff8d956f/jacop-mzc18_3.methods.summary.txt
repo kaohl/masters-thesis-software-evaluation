@@ -1,0 +1,372 @@
+java.util.ArrayList.remove(Object),6153
+java.lang.Object.equals(Object),826
+org.jacop.fz.ParserTokenManager.jjMoveNfa_0(int, int),334
+org.jacop.fz.JJTParserState.openNodeScope(Node),210
+org.jacop.core.Store.recordBooleanChange(BooleanVar),152
+org.jacop.fz.Parser.jj_scan_token(int),140
+org.jacop.fz.SimpleCharStream.UpdateLineColumn(char),129
+org.jacop.fz.SimpleCharStream.readChar(),118
+org.jacop.util.SimpleHashSet.hash(Object),104
+org.jacop.fz.ParserTokenManager.jjCheckNAdd(int),103
+org.jacop.util.SimpleHashSet.removeFirst(),91
+org.jacop.util.QueueForward.queueForward(int, Var),88
+java.lang.String.equals(Object),80
+org.jacop.util.SimpleHashSet.add(Object),67
+java.util.HashMap.getNode(Object),65
+java.util.HashMap.resize(),60
+org.jacop.fz.Parser.jj_2_2(int),60
+org.jacop.fz.ParserTokenManager.getNextToken(),60
+org.jacop.fz.Parser.jj_consume_token(int),58
+java.util.ArrayList.add(Object, Object[], int),57
+java.util.ArrayList.fastRemove(Object[], int),55
+org.jacop.core.IntVar.max(),50
+org.jacop.util.SimpleHashSet$Entry.<init>(SimpleHashSet, Object),49
+org.jacop.core.Store.addChanged(Var, int, int),47
+java.util.HashMap.putVal(int, Object, Object, boolean, boolean),45
+org.jacop.core.IntDomain.putModelConstraint(int, Var, Constraint, int),42
+org.jacop.fz.Parser.jj_ntk(),39
+org.jacop.fz.JJTParserState.popNode(),37
+org.jacop.fz.JJTParserState.closeNodeScope(Node, boolean),37
+org.jacop.core.Store.removeLevel(int),36
+org.jacop.constraints.Reified.consistency(Store),35
+org.jacop.core.IntVar.min(),34
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa0_0(),34
+java.lang.String.startsWith(String, int),29
+org.jacop.fz.OutputArrayAnnotation.contains(Var),25
+org.jacop.util.SimpleHashSet$Entry.add(Object),24
+org.jacop.core.Store.consistency(),24
+java.util.HashMap$Node.<init>(int, Object, Object, HashMap$Node),24
+java.lang.StringLatin1.hashCode(byte[]),24
+java.util.HashMap$HashIterator.nextNode(),23
+org.jacop.core.IntDomain.removeModelConstraint(int, Var, Constraint),22
+org.jacop.fz.Parser.jj_2_9(int),22
+org.jacop.fz.Parser.jj_save(int, int),21
+org.jacop.fz.SimpleNode.jjtAddChild(Node, int),21
+org.jacop.core.IntervalDomain.isIntersecting(IntDomain),18
+org.jacop.fz.Token.newToken(int, String),17
+org.jacop.fz.VariablesParameters.generateVariables(SimpleNode, Tables, Store),17
+org.jacop.fz.SimpleCharStream.BeginToken(),15
+org.jacop.fz.ParserTokenManager.jjCheckNAddStates(int, int),15
+org.jacop.fz.Parser.jj_3R_15(),15
+java.util.HashMap.hash(Object),15
+org.jacop.fz.Parser.annotation(),15
+org.jacop.core.Store.addChanged(Constraint),14
+org.jacop.fz.SimpleCharStream.getBeginColumn(),14
+org.jacop.fz.ParserTokenManager.jjFillToken(),14
+java.util.ArrayList.grow(int),13
+org.jacop.fz.SimpleNode.<init>(int),13
+java.util.HashMap$KeySpliterator.forEachRemaining(Consumer),12
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa1_0(long),12
+org.jacop.fz.Parser.var_decl_items(),12
+org.jacop.constraints.ChannelReif.consistency(Store),11
+java.util.Arrays.fill(Object[], Object),10
+org.jacop.constraints.AndBoolVector.consistency(Store),10
+org.jacop.fz.Tables.getConstant(int),10
+java.lang.Integer.valueOf(int),10
+org.jacop.fz.Parser.scalar_flat_expr(),10
+org.jacop.core.IntervalDomain.min(),9
+org.jacop.fz.Parser.array_literal(),9
+org.jacop.fz.SimpleNode.jjtSetParent(Node),9
+org.jacop.core.TimeStamp.removeLevel(int),8
+org.jacop.constraints.SumBool.entailed(byte),8
+org.jacop.fz.SimpleCharStream.backup(int),8
+org.jacop.fz.SimpleNode.jjtGetChild(int),8
+org.jacop.fz.SimpleCharStream.GetImage(),8
+org.jacop.constraints.XeqY.notSatisfied(),7
+java.lang.PublicMethods$MethodList.filter(Method[], String, Class[], boolean),7
+org.jacop.fz.Constraints.generateAllConstraints(SimpleNode),7
+java.util.ArrayList.add(Object),7
+org.jacop.fz.Parser.var_decl_item(),7
+org.jacop.core.BoundDomain.inValue(int, IntVar, int),6
+org.jacop.core.TimeStamp.value(),6
+org.jacop.constraints.Constraint.removeConstraint(),6
+org.jacop.fz.Parser.constraint_items(),6
+org.jacop.fz.Parser.non_array_flat_exprs(),6
+java.lang.StringUTF16.compress(char[], int, int),6
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa2_0(long, long),6
+org.jacop.fz.Parser.flat_expr(),6
+org.jacop.core.BooleanVar.singleton(),5
+java.util.stream.Nodes$FixedNodeBuilder.accept(Object),5
+org.jacop.constraints.SumBool.filterAndOverflow(IntVar[]),5
+org.jacop.constraints.XlteqY.consistency(Store),5
+org.jacop.constraints.Count.consistency(Store),5
+org.jacop.fz.Tables.removeAliasFromSearch(),5
+org.jacop.fz.Parser.constraint_elem(),5
+org.jacop.fz.Parser.non_array_flat_expr(),5
+java.lang.String.length(),5
+org.jacop.fz.Parser.bool_ti_expr_tail(),5
+java.util.HashMap.containsKey(Object),5
+org.jacop.core.BooleanVar.<init>(Store, String, BoundDomain),5
+org.jacop.fz.VariablesParameters.parseAnnExpr(SimpleNode, int),5
+org.jacop.fz.Parser.ann_expr(),5
+org.jacop.constraints.XeqY.satisfied(),4
+org.jacop.constraints.XorBool.notConsistency(Store),4
+org.jacop.constraints.ChannelReif.<init>(IntVar, Map),4
+org.jacop.fz.constraints.Support.aliasConstraints(),4
+org.jacop.fz.Tables.getAlias(IntVar),4
+org.jacop.constraints.PrimitiveConstraint.impose(Store),4
+org.jacop.fz.Parser.jj_3R_27(),4
+org.jacop.fz.Parser.jj_3_9(),4
+org.jacop.fz.Parser.flat_exprs(),4
+org.jacop.fz.Constraints.generateAlias(SimpleNode),4
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa4_0(long, long),4
+org.jacop.fz.SimpleCharStream.getBeginLine(),4
+org.jacop.fz.VariablesParameters.getScalarFlatExpr_ArrayVar(Store, SimpleNode, int),4
+java.lang.String.decodeASCII(byte[], int, char[], int, int),4
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa3_0(long, long),4
+org.jacop.fz.VariablesParameters.getAnnotations(SimpleNode, int),4
+java.lang.String.<init>(char[], int, int, Void),4
+org.jacop.fz.ParserTokenManager.jjStartNfa_0(int, long),4
+org.jacop.fz.Parser.annotations(),4
+org.jacop.fz.Parser.jj_2_1(int),4
+java.lang.StringLatin1.inflate(byte[], int, char[], int, int),4
+org.jacop.fz.Parser.jj_3R_16(),4
+org.jacop.util.SimpleHashSet.indexFor(int, int),3
+org.jacop.core.IntervalDomain.contains(int),3
+org.jacop.fz.Tables.isOutput(Var),3
+java.util.ArrayList$Itr.next(),3
+org.jacop.fz.constraints.ComparisonConstraints.int_comparison_reif(int, SimpleNode),3
+org.jacop.util.QueueForward.<init>(Collection, Collection),3
+org.jacop.core.TimeStamp.update(Object),3
+org.jacop.constraints.Constraint.impose(Store),3
+org.jacop.constraints.OrBoolSimple.consistency(Store),3
+java.lang.reflect.Method.<init>(Class, String, Class[], Class, Class[], int, int, String, byte[], byte[], byte[]),3
+org.jacop.fz.Parser.jj_3R_19(),3
+org.jacop.fz.Parser.jj_3R_30(),3
+org.jacop.fz.Parser.jj_3R_45(),3
+org.jacop.fz.constraints.ChannelMap.add(IntVar, int, IntVar),3
+org.jacop.fz.Parser.jj_3R_17(),3
+org.jacop.fz.Parser.constraint_item(),3
+org.jacop.fz.ParserTokenManager.jjStartNfaWithStates_0(int, int, int),3
+org.jacop.fz.ParserTokenManager.jjStopAtPos(int, int),3
+org.jacop.fz.JJTParserState.pushNode(Node),3
+java.util.Objects.checkIndex(int, int),3
+org.jacop.core.SmallDenseDomain.getSize(long),3
+org.jacop.fz.Parser.jj_3_4(),3
+org.jacop.fz.Parser.jj_3_2(),3
+org.jacop.core.SimpleBacktrackableManager.setSize(int),3
+org.jacop.core.IntervalDomain.intervalNo(int),2
+org.jacop.core.IntDomain.getEventsInclusion(int),2
+java.util.HashMap.keySet(),2
+org.jacop.constraints.Not.queueVariable(int, Var),2
+java.lang.Integer.<init>(int),2
+org.jacop.constraints.Constraint.<init>(),2
+java.util.stream.AbstractPipeline.spliterator(),2
+java.util.LinkedHashMap.linkNodeLast(LinkedHashMap$Entry),2
+org.jacop.constraints.DecomposedConstraint.checkInputForNullness(String[], Object[][]),2
+org.jacop.core.IntVar.singleton(int),2
+org.jacop.constraints.OrBoolVector.consistency(Store),2
+java.util.HashMap$HashIterator.<init>(HashMap),2
+java.lang.System.getSecurityManager(),2
+java.util.HashMap.keysToArray(Object[]),2
+java.util.stream.AbstractPipeline.sourceStageSpliterator(),2
+java.util.stream.AbstractPipeline.evaluate(Spliterator, boolean, IntFunction),2
+org.jacop.constraints.AndBool.filter(IntVar[]),2
+org.jacop.constraints.Constraint.setScope(Stream),2
+java.util.stream.Stream.concat(Stream, Stream),2
+org.jacop.fz.constraints.Support.parseAnnotations(SimpleNode),2
+java.util.Objects.requireNonNull(Object),2
+org.jacop.constraints.OrBoolSimple.<init>(IntVar, IntVar, IntVar),2
+org.jacop.fz.constraints.Support.getVarArray(SimpleNode),2
+java.util.Collections.unmodifiableSet(Set),2
+java.util.stream.Nodes$ArrayNode.<init>(long, IntFunction),2
+java.util.stream.ReferencePipeline$Head.forEach(Consumer),2
+org.jacop.core.Store.recordChange(Var),2
+org.jacop.constraints.Constraint.setScope(Var[]),2
+org.jacop.fz.SimpleNode.getId(),2
+java.lang.String.coder(),2
+java.util.ArrayList.remove(int),2
+java.util.ArrayList.grow(),2
+org.jacop.fz.ASTConstElem.getName(),2
+java.lang.String.startsWith(String),2
+org.jacop.fz.Parser.jj_3R_21(),2
+org.jacop.fz.Parser.jj_2_3(int),2
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa7_0(long, long),2
+java.lang.String.hashCode(),2
+java.lang.StringCoding.hasNegatives(byte[], int, int),2
+org.jacop.core.BooleanVar.<init>(Store, String),2
+org.jacop.core.BoundDomain.<init>(int, int),2
+sun.nio.cs.StreamDecoder.read0(),2
+org.jacop.core.IntVar.commonInitialization(Store, String, IntDomain),2
+org.jacop.fz.Parser.scalar_ti_expr_tail(),2
+org.jacop.fz.Parser.int_ti_expr_tail(),2
+org.jacop.fz.Parser.jj_3_1(),2
+java.lang.Integer.parseInt(String, int),2
+org.jacop.core.Store.putVariable(Var),2
+org.jacop.fz.Parser.jj_3_10(),2
+sun.nio.cs.StreamDecoder.implRead(char[], int, int),2
+sun.nio.cs.UTF_8$Decoder.decodeArrayLoop(ByteBuffer, CharBuffer),2
+java.util.HashMap.<init>(),2
+org.jacop.fz.Parser.non_array_ti_expr_tail(),2
+jdk.internal.util.Preconditions.checkIndex(int, int, BiFunction),2
+org.jacop.fz.Parser.jj_3R_20(),2
+java.net.URLStreamHandler.setURL(URL, String, String, int, String, String, String, String, String),2
+java.lang.StringConcatHelper.simpleConcat(Object, Object),2
+jdk.internal.loader.BuiltinClassLoader.defineClass(String, Resource),2
+java.util.zip.ZipFile$ZipFileInflaterInputStream.<init>(ZipFile, ZipFile$ZipFileInputStream, ZipFile$CleanableResource, Inflater, int),2
+java.util.concurrent.ConcurrentHashMap.transfer(ConcurrentHashMap$Node[], ConcurrentHashMap$Node[]),2
+java.net.URL.<init>(URL, String, URLStreamHandler),2
+java.lang.invoke.LambdaForm$Name.<init>(LambdaForm$NamedFunction, Object[]),2
+java.lang.invoke.VarForm.getMemberName(int),1
+java.lang.invoke.VarForm.<init>(Class, Class, Class, Class[]),1
+java.lang.invoke.VarHandles.byteArrayViewHandle(Class, boolean),1
+java.lang.StringLatin1.canEncode(int),1
+sun.security.util.KnownOIDs.register(KnownOIDs),1
+java.lang.AbstractStringBuilder.<init>(String),1
+org.jacop.fz.OutputArrayAnnotation.toString(),1
+java.lang.invoke.StringConcatFactory.generateMHInlineCopy(MethodType, List),1
+org.jacop.core.BooleanVar.dom(),1
+java.util.HashSet.iterator(),1
+org.jacop.core.Store.getFirstChanged(),1
+org.jacop.constraints.XlteqY.notSatisfied(),1
+org.jacop.core.IntervalDomain.inComplement(int, Var, int),1
+org.jacop.constraints.Reified.queueVariable(int, Var),1
+org.jacop.core.BoundDomain.cloneLight(),1
+java.util.Collections$UnmodifiableCollection$1.hasNext(),1
+org.jacop.constraints.AndBoolVector.swap(int, int),1
+java.util.HashMap$HashIterator.hasNext(),1
+org.jacop.constraints.AndBoolSimple.consistency(Store),1
+org.jacop.constraints.ChannelReif.swap(int, int),1
+org.jacop.util.SimpleHashSet.transfer(SimpleHashSet$Entry[]),1
+org.jacop.core.IntervalDomain.getSize(),1
+java.security.SecureClassLoader$CodeSourceKey.hashCode(),1
+org.jacop.fz.constraints.ReificationConstraints.pose(),1
+java.util.ArrayList$Itr.hasNext(),1
+java.util.ArrayList.iterator(),1
+java.util.HashMap$KeyIterator.next(),1
+org.jacop.constraints.PrimitiveConstraint.include(Store),1
+org.jacop.constraints.Reified.getConsistencyPruningEvent(Var),1
+java.lang.reflect.Modifier.isPublic(int),1
+org.jacop.constraints.Constraint.lambda$impose$7(Store, Var),1
+org.jacop.constraints.SumBool.<init>(IntVar[], String, IntVar),1
+java.util.stream.Nodes$FixedNodeBuilder.end(),1
+java.util.stream.StreamOpFlag.isKnown(int),1
+org.jacop.fz.Tables.getVariableArray(String),1
+java.util.stream.Nodes$ArrayNode.asArray(IntFunction),1
+java.lang.reflect.Method.copy(),1
+java.lang.reflect.Method.invoke(Object, Object[]),1
+java.util.Optional.ofNullable(Object),1
+java.lang.reflect.Method.getName(),1
+java.util.stream.AbstractPipeline.copyInto(Sink, Spliterator),1
+org.jacop.core.TimeStamp.addLast(Object, int),1
+java.util.HashSet.<init>(Collection),1
+java.util.stream.ReferencePipeline.toArray(IntFunction),1
+org.jacop.fz.constraints.LinearConstraints.allNonPositive(int[]),1
+org.jacop.constraints.OrBoolVector.notConsistency(Store),1
+java.util.stream.Nodes$SpinedNodeBuilder.accept(Object),1
+java.util.stream.Streams$ConcatSpliterator.characteristics(),1
+java.util.stream.Sink$ChainedReference.end(),1
+org.jacop.constraints.PrimitiveConstraint.getNestedPruningEvent(Var, boolean),1
+java.util.HashMap.newNode(int, Object, Object, HashMap$Node),1
+org.jacop.fz.constraints.LinearConstraints.boolSum(IntVar[]),1
+org.jacop.constraints.Constraint.setScope(PrimitiveConstraint[]),1
+java.util.Arrays.stream(Object[], int, int),1
+org.jacop.fz.constraints.ConstraintFncs.bool_eq_reif(SimpleNode),1
+org.jacop.fz.constraints.LinearConstraints.int_lin_relation_reif(int, SimpleNode),1
+org.jacop.fz.constraints.BoolConstraints.clause_generation(SimpleNode),1
+java.lang.invoke.DirectMethodHandle.allocateInstance(Object),1
+java.util.HashMap.put(Object, Object),1
+org.jacop.fz.constraints.LinearConstraints.allWeightsOne(int[]),1
+java.util.stream.SpinedBuffer.asArray(IntFunction),1
+org.jacop.fz.constraints.Support$1.consistency(Store),1
+org.jacop.core.IntervalDomain.unionAdapt(Interval),1
+org.jacop.constraints.Constraint.setScope(Var[][]),1
+org.jacop.constraints.XeqY.consistency(Store),1
+java.util.ArrayList.<init>(),1
+java.util.ArrayList.size(),1
+org.jacop.constraints.OrBool.decompose(Store),1
+org.jacop.constraints.XlteqY.<init>(IntVar, IntVar),1
+jdk.internal.reflect.ReflectionFactory.copyMethod(Method),1
+org.jacop.constraints.SumInt.computeInit(),1
+java.util.stream.AbstractPipeline.wrapAndCopyInto(Sink, Spliterator),1
+org.jacop.constraints.Constraint.getConsistencyPruningEvent(Var),1
+org.jacop.fz.constraints.GlobalConstraints.gen_jacop_count(SimpleNode),1
+org.jacop.core.IntervalDomain.singleton(),1
+jdk.internal.reflect.ClassFileAssembler.<init>(),1
+org.jacop.fz.SimpleCharStream.FillBuff(),1
+org.jacop.fz.Parser.jj_3R_33(),1
+java.nio.ByteBuffer.position(int),1
+jdk.jfr.internal.RequestEngine.run_requests(Collection),1
+org.jacop.fz.SimpleCharStream.getEndLine(),1
+org.jacop.fz.Parser.jj_3_3(),1
+org.jacop.fz.constraints.Support.getVariable(ASTScalarFlatExpr),1
+org.jacop.fz.Parser.jj_3R_18(),1
+org.jacop.fz.ASTIntFlatExpr.<init>(int),1
+org.jacop.fz.Parser.int_flat_expr(),1
+org.jacop.fz.ASTAnnotation.setId(String),1
+java.lang.StringConcatHelper.newString(byte[], long),1
+org.jacop.fz.JJTParserState.nodeArity(),1
+org.jacop.fz.ParserTokenManager.jjMoveStringLiteralDfa5_0(long, long),1
+org.jacop.fz.ASTScalarFlatExpr.setIdent(String),1
+java.net.URL.set(String, String, int, String, String, String, String, String),1
+java.lang.String.rangeCheck(char[], int, int),1
+org.jacop.fz.ASTScalarFlatExpr.getIdent(),1
+org.jacop.fz.VariablesParameters.generateArrayVariables(SimpleNode, Tables, Store),1
+org.jacop.fz.Tables.getVariable(String),1
+org.jacop.fz.Parser.jj_3R_23(),1
+java.lang.invoke.LambdaForm.useCount(LambdaForm$Name),1
+java.lang.invoke.MethodType.toFieldDescriptorString(Class),1
+jdk.internal.org.objectweb.asm.MethodWriter.<init>(SymbolTable, int, String, String, String, String[], int),1
+java.lang.invoke.DirectMethodHandle.makePreparedLambdaForm(MethodType, int),1
+java.lang.invoke.MethodHandle.intrinsicName(),1
+java.nio.CharBuffer.<init>(int, int, int, int, char[], int, MemorySegmentProxy),1
+java.nio.HeapCharBuffer.slice(),1
+org.jacop.fz.Token.<init>(int, String),1
+org.jacop.fz.Tables.addVariable(String, IntVar),1
+java.nio.CharBuffer.position(int),1
+sun.nio.cs.StreamDecoder.read(char[], int, int),1
+org.jacop.fz.Tables.addOutVar(Var),1
+java.nio.ByteBuffer.hasArray(),1
+sun.nio.cs.UTF_8.updatePositions(Buffer, int, Buffer, int),1
+org.jacop.fz.Parser.ident_anns(),1
+sun.nio.cs.UTF_8$Decoder.decodeLoop(ByteBuffer, CharBuffer),1
+java.util.HashSet.<init>(),1
+org.jacop.core.Var.<init>(),1
+java.util.HashSet.contains(Object),1
+org.jacop.core.IntVar.<init>(Store, String, int, int),1
+java.lang.CharacterData.of(int),1
+org.jacop.fz.SimpleNode.jjtGetNumChildren(),1
+sun.nio.cs.StreamDecoder.readBytes(),1
+java.nio.charset.CharsetDecoder.decode(ByteBuffer, CharBuffer, boolean),1
+org.jacop.fz.ASTScalarFlatExpr.setType(int),1
+org.jacop.fz.ASTVarDeclItem.setKind(int),1
+java.nio.HeapByteBuffer.compact(),1
+org.jacop.fz.ParserTokenManager.jjStopStringLiteralDfa_0(int, long),1
+org.jacop.core.IntervalDomain.<init>(int, int),1
+org.jacop.fz.ASTIntTiExprTail.setType(int),1
+java.lang.CharacterDataLatin1.digit(int, int),1
+java.util.jar.JarFile.getJarEntry(String),1
+org.jacop.fz.SimpleNode.jjtClose(),1
+com.sun.management.internal.PlatformMBeanProviderImpl$4.<init>(PlatformMBeanProviderImpl),1
+java.util.jar.Manifest.getAttributes(String),1
+java.util.StringTokenizer.scanToken(int),1
+java.net.URLStreamHandler.toExternalForm(URL),1
+java.lang.Class.getName(),1
+java.util.concurrent.ConcurrentHashMap.computeIfAbsent(Object, Function),1
+java.util.zip.ZipEntry.<init>(String),1
+java.lang.String.replace(char, char),1
+java.util.zip.ZipFile$ZipFileInputStream.<init>(ZipFile, byte[], int),1
+java.lang.StringBuilder.append(String),1
+java.util.WeakHashMap.matchesKey(WeakHashMap$Entry, Object),1
+java.util.zip.ZipFile$ZipFileInflaterInputStream.<init>(ZipFile, ZipFile$ZipFileInputStream, ZipFile$CleanableResource, int),1
+java.lang.invoke.MethodType.insertParameterTypes(int, Class[]),1
+java.util.zip.ZipFile.getMetaInfVersions(),1
+java.lang.ClassLoader.getDefinedPackage(String),1
+java.lang.ClassLoader.getNamedPackage(String, Module),1
+jdk.internal.misc.Unsafe.allocateUninitializedArray0(Class, int),1
+java.util.Arrays.copyOf(byte[], int),1
+jdk.internal.ref.PhantomCleanable.<init>(Object, Cleaner),1
+jdk.internal.loader.Resource.getBytes(),1
+sun.net.util.URLUtil.urlNoFragString(URL),1
+java.util.zip.ZipFile.getZipEntry(String, int),1
+org.dacapo.harness.Benchmark.startIteration(),1
+java.util.concurrent.ConcurrentHashMap.putVal(Object, Object, boolean),1
+java.lang.invoke.LambdaForm$Name.type(),1
+org.dacapo.harness.Benchmark.initialize(),1
+java.lang.StringConcatHelper.mix(long, String),1
+java.lang.invoke.InvokerBytecodeGenerator.isStaticallyNameable(Class),1
+java.lang.invoke.MethodTypeForm.<init>(MethodType),1
+java.lang.invoke.DirectMethodHandle.shouldBeInitialized(MemberName),1
+java.lang.String.isEmpty(),1
+java.lang.String.getBytes(byte[], int, byte),1
+jdk.jfr.internal.Utils.isSettingVisible(Control, boolean),1

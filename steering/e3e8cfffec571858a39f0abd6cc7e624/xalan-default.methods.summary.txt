@@ -1,0 +1,734 @@
+org.apache.xml.serializer.ToStream.characters(char[], int, int),110
+org.apache.xml.dtm.ref.DTMManagerDefault.getDTM(int),59
+sun.nio.cs.StreamEncoder.write(char[], int, int),59
+java.util.Hashtable.get(Object),44
+java.lang.String.length(),43
+org.apache.xml.utils.SuballocatedIntVector.elementAt(int),41
+java.lang.String.equals(Object),39
+sun.nio.cs.ISO_8859_1$Encoder.implEncodeISOArray(char[], int, byte[], int, int),39
+org.apache.xalan.templates.TemplateSubPatternAssociation.matchMode(QName),37
+java.io.FileOutputStream.write(byte[], int, int),35
+java.util.Vector.addElement(Object),34
+org.apache.xpath.axes.IteratorPool.getInstance(),32
+java.util.Vector.isEmpty(),30
+sun.nio.cs.ISO_8859_1$Encoder.encodeISOArray(char[], int, byte[], int, int),28
+sun.nio.cs.ISO_8859_1$Encoder.encodeArrayLoop(CharBuffer, ByteBuffer),26
+java.util.Vector.size(),25
+org.apache.xpath.axes.LocPathIterator.setRoot(int, Object),23
+org.apache.xalan.templates.ElemApplyTemplates.transformSelectedNodes(TransformerImpl),22
+org.apache.xml.utils.SuballocatedIntVector.addElement(int),21
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.startElement(String, String, String, Attributes),20
+sun.nio.cs.StreamEncoder.write(String, int, int),18
+org.apache.xml.serializer.CharInfo.shouldMapTextChar(int),18
+java.lang.String.coder(),18
+org.apache.xml.utils.FastStringBuffer.append(char[], int, int),17
+org.apache.xalan.templates.ElemLiteralResult.execute(TransformerImpl),16
+org.apache.xml.dtm.ref.DTMDefaultBase.makeNodeIdentity(int),16
+org.apache.xpath.axes.IteratorPool.freeInstance(DTMIterator),15
+org.dacapo.xalan.XSLTBench$XalanWorker.run(),15
+java.nio.Buffer.position(int),15
+org.apache.xml.dtm.ref.DTMDefaultBase._exptype(int),15
+org.apache.xalan.transformer.TransformerImpl.getDebug(),15
+java.util.Stack.pop(),15
+org.apache.xml.utils.ObjectVector.<init>(int),14
+org.apache.xpath.VariableStack.reset(int, int),13
+sun.nio.cs.ISO_8859_1$Encoder.encodeISOArrayCheck(char[], int, byte[], int, int),13
+org.apache.xml.dtm.ref.ExpandedNameTable.getExpandedTypeID(String, String, int, boolean),13
+java.lang.String.isLatin1(),13
+org.apache.xml.utils.ObjectStack.setTop(Object),13
+org.apache.xml.dtm.ref.ExpandedNameTable.getType(int),13
+java.util.zip.ZipFile$Source.getEntryPos(String, boolean),13
+org.apache.xml.utils.IntVector.<init>(int),12
+org.apache.xml.serializer.ToHTMLStream$Trie.get2(String),12
+org.apache.xml.utils.IntStack.peek(),12
+java.nio.HeapCharBuffer.<init>(char[], int, int, MemorySegmentProxy),12
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.addNode(int, int, int, int, int, boolean),11
+org.apache.xalan.transformer.TransformerImpl.executeChildTemplates(ElemTemplateElement, boolean),11
+java.lang.StringLatin1.indexOf(byte[], int, int),10
+java.util.HashMap.putMapEntries(Map, boolean),10
+java.nio.CharBuffer.<init>(int, int, int, int, char[], int, MemorySegmentProxy),10
+org.apache.xpath.patterns.StepPattern.execute(XPathContext, int, DTM, int),10
+org.apache.xml.serializer.ToHTMLStream.startElement(String, String, String, Attributes),10
+org.apache.xml.serializer.ToHTMLStream.getElemDesc2(String),9
+java.util.HashMap.getNode(Object),9
+java.util.HashMap$HashIterator.nextNode(),9
+org.apache.xml.utils.SuballocatedIntVector.setElementAt(int, int),9
+org.apache.xalan.templates.TemplateList.getHead(XPathContext, int, DTM),9
+java.lang.StringLatin1.regionMatchesCI(byte[], int, byte[], int, int),9
+org.apache.xpath.patterns.NodeTest.execute(XPathContext, int, DTM, int),9
+org.apache.xml.serializer.ToHTMLStream.endElement(String, String, String),9
+java.lang.StringLatin1.getChars(byte[], int, int, char[], int),9
+org.apache.xml.utils.IntStack.push(int),9
+org.apache.xml.utils.ObjectStack.push(Object),8
+java.util.Vector.elementAt(int),8
+java.util.HashMap.putVal(int, Object, Object, boolean, boolean),8
+java.util.Vector.add(Object, Object[], int),8
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.dispatchCharactersEvents(int, ContentHandler, boolean),8
+java.util.ArrayList.fastRemove(Object[], int),8
+java.util.HashMap.hash(Object),8
+org.apache.xml.dtm.ref.DTMDefaultBase.ensureSizeOfIndex(int, int),8
+java.util.concurrent.ConcurrentHashMap.get(Object),7
+org.apache.xpath.axes.NodeSequence.getVector(),7
+org.apache.xml.utils.StringBufferPool.get(),7
+org.apache.xml.utils.FastStringBuffer.sendSAXcharacters(ContentHandler, int, int),7
+org.apache.xalan.templates.ElemLiteralResult.getPrefix(),7
+sun.nio.cs.StreamEncoder.flush(),7
+org.apache.xpath.XPathContext.getCurrentNode(),7
+org.apache.xalan.transformer.TransformerImpl.getMode(),7
+org.apache.xpath.axes.LocPathIterator.asIterator(XPathContext, int),7
+org.apache.xpath.functions.FuncId.execute(XPathContext),7
+org.apache.xalan.templates.TemplateList.getTemplateFast(XPathContext, int, int, QName, int, boolean, DTM),7
+org.apache.xpath.XPathContext.getDTM(int),7
+sun.nio.cs.StreamEncoder.implWrite(CharBuffer),6
+java.util.zip.ZipUtils.SH(byte[], int),6
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.charactersFlush(),6
+org.apache.xml.serializer.Encodings.getWriter(OutputStream, String),6
+java.util.Hashtable.put(Object, Object),6
+java.net.URL.<init>(URL, String, URLStreamHandler),6
+org.apache.xml.serializer.CharInfo.createEmptySetOfIntegers(int),6
+org.apache.xpath.axes.BasicTestIterator.nextNode(),6
+java.lang.StringLatin1.charAt(byte[], int),6
+org.apache.xml.dtm.ref.DTMDefaultBase.getNodeType(int),6
+java.nio.charset.CharsetEncoder.encode(CharBuffer, ByteBuffer, boolean),6
+org.apache.xml.utils.IntStack.setTop(int),6
+org.apache.xml.serializer.ToHTMLStream.writeAttrURI(Writer, String, boolean),6
+org.apache.xalan.templates.ElemNumber.formatNumberList(TransformerImpl, long[], int),6
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.getLocalName(int),6
+java.nio.HeapByteBuffer.<init>(int, int, MemorySegmentProxy),5
+org.apache.xpath.axes.ChildIterator.nextNode(),5
+org.apache.xalan.templates.ElemTextLiteral.execute(TransformerImpl),5
+java.io.BufferedReader.<init>(Reader, int),5
+org.apache.xpath.axes.NodeSequence.setRoot(int, Object),5
+org.apache.xml.dtm.ref.ExtendedType.equals(ExtendedType),5
+java.util.zip.ZipFile.getEntry(String),5
+org.apache.xalan.templates.ElemChoose.execute(TransformerImpl),5
+java.nio.Buffer.position(),5
+org.apache.xml.dtm.ref.DTMDefaultBase._prevsib(int),5
+org.apache.xalan.transformer.TransformerImpl.pushPairCurrentMatched(ElemTemplateElement, int),5
+org.apache.xml.dtm.ref.DTMDefaultBase.makeNodeHandle(int),5
+org.apache.xpath.XPathContext.pushCurrentNodeAndExpression(int, int),5
+org.apache.xml.utils.ObjectStack.pop(),5
+java.nio.CharBuffer.wrap(char[], int, int),4
+java.lang.StringLatin1.hashCode(byte[]),4
+org.apache.xml.serializer.ElemContext.push(String, String, String),4
+java.lang.String.hashCode(),4
+org.apache.xml.utils.ObjectPool.getInstance(),4
+org.apache.xalan.templates.ElemNumber$NumberFormatStringTokenizer.nextToken(),4
+org.apache.xalan.templates.ElemNumber.getCountString(TransformerImpl, int),4
+java.lang.AbstractStringBuilder.ensureCapacityInternal(int),4
+org.apache.xml.serializer.ToHTMLStream.characters(char[], int, int),4
+org.apache.xml.dtm.ref.ExtendedType.getNamespace(),4
+jdk.internal.loader.URLClassPath.getLoader(int),4
+java.nio.CharBuffer.array(),4
+java.nio.ByteBuffer.array(),4
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.getPrefix(String, String),4
+org.apache.xml.serializer.ElemDesc.getFlags(),4
+org.apache.xml.serializer.ToStream.processLineFeed(char[], int, int, Writer),4
+org.apache.xml.dtm.ref.DTMDefaultBase._nextsib(int),4
+java.lang.Character.getType(int),4
+org.apache.xml.dtm.ref.DTMDefaultBase.getNextSibling(int),4
+org.apache.xpath.axes.LocPathIterator.asNode(XPathContext),4
+sun.nio.cs.ISO_8859_1$Encoder.encodeLoop(CharBuffer, ByteBuffer),4
+java.nio.charset.CoderResult.isOverflow(),4
+org.apache.xml.dtm.ref.DTMDefaultBase.getExpandedTypeID(int),4
+org.apache.xml.serializer.CharInfo.getOutputStringForChar(char),4
+org.apache.xalan.templates.ElemTemplateElement.unexecuteNSDecls(TransformerImpl, String),4
+org.apache.xml.serializer.ToHTMLStream.processAttribute(Writer, String, String, ElemDesc),4
+java.lang.StringLatin1.inflate(byte[], int, char[], int, int),4
+org.apache.xalan.transformer.TransformerImpl.transformToString(ElemTemplateElement),4
+org.apache.xalan.templates.ElemNumber.getCountMatchPattern(XPathContext, int),4
+org.apache.xml.serializer.NamespaceMappings.pushNamespace(String, String, int),4
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.endElement(String, String, String),4
+jdk.jfr.internal.handlers.EventHandler.isEnabled(),4
+org.apache.xml.serializer.SerializerFactory.getSerializer(Properties),3
+java.util.Vector.removeElementAt(int),3
+org.apache.xpath.patterns.UnionPattern.execute(XPathContext),3
+java.lang.CharacterDataLatin1.toUpperCase(int),3
+org.apache.xml.dtm.ref.ExpandedNameTable.getNamespace(int),3
+org.apache.xml.utils.XMLReaderManager.getXMLReader(),3
+org.apache.xpath.axes.AxesWalker.wi(),3
+java.lang.String.charAt(int),3
+java.lang.StringConcatHelper.stringOf(Object),3
+org.apache.xpath.XPathContext.popContextNodeList(),3
+org.apache.xpath.patterns.StepPattern.executeRelativePathPattern(XPathContext, DTM, int),3
+org.apache.xalan.transformer.TransformerImpl.transform(Source, boolean),3
+sun.net.www.protocol.jar.JarURLConnection.connect(),3
+org.apache.xml.serializer.SerializerBase.getOutputPropertyNonDefault(String),3
+org.apache.xml.dtm.ref.DTMDefaultBase._type(int),3
+sun.nio.cs.UTF_8.updatePositions(Buffer, int, Buffer, int),3
+org.xml.sax.helpers.AttributesImpl.addAttribute(String, String, String, String, String),3
+org.apache.xml.dtm.ref.ExtendedType.redefine(int, String, String, int),3
+java.nio.Buffer.limit(),3
+org.apache.xpath.patterns.NodeTest.execute(XPathContext, int),3
+java.net.URLConnection.<init>(URL),3
+org.xml.sax.helpers.AttributesImpl.clear(),3
+org.apache.xml.dtm.ref.DTMStringPool.<init>(int),3
+org.apache.xalan.templates.StylesheetRoot.getWhiteSpaceInfo(XPathContext, int, DTM),3
+org.apache.xpath.axes.PredicatedNodeTest.clone(),3
+org.apache.xml.serializer.ToHTMLStream.writeAttrString(Writer, String, String),3
+org.apache.xml.serializer.SerializerBase.getOutputPropertyDefault(String),3
+java.lang.Class.getReflectionFactory(),3
+org.apache.xml.dtm.ref.DTMManagerDefault.release(DTM, boolean),3
+org.apache.xml.dtm.ref.ExtendedType.getNodeType(),3
+java.lang.StringLatin1.indexOf(byte[], int, byte[], int, int),3
+org.apache.xpath.XPathContext.popSAXLocator(),3
+org.apache.xalan.templates.ElemTemplateElement.getNextSiblingElem(),3
+org.apache.xml.dtm.ref.DTMDefaultBase.getFirstAttributeIdentity(int),3
+org.apache.xml.serializer.SerializerBase.resetSerializerBase(),3
+org.apache.xpath.axes.LocPathIterator.executeCharsToContentHandler(XPathContext, ContentHandler),3
+org.apache.xml.dtm.ref.ExtendedType.getLocalName(),3
+org.apache.xml.dtm.ref.DTMManagerDefault.getDTM(Source, boolean, DTMWSFilter, boolean, boolean),3
+java.nio.ByteBuffer.clear(),3
+org.apache.xml.dtm.ref.ExpandedNameTable.getLocalName(int),3
+java.net.URL.set(String, String, int, String, String, String, String, String),3
+org.apache.xpath.VariableStack.link(int),3
+sun.nio.cs.StreamEncoder.write(int),3
+org.apache.xpath.XPathContext.pushCurrentNode(int),3
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.characters(char[], int, int),3
+org.apache.xalan.templates.TemplateList.getTemplate(XPathContext, int, QName, boolean, DTM),3
+java.util.ArrayList.add(Object),3
+org.apache.xml.utils.SuballocatedIntVector.<init>(int, int),3
+java.util.jar.JarFile.getEntry(String),3
+org.apache.xalan.templates.ElemCallTemplate.execute(TransformerImpl),3
+org.apache.xpath.patterns.StepPattern.getProximityPosition(XPathContext, int, boolean),3
+org.apache.xalan.templates.ElemNumber.getMatchingAncestors(XPathContext, int, boolean),3
+org.apache.xalan.templates.ElemIf.execute(TransformerImpl),3
+sun.nio.cs.StreamEncoder.writeBytes(),3
+java.nio.charset.CoderResult.isUnderflow(),3
+org.apache.xpath.XPath.bool(XPathContext, int, PrefixResolver),3
+jdk.internal.util.Preconditions.checkIndex(int, int, BiFunction),3
+org.apache.xpath.compiler.Compiler.stepPattern(int, int, StepPattern),3
+java.lang.AbstractStringBuilder.appendChars(char[], int, int),3
+java.util.Properties$LineReader.readLine(),3
+java.util.jar.JarFile.getJarEntry(String),3
+java.lang.StringLatin1.replace(byte[], char, char),3
+jdk.internal.loader.BuiltinClassLoader.findClassOnClassPathOrNull(String),3
+sun.net.www.ParseUtil.firstEncodeIndex(String),3
+java.util.zip.Inflater.inflate(byte[], int, int),3
+java.lang.String.startsWith(String, int),2
+org.apache.xml.serializer.SerializerBase.getProp(String, boolean),2
+java.nio.Buffer.remaining(),2
+java.util.Arrays.copyOfRange(byte[], int, int),2
+org.apache.xml.utils.ObjectVector.setElementAt(Object, int),2
+org.apache.xalan.templates.ElemNumber$MyPrefixResolver.<init>(ElemNumber, Node, DTM, int, boolean),2
+java.lang.Class.getName(),2
+java.lang.AbstractStringBuilder.newCapacity(int),2
+org.apache.xml.dtm.ref.DTMStringPool.stringToIndex(String),2
+sun.net.www.protocol.jar.JarFileFactory.cacheIfAbsent(URL, JarFile),2
+org.apache.xpath.XPathContext.getDTMManager(),2
+java.lang.Character.isLetterOrDigit(int),2
+org.apache.xpath.Expression.exprSetParent(ExpressionNode),2
+org.apache.xpath.VariableStack.isLocalSet(int),2
+java.util.zip.ZipFile$Source.readFullyAt(byte[], int, int, long),2
+java.lang.StringBuilder.append(String),2
+org.apache.xalan.templates.ElemNumber.getFormattedNumber(TransformerImpl, int, char, int, long, FastStringBuffer),2
+java.lang.reflect.Method.copy(),2
+org.apache.xml.dtm.ref.DTMDefaultBaseTraversers.getAxisTraverser(int),2
+java.security.AccessController.doPrivileged(PrivilegedExceptionAction, AccessControlContext),2
+org.apache.xml.serializer.NamespaceMappings.createPrefixStack(String),2
+java.lang.StringBuffer.toString(),2
+java.nio.CharBuffer.arrayOffset(),2
+java.util.Objects.requireNonNull(Object, String),2
+org.apache.xml.dtm.SecuritySupport.getResourceAsStream(ClassLoader, String),2
+java.lang.StringBuffer.append(char[], int, int),2
+java.security.AccessController.executePrivileged(PrivilegedAction, AccessControlContext, Class),2
+java.util.WeakHashMap.hash(Object),2
+org.apache.xpath.compiler.OpMap.getStepLocalName(int),2
+sun.nio.cs.StreamEncoder.<init>(OutputStream, Object, Charset),2
+java.util.zip.ZipCoder$UTF8ZipCoder.hasTrailingSlash(byte[], int),2
+java.lang.Class.getMethodsRecursive(String, Class[], boolean),2
+org.apache.xml.utils.NodeVector.<init>(),2
+org.apache.xalan.transformer.TransformerImpl.getResultTreeHandler(),2
+org.apache.xalan.transformer.TransformerImpl.createSerializationHandler(Result, OutputProperties),2
+java.nio.ByteBuffer.allocate(int),2
+org.apache.xml.serializer.ToStream.startElement(String, String, String),2
+org.apache.xalan.transformer.TransformerImpl.pushGlobalVars(int),2
+org.apache.xalan.transformer.Counter.getPreviouslyCounted(XPathContext, int),2
+java.lang.Integer.parseInt(String, int),2
+org.apache.xalan.transformer.TransformerImpl.popElemTemplateElement(),2
+org.apache.xpath.objects.XNodeSet.<init>(int, DTMManager),2
+org.apache.xpath.compiler.Lexer.tokenize(String, Vector),2
+java.nio.ByteBuffer.arrayOffset(),2
+org.apache.xml.utils.IntStack.quickPop(int),2
+java.net.URLStreamHandler.parseURL(URL, String, int, int),2
+org.apache.xpath.XPathContext.reset(),2
+java.util.Hashtable.addEntry(int, Object, Object, int),2
+java.util.ArrayList.isEmpty(),2
+org.apache.xml.utils.ObjectPool.<init>(Class),2
+sun.net.util.URLUtil.urlNoFragString(URL),2
+sun.net.www.protocol.file.FileURLConnection.<init>(URL, File),2
+org.apache.xml.serializer.AttributesImplSerializer.addAttribute(String, String, String, String, String),2
+org.apache.xml.utils.NodeVector.removeAllElements(),2
+org.apache.xml.dtm.ref.DTMDefaultBase.indexNode(int, int),2
+java.lang.ClassLoader.getSystemClassLoader(),2
+org.apache.xml.serializer.SerializerBase.inTemporaryOutputState(),2
+java.util.zip.ZipFile$ZipFileInputStream.<init>(ZipFile, byte[], int),2
+org.apache.xpath.objects.XString.startsWith(XMLString, int),2
+java.lang.Object.toString(),2
+java.lang.String.startsWith(String),2
+org.apache.xml.dtm.ref.DTMStringPool.indexToString(int),2
+org.apache.xml.dtm.ref.DTMDefaultBase._parent(int),2
+org.apache.xalan.templates.ElemTemplateElement.executeNSDecls(TransformerImpl, String),2
+org.apache.xml.utils.ObjectVector.<init>(int, int),2
+sun.nio.cs.StreamDecoder.<init>(InputStream, Object, CharsetDecoder),2
+org.apache.xpath.XPathContext.popCurrentNode(),2
+org.apache.xml.serializer.ToStream$BoolStack.peekOrFalse(),2
+org.apache.xpath.axes.AxesWalker.getDTM(int),2
+jdk.internal.misc.Unsafe.allocateUninitializedArray(Class, int),2
+java.lang.String.equalsIgnoreCase(String),2
+org.apache.xpath.XPathContext.popNamespaceContext(),2
+org.apache.xalan.templates.ElemApplyTemplates.execute(TransformerImpl),2
+org.apache.xml.dtm.ref.DTMDefaultBaseIterators.getAxisIterator(int),2
+java.lang.String.regionMatches(boolean, int, String, int, int),2
+org.apache.xml.dtm.ObjectFactory.findProviderClass(String, ClassLoader, boolean),2
+java.io.UnixFileSystem.resolve(String, String),2
+org.apache.xpath.patterns.NodeTest.subPartMatch(String, String),2
+org.apache.xalan.templates.TemplateSubPatternAssociation.matchModes(QName, QName),2
+java.lang.String.indexOf(String),2
+java.io.StringWriter.write(char[], int, int),2
+java.io.OutputStreamWriter.write(int),2
+org.apache.xalan.transformer.TransformerImpl.pushCurrentTemplateRuleIsNull(boolean),2
+org.apache.xml.serializer.utils.StringToIntTable.getIgnoreCase(String),2
+java.util.HashMap.resize(),2
+org.apache.xml.serializer.ToStream.startPrefixMapping(String, String),2
+org.apache.xml.serializer.ToStream.addAttributeAlways(String, String, String, String, String, boolean),2
+org.apache.xpath.axes.LocPathIterator.detach(),2
+org.apache.xml.utils.FastStringBuffer.append(String),2
+org.apache.xpath.axes.LocPathIterator.returnNextNode(int),2
+java.util.jar.JarFile.entryFor(String),2
+org.apache.xml.serializer.ToHTMLStream.setOutputFormat(Properties),2
+org.apache.xpath.axes.NodeSequence.detach(),2
+org.apache.xml.utils.BoolStack.push(boolean),2
+org.apache.xml.serializer.ToStream.escapingNotNeeded(char),2
+org.apache.xml.dtm.ref.DTMDefaultBase.getShouldStripWhitespace(),2
+sun.nio.cs.StreamDecoder.readBytes(),2
+org.apache.xpath.VariableStack.setStackFrame(int),2
+java.lang.String.<init>(byte[], byte),2
+org.apache.xpath.compiler.XPathParser.initMatchPattern(Compiler, String, PrefixResolver),2
+org.apache.xml.dtm.ref.DTMDefaultBase.getParent(int),2
+java.nio.ByteBuffer.flip(),2
+org.apache.xalan.templates.ElemUse.execute(TransformerImpl),2
+org.apache.xml.serializer.NamespaceMappings.initNamespaces(),2
+java.util.ArrayList.remove(int),2
+org.apache.xpath.axes.OneStepIteratorForward.setRoot(int, Object),2
+java.io.File.<init>(String),2
+org.apache.xpath.patterns.StepPattern.execute(XPathContext, int),2
+jdk.jfr.internal.instrument.ThrowableTracer.traceThrowable(Throwable, String),2
+org.apache.xpath.axes.NodeSequence.getDTM(int),2
+java.nio.charset.Charset.lookup(String),2
+org.apache.xalan.transformer.TransformerImpl.popCurrentMatched(),2
+org.apache.xml.serializer.ToStream.setProp(String, String, boolean),2
+org.apache.xml.dtm.ref.DTMDefaultBase.declareNamespaceInContext(int, int),2
+java.io.RandomAccessFile.read(byte[], int, int),2
+org.apache.xalan.templates.ElemElement.execute(TransformerImpl),2
+org.apache.xml.utils.NodeVector.elementAt(int),2
+org.apache.xml.serializer.ToTextStream.characters(char[], int, int),2
+org.apache.xpath.axes.OneStepIteratorForward.getNextNode(),2
+java.util.ArrayList.add(Object, Object[], int),2
+org.apache.xpath.axes.NodeSequence.setShouldCacheNodes(boolean),2
+org.xml.sax.helpers.AttributesImpl.getIndex(String),2
+sun.nio.cs.StreamEncoder.implFlush(),2
+org.apache.xpath.axes.PredicatedNodeTest.acceptNode(int),2
+java.util.jar.JarFile.isMultiRelease(),2
+java.util.StringTokenizer.hasMoreTokens(),2
+java.util.concurrent.ConcurrentHashMap.transfer(ConcurrentHashMap$Node[], ConcurrentHashMap$Node[]),2
+org.apache.xml.utils.XMLCharacterRecognizer.isWhiteSpace(char[], int, int),2
+org.apache.xpath.compiler.XPathParser.<init>(ErrorListener, SourceLocator),2
+org.apache.xalan.processor.XSLTElementProcessor.setPropertiesFromAttributes(StylesheetHandler, String, Attributes, ElemTemplateElement, boolean),2
+org.apache.xalan.processor.ProcessorLRE.startElement(StylesheetHandler, String, String, String, Attributes),2
+org.apache.xpath.compiler.OpMap.getArgLengthOfStep(int),2
+java.lang.Character.isLetter(int),2
+org.apache.xalan.processor.XSLTElementDef.getProcessorFor(String, String),2
+sun.net.www.protocol.jar.Handler.canonicalizeString(String, int),2
+java.util.concurrent.ConcurrentHashMap.putVal(Object, Object, boolean),2
+java.security.SecureClassLoader.getProtectionDomain(CodeSource),2
+java.nio.Buffer.hasRemaining(),2
+jdk.internal.loader.URLClassPath$JarLoader.checkResource(String, boolean, JarEntry),2
+java.util.ArrayDeque.addLast(Object),2
+jdk.internal.loader.Resource.getBytes(),2
+java.lang.ref.Cleaner.register(Object, Runnable),2
+java.lang.Math.min(int, int),2
+java.util.zip.ZipCoder$UTF8ZipCoder.toString(byte[], int, int),2
+java.lang.StringCoding.hasNegatives(byte[], int, int),2
+java.lang.Thread.run(),1
+java.lang.constant.ConstantDescs.<clinit>(),1
+java.lang.invoke.MethodHandles$Lookup$ClassOption.optionsToFlag(Set),1
+java.security.Provider.putService(Provider$Service),1
+sun.security.util.KnownOIDs.register(KnownOIDs),1
+org.apache.xml.utils.StringBufferPool.free(FastStringBuffer),1
+java.lang.ClassLoader.loadClass(String),1
+java.nio.CharBuffer.hasArray(),1
+org.apache.xalan.transformer.TransformerImpl.<init>(StylesheetRoot),1
+org.apache.xml.serializer.CharInfo.mutableCopyOf(CharInfo),1
+org.apache.xml.utils.ObjectPool.freeInstance(Object),1
+org.apache.xml.dtm.ref.DTMDefaultBase._firstch(int),1
+org.apache.xpath.axes.PredicatedNodeTest.resetProximityPositions(),1
+org.apache.xml.dtm.DTMManager.newInstance(XMLStringFactory),1
+org.apache.xml.dtm.ref.DTMDefaultBaseTraversers.<init>(DTMManager, Source, int, DTMWSFilter, XMLStringFactory, boolean, int, boolean, boolean),1
+sun.nio.cs.StandardCharsets.canonicalize(String),1
+java.lang.StringConcatHelper.newArrayWithSuffix(String, long),1
+org.apache.xml.dtm.ref.DTMManagerDefault.addDTM(DTM, int, int),1
+java.lang.String.indexOf(int, int),1
+org.apache.xml.utils.IntStack.<init>(),1
+org.apache.xpath.XPath.getMatchScore(XPathContext, int),1
+org.xml.sax.helpers.AttributesImpl.getQName(int),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.endDocument(),1
+java.lang.System.allowSecurityManager(),1
+org.apache.xpath.VariableStack.reset(),1
+org.apache.xpath.axes.ReverseAxesWalker.setRoot(int),1
+org.dacapo.harness.DacapoClassLoader.loadClass(String, boolean),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.isTextType(int),1
+org.apache.xml.dtm.DTMManager.<init>(),1
+java.util.Arrays.copyOf(Object[], int),1
+java.net.JarURLConnection.getEntryName(),1
+org.apache.xpath.XPathContext.<init>(Object, boolean),1
+java.util.Properties.enumerate(Map),1
+org.apache.xml.utils.NodeVector.addElement(int),1
+sun.net.www.protocol.jar.JarURLConnection.getUseCaches(),1
+org.apache.xalan.transformer.TransformerImpl.applyTemplateToNode(ElemTemplateElement, ElemTemplate, int),1
+org.apache.xml.dtm.SecuritySupport$7.<init>(File),1
+java.util.zip.InflaterInputStream.<init>(InputStream, Inflater, int),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.<init>(DTMManager, Source, int, DTMWSFilter, XMLStringFactory, boolean, int, boolean, boolean),1
+java.util.zip.ZipFile.getZipEntry(String, int),1
+org.apache.xalan.transformer.TransformerImpl.getXPathContext(),1
+java.util.zip.ZipFile$ZipFileInputStream.close(),1
+java.lang.Throwable.fillInStackTrace(),1
+java.lang.ref.Reference.refersTo(Object),1
+org.apache.xml.utils.BoolStack.<init>(int),1
+java.io.BufferedReader.readLine(),1
+org.apache.xalan.templates.XUnresolvedVariable.execute(XPathContext),1
+java.util.AbstractMap.clone(),1
+org.apache.xml.utils.ObjectVector.removeAllElements(),1
+org.apache.xalan.templates.AVT.isSimple(),1
+jdk.internal.reflect.ReflectionFactory.copyMethod(Method),1
+java.lang.Integer.toHexString(int),1
+java.util.zip.ZipFile$ZipFileInflaterInputStream.<init>(ZipFile, ZipFile$ZipFileInputStream, ZipFile$CleanableResource, int),1
+jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(String, boolean),1
+java.util.zip.ZipFile$ZipFileInputStream.read(byte[], int, int),1
+org.apache.xpath.axes.WalkingIterator.detach(),1
+java.lang.ref.Cleaner$1.apply(Object),1
+org.apache.xalan.transformer.TransformerImpl.getMsgMgr(),1
+java.io.UnixFileSystem.normalize(String),1
+java.nio.Buffer.<init>(int, int, int, int, MemorySegmentProxy),1
+java.net.URL.getRef(),1
+org.apache.xpath.axes.NodeSequence.setIter(DTMIterator),1
+jdk.internal.math.FloatingDecimal.readJavaFormatString(String),1
+java.util.zip.ZipFile.getInputStream(ZipEntry),1
+java.net.JarURLConnection.parseSpecs(URL),1
+org.xml.sax.helpers.AttributesImpl.ensureCapacity(int),1
+java.lang.Float.isNaN(float),1
+org.apache.xalan.transformer.TransformerImpl.getQuietConflictWarnings(),1
+org.apache.xpath.functions.FuncStartsWith.execute(XPathContext),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.getNodeValue(int),1
+sun.nio.cs.StreamDecoder.<init>(InputStream, Object, Charset),1
+org.apache.xml.dtm.ref.DTMManagerDefault.getXMLReader(Source),1
+java.io.OutputStreamWriter.flush(),1
+jdk.jfr.internal.handlers.EventHandler.shouldCommit(long),1
+org.apache.xpath.objects.XNumber.num(),1
+javax.xml.transform.TransformerException.<init>(String, SourceLocator),1
+java.util.Properties.<init>(Properties),1
+java.lang.StringLatin1.trim(byte[]),1
+org.apache.xml.serializer.SerializerBase.addAttribute(String, String, String, String, String, boolean),1
+java.util.zip.Inflater.ensureOpen(),1
+java.lang.String.lastIndexOf(int, int),1
+java.nio.ByteBuffer.limit(int),1
+java.lang.Integer.formatUnsignedInt(int, int, byte[], int),1
+jdk.internal.ref.PhantomCleanable.insert(),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM._dataOrQName(int),1
+java.util.zip.ZipFile$ZipFileInflaterInputStream.fill(),1
+java.lang.Math.max(int, int),1
+java.lang.reflect.Constructor.newInstanceWithCaller(Object[], boolean, Class),1
+jdk.internal.ref.CleanerImpl.getCleanerImpl(Cleaner),1
+org.apache.xml.serializer.ToStream.setOutputFormat(Properties),1
+org.apache.xpath.XPathContext.<init>(boolean),1
+java.lang.StringLatin1.toLowerCase(String, byte[], Locale),1
+org.apache.xpath.axes.NodeSequence$IteratorCache.isComplete(),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.getElementById(String),1
+org.apache.xml.dtm.ref.ExpandedNameTable$HashEntry.<init>(ExtendedType, int, int, ExpandedNameTable$HashEntry),1
+org.apache.xpath.axes.FilterExprWalker.clone(),1
+sun.nio.cs.UTF_8$Decoder.<init>(Charset),1
+org.apache.xpath.compiler.Compiler.matchPattern(int),1
+sun.nio.cs.StreamDecoder.forInputStreamReader(InputStream, Object, String),1
+org.apache.xml.dtm.ref.DTMStringPool.removeAllElements(),1
+org.apache.xml.serializer.AttributesImplSerializer.clear(),1
+java.net.URL.openConnection(),1
+sun.net.www.MessageHeader.grow(),1
+java.lang.Class.privateGetDeclaredMethods(boolean),1
+java.util.Vector.<init>(int, int),1
+org.apache.xpath.patterns.NodeTest.initNodeTest(int, String, String),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.endCDATA(),1
+java.util.Hashtable$Enumerator.hasMoreElements(),1
+org.apache.xpath.compiler.XPathParser.NodeTest(int),1
+java.lang.Class.newInstance(),1
+sun.net.www.protocol.jar.Handler.indexOfBangSlash(String),1
+java.lang.String.isEmpty(),1
+org.apache.xpath.functions.FuncId.getNodesByID(XPathContext, int, String, StringVector, NodeSetDTM, boolean),1
+java.lang.System.checkKey(String),1
+org.apache.xpath.objects.XNodeSet.mutableNodeset(),1
+java.util.jar.JarFile.getInputStream(ZipEntry),1
+org.apache.xpath.axes.WalkingIterator.clone(),1
+org.apache.xalan.templates.ElemNumber$NumberFormatStringTokenizer.<init>(ElemNumber, String),1
+org.apache.xml.serializer.SerializerBase.getFirstCharLocName(String),1
+java.lang.StringLatin1.canEncode(int),1
+java.util.zip.ZipFile$CleanableResource.releaseInflater(Inflater),1
+org.apache.xml.dtm.ref.ExpandedNameTable.initExtendedTypes(),1
+org.apache.xml.serializer.SerializerBase.getOutputProperty(String),1
+java.util.zip.Inflater.setInput(byte[], int, int),1
+org.apache.xalan.templates.XMLNSDecl.getIsExcluded(),1
+java.lang.ClassLoader.getResource(String),1
+java.lang.StringBuilder.toString(),1
+org.apache.xml.serializer.ToStream.writeOutCleanChars(char[], int, int),1
+org.apache.xpath.axes.NodeSequence.cloneWithReset(),1
+java.lang.ClassLoader.findLoadedClass(String),1
+sun.nio.cs.StreamEncoder.ensureOpen(),1
+org.apache.xpath.VariableStack.getStackFrame(),1
+org.apache.xpath.axes.AxesWalker.clone(),1
+org.apache.xpath.axes.NodeSequence.setObject(Object),1
+java.io.FilterInputStream.read(byte[], int, int),1
+org.apache.xml.utils.NodeVector.push(int),1
+org.apache.xpath.patterns.StepPattern.getPredicateCount(),1
+sun.net.www.MessageHeader.<init>(),1
+org.apache.xml.serializer.ToHTMLStream$Trie.<init>(ToHTMLStream$Trie),1
+org.apache.xalan.templates.ElemNumber$NumberFormatStringTokenizer.hasMoreTokens(),1
+org.apache.xml.serializer.SerializerBase.setOutputProperty(String, String),1
+org.apache.xpath.axes.LocPathIterator.getDTM(int),1
+java.lang.String.indexOf(int),1
+java.util.concurrent.ConcurrentHashMap$EntryIterator.<init>(ConcurrentHashMap$Node[], int, int, int, ConcurrentHashMap),1
+org.apache.xpath.axes.ChildTestIterator.setRoot(int, Object),1
+java.net.URLClassLoader.findClass(String),1
+org.apache.xpath.compiler.OpMapVector.elementAt(int),1
+java.lang.String.valueOf(long),1
+java.net.URL.isBuiltinStreamHandler(URLStreamHandler),1
+sun.nio.cs.UTF_8.newDecoder(),1
+java.net.URL.toLowerCase(String),1
+org.apache.xalan.transformer.MsgMgr.message(SourceLocator, String, boolean),1
+org.apache.xalan.templates.ElemTemplateElement.getFirstChildElem(),1
+org.apache.xpath.axes.NodeSequence.<init>(Object),1
+org.apache.xalan.transformer.ClonerToResultTree.cloneToResultTree(int, int, DTM, SerializationHandler, boolean),1
+sun.net.www.protocol.jar.JarFileFactory.getCachedJarFile(URL),1
+java.io.Reader.<init>(Object),1
+org.apache.xml.dtm.ref.DTMDefaultBase.findInSortedSuballocatedIntVector(SuballocatedIntVector, int),1
+sun.net.www.protocol.jar.Handler.checkNestedProtocol(String),1
+java.util.zip.ZipUtils.CH(byte[], int),1
+java.util.Objects.requireNonNull(Object),1
+java.lang.CharacterDataLatin1.getProperties(int),1
+org.apache.xml.dtm.ref.DTMDefaultBaseIterators$ParentIterator.<init>(DTMDefaultBaseIterators),1
+java.util.HashMap.get(Object),1
+org.apache.xalan.transformer.TransformerImpl.reset(),1
+org.apache.xpath.VariableStack.clearLocalSlots(int, int),1
+org.apache.xpath.objects.XObject.toString(),1
+java.util.Hashtable.keys(),1
+java.util.Hashtable.<init>(int, float),1
+java.lang.AbstractStringBuilder.checkRange(int, int, int),1
+org.apache.xml.serializer.ToStream$BoolStack.clear(),1
+org.apache.xml.serializer.ElemContext.<init>(),1
+org.apache.xml.serializer.ToStream.endPrefixMapping(String),1
+org.apache.xml.serializer.AttributesImplSerializer.getIndex(String),1
+org.xml.sax.helpers.AttributesImpl.getValue(int),1
+java.lang.AbstractStringBuilder.putStringAt(int, String, int, int),1
+org.apache.xml.utils.FastStringBuffer.getString(StringBuffer, int, int, int),1
+org.apache.xalan.templates.ElemNumber.getPreviousNode(XPathContext, int),1
+java.lang.reflect.ReflectAccess.copyMethod(Method),1
+java.lang.reflect.Method.getReturnType(),1
+sun.nio.cs.UTF_8$Decoder.decodeArrayLoop(ByteBuffer, CharBuffer),1
+org.apache.xalan.templates.ElemParam.execute(TransformerImpl),1
+org.apache.xpath.objects.XString.equals(XObject),1
+org.apache.xpath.NodeSetDTM.runTo(int),1
+java.lang.String.<init>(char[], int, int, Void),1
+java.lang.StringUTF16.compress(char[], int, int),1
+sun.nio.cs.StreamDecoder.read(char[], int, int),1
+java.lang.ClassLoader.loadClass(String, boolean),1
+java.lang.ThreadLocal.getMap(Thread),1
+org.apache.xalan.templates.ElemTemplateElement.hasTextLitOnly(),1
+sun.net.www.protocol.jar.URLJarFile.isFileURL(URL),1
+org.apache.xpath.operations.Variable.execute(XPathContext, boolean),1
+java.lang.StringConcatHelper.newArray(long),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.<init>(DTMManager, Source, int, DTMWSFilter, XMLStringFactory, boolean),1
+java.util.Arrays.copyOf(Object[], int, Class),1
+org.apache.xpath.axes.FilterExprIteratorSimple.executeFilterExpr(int, XPathContext, PrefixResolver, boolean, int, Expression),1
+java.lang.StringConcatHelper.newString(byte[], long),1
+java.net.URLClassLoader.getResourceAsStream(String),1
+java.util.LinkedHashMap.linkNodeLast(LinkedHashMap$Entry),1
+org.apache.xpath.XPathContext.getErrorListener(),1
+org.apache.xml.dtm.DTMAxisTraverser.first(int),1
+org.apache.xml.serializer.CharInfo.<init>(),1
+org.apache.xpath.VariableStack.setLocalVariable(int, XObject, int),1
+org.apache.xpath.functions.FunctionDef1Arg.getArg0AsNode(XPathContext),1
+java.lang.String.replace(char, char),1
+org.apache.xalan.transformer.TransformerImpl.hasTraceListeners(),1
+java.util.Properties.getProperty(String),1
+sun.net.util.IPAddressUtil.checkHostString(String),1
+java.lang.String.getBytes(byte[], int, byte),1
+org.apache.xml.serializer.ToStream$BoolStack.<init>(int),1
+java.lang.Integer.getChars(int, int, byte[]),1
+org.apache.xalan.templates.ElemTemplateElement.unexecuteNSDecls(TransformerImpl),1
+org.apache.xalan.templates.ElemTemplateElement.getNamespaceForPrefix(String),1
+org.apache.xpath.NodeSetDTM.removeAllElements(),1
+org.apache.xpath.axes.AxesWalker.getNextNode(),1
+org.apache.xpath.XPathContext.pushCurrentExpressionNode(int),1
+org.apache.xpath.XPathContext.pushSubContextList(SubContextList),1
+java.io.File.<init>(File, String),1
+org.apache.xalan.templates.AVT.evaluate(XPathContext, int, PrefixResolver),1
+org.apache.xml.dtm.SecuritySupport$3.run(),1
+org.apache.xpath.patterns.StepPattern.execute(XPathContext),1
+org.apache.xml.serializer.OutputPropertiesFactory.getDefaultMethodProperties(String),1
+java.nio.CharBuffer.position(int),1
+java.util.zip.ZipFile.ensureOpen(),1
+org.apache.xalan.templates.OutputProperties.<init>(String),1
+org.apache.xalan.transformer.StackGuard.checkForInfinateLoop(),1
+org.apache.xml.dtm.SecuritySupport.getContextClassLoader(),1
+java.util.StringTokenizer.<init>(String),1
+org.apache.xml.dtm.ref.DTMDefaultBase.<init>(DTMManager, Source, int, DTMWSFilter, XMLStringFactory, boolean, int, boolean, boolean),1
+java.lang.Long.stringSize(long),1
+sun.net.www.protocol.file.Handler.openConnection(URL),1
+org.apache.xpath.operations.And.bool(XPathContext),1
+org.apache.xml.serializer.CharInfo$CharKey.equals(Object),1
+org.apache.xpath.objects.XNodeSet.<init>(DTMManager),1
+org.apache.xml.dtm.ref.ExpandedNameTable.getExpandedTypeID(String, String, int),1
+jdk.internal.ref.PhantomCleanable.clear(),1
+org.apache.xml.utils.QName.equals(Object),1
+javax.xml.transform.stream.StreamSource.<init>(InputStream),1
+jdk.internal.loader.URLClassPath.findResource(String, boolean),1
+sun.nio.cs.StreamEncoder.implFlushBuffer(),1
+java.lang.String.valueOf(int),1
+org.apache.xpath.axes.LocPathIterator.execute(XPathContext),1
+org.apache.xpath.Expression.execute(XPathContext, boolean),1
+org.apache.xpath.axes.NodeSequence.setCurrentPos(int),1
+org.apache.xml.serializer.NamespaceMappings$Stack.peek(),1
+java.lang.Math.min(float, float),1
+org.apache.xml.dtm.ObjectFactory.lookUpFactoryClassName(String, String, String),1
+org.apache.xpath.NodeSetDTM.detach(),1
+org.apache.xpath.axes.NodeSequence$IteratorCache.increaseUseCount(),1
+org.apache.xml.utils.FastStringBuffer.size(),1
+org.apache.xpath.axes.WalkingIterator.setRoot(int, Object),1
+jdk.internal.loader.BootLoader.findResource(String),1
+org.apache.xml.utils.NodeVector.pop(),1
+org.apache.xalan.transformer.TransformerImpl.popMode(),1
+org.apache.xpath.objects.XNodeSet.<init>(DTMIterator),1
+org.apache.xpath.XPathContext.getSubContextList(),1
+org.apache.xml.utils.BoolStack.pop(),1
+java.lang.StringLatin1.toUpperCase(String, byte[], Locale),1
+org.apache.xml.dtm.ref.DTMDefaultBase.popShouldStripWhitespace(),1
+org.apache.xalan.templates.ElemTemplateElement.getBaseIdentifier(),1
+org.apache.xalan.templates.AVT.getName(),1
+sun.net.www.protocol.jar.JarURLConnection.<init>(URL, Handler),1
+org.apache.xalan.templates.ElemNumber.findAncestor(XPathContext, XPath, XPath, int, ElemNumber),1
+org.apache.xalan.templates.StylesheetRoot.getTemplateListComposed(),1
+java.lang.StringLatin1.toChars(byte[]),1
+org.apache.xpath.axes.LocPathIterator.<init>(PrefixResolver),1
+jdk.jfr.internal.handlers.EventHandler.timestamp(),1
+java.io.StringWriter.<init>(),1
+org.apache.xpath.XPathContext.pushSAXLocatorNull(),1
+org.apache.xml.dtm.ref.ExtendedType.<init>(int, String, String),1
+org.apache.xml.dtm.ref.sax2dtm.SAX2DTM.comment(char[], int, int),1
+java.net.URLConnection.getDefaultUseCaches(String),1
+java.util.Collections$SetFromMap.add(Object),1
+java.util.Properties.propertyNames(),1
+sun.nio.cs.UTF_8$Decoder.xflow(Buffer, int, int, Buffer, int, int),1
+org.apache.xalan.templates.ElemMessage.execute(TransformerImpl),1
+org.apache.xalan.transformer.TransformerImpl.transformNode(int),1
+org.apache.xalan.templates.ElemVariable.getValue(TransformerImpl, int),1
+org.apache.xpath.axes.NodeSequence.<init>(),1
+org.apache.xalan.transformer.CountersTable.countNode(XPathContext, ElemNumber, int),1
+org.apache.xpath.axes.WalkingIterator.nextNode(),1
+org.apache.xalan.templates.ElemAttribute.constructNode(String, String, String, TransformerImpl),1
+org.apache.xpath.XPathContext.pushNamespaceContextNull(),1
+org.apache.xpath.axes.NodeSequence.SetVector(NodeVector),1
+org.apache.xpath.XPathContext.pushPredicatePos(int),1
+org.apache.xpath.axes.AxesWalker.setRoot(int),1
+org.apache.xml.serializer.ToStream.startPrefixMapping(String, String, boolean),1
+org.apache.xpath.NodeSetDTM.size(),1
+org.apache.xpath.operations.Operation.execute(XPathContext),1
+org.apache.xml.serializer.CharInfo.shouldMapAttrChar(int),1
+org.apache.xalan.serialize.SerializerUtils.processNSDecls(SerializationHandler, int, int, DTM),1
+org.apache.xalan.transformer.TransformerImpl.getErrorListener(),1
+org.apache.xpath.axes.NodeSequence.nextNode(),1
+org.apache.xml.dtm.ref.DTMDefaultBase.getFirstAttribute(int),1
+org.apache.xml.serializer.ToStream.reset(),1
+java.lang.StringLatin1.indexOf(byte[], byte[]),1
+org.apache.xalan.transformer.TransformerImpl.pushElemTemplateElement(ElemTemplateElement),1
+org.apache.xpath.XPathContext.setSAXLocator(SourceLocator),1
+java.nio.CharBuffer.limit(int),1
+org.apache.xml.serializer.ToStream.setTransformer(Transformer),1
+java.util.concurrent.ConcurrentHashMap.getOrDefault(Object, Object),1
+java.io.BufferedReader.readLine(boolean, boolean[]),1
+java.util.Spliterators.iterator(Spliterator),1
+org.apache.xml.serializer.Encodings.loadEncodingInfo(),1
+java.util.Collections$SynchronizedSet.<init>(Set, Object),1
+org.apache.xml.serializer.CharInfo.defineEntity(String, char),1
+java.lang.CharacterDataLatin1.digit(int, int),1
+java.util.Properties.load0(Properties$LineReader),1
+org.apache.xml.serializer.utils.StringToIntTable.<init>(),1
+java.lang.invoke.MethodHandles.argumentsWithCombiner(boolean, MethodHandle, int, MethodHandle, int[]),1
+java.lang.invoke.DirectMethodHandle.shouldBeInitialized(MemberName),1
+org.apache.xalan.templates.ElemLiteralResult.resolvePrefixTables(),1
+java.util.Vector.setSize(int),1
+org.apache.xpath.axes.PredicatedNodeTest.fixupVariables(Vector, int),1
+org.apache.xalan.templates.StylesheetRoot.QuickSort2(Vector, int, int),1
+org.apache.xalan.templates.StylesheetComposed.isAggregatedType(),1
+org.apache.xml.utils.NamespaceSupport2.pushContext(),1
+org.apache.xml.utils.QName.<init>(String, PrefixResolver, boolean),1
+org.apache.xalan.processor.StylesheetHandler.pushSpaceHandling(Attributes),1
+java.util.Stack.peek(),1
+org.apache.xpath.compiler.XPathParser.PrimaryExpr(),1
+org.apache.xpath.axes.WalkerFactory.walksDescendants(int),1
+org.apache.xpath.axes.IteratorPool.<init>(DTMIterator),1
+org.apache.xpath.axes.LocPathIterator.<init>(Compiler, int, int, boolean),1
+org.apache.xalan.processor.XSLTElementDef.getMultiAllowed(),1
+org.apache.xpath.axes.WalkerFactory.newDTMIterator(Compiler, int, boolean),1
+java.util.StringTokenizer.scanToken(int),1
+org.apache.xalan.templates.ElemUse.<init>(),1
+org.apache.xalan.templates.ElemTemplateElement.setEndLocaterInfo(SourceLocator),1
+org.apache.xalan.templates.AVT.<init>(StylesheetHandler, String, String, String, String, ElemTemplateElement),1
+org.apache.xalan.processor.XSLTAttributeDef.processAVT_QNAME(StylesheetHandler, String, String, String, String, ElemTemplateElement),1
+jdk.internal.loader.URLClassPath$JarLoader$2.getManifest(),1
+org.apache.xpath.compiler.OpMapVector.setElementAt(int, int),1
+java.lang.Class$Atomic.casReflectionData(Class, SoftReference, SoftReference),1
+java.util.Properties.loadConvert(char[], int, int, StringBuilder),1
+jdk.internal.jimage.ImageStringsReader.hashCode(String, String, int),1
+java.net.URLStreamHandler.toExternalForm(URL),1
+java.util.ArrayList.indexOfRange(Object, int, int),1
+java.lang.ClassLoader.defineClass(String, byte[], int, int, ProtectionDomain),1
+org.apache.xalan.processor.XSLTSchema.build(),1
+java.lang.ClassLoader.preDefineClass(String, ProtectionDomain),1
+jdk.internal.org.objectweb.asm.ClassWriter.toByteArray(),1
+java.util.WeakHashMap.put(Object, Object),1
+java.lang.StringConcatHelper.simpleConcat(Object, Object),1
+java.util.Arrays.copyOf(byte[], int),1
+java.util.zip.ZipFile$ZipFileInputStream.initDataOffset(),1
+java.security.CodeSource.<init>(URL, CodeSigner[]),1
+java.lang.Package.isSealed(),1
+java.lang.ClassLoader.defineClassSourceLocation(ProtectionDomain),1
+java.lang.ClassLoader.definePackage(String, Module),1
+java.lang.invoke.MethodHandle.setVarargs(MemberName),1
+java.lang.invoke.MethodHandles$Lookup.fixmods(int),1
+java.lang.invoke.InvokerBytecodeGenerator.clinit(ClassWriter, String, List),1
+java.lang.invoke.InvokerBytecodeGenerator.classDataValues(),1
+java.lang.invoke.MethodHandle.<init>(MethodType, LambdaForm),1
+java.lang.invoke.LambdaFormEditor$TransformKey.<init>(long),1
+java.lang.Class.descriptorString(),1
+jdk.internal.org.objectweb.asm.MethodWriter.putMethodInfo(ByteVector),1
+java.lang.invoke.LambdaForm.returnType(),1
+java.lang.invoke.InvokerBytecodeGenerator.<init>(String, String, LambdaForm, MethodType),1
+jdk.internal.org.objectweb.asm.SymbolTable.addConstantUtf8Reference(int, String),1
+java.lang.invoke.LambdaFormBuffer.clearDuplicatesAndNulls(),1
+java.util.jar.JarFile.getManifest(),1
+java.lang.Math.multiplyExact(long, long),1
+jdk.internal.loader.BuiltinClassLoader.getAndVerifyPackage(String, Manifest, URL),1
+jdk.internal.org.objectweb.asm.ByteVector.put11(int, int),1
+java.lang.invoke.MethodType.parameterCount(),1
+java.lang.invoke.MemberName.getReferenceKind(),1
+java.lang.invoke.MemberName$Factory.resolve(byte, MemberName, Class, int, boolean),1
+java.lang.invoke.InvokerBytecodeGenerator.generateCustomizedCode(LambdaForm, MethodType),1
+jdk.nio.zipfs.ZipFileSystem$IndexNode.keyOf(byte[]),1
+java.net.URL.toExternalForm(),1
+jdk.internal.jimage.ImageLocation.verifyName(String, String, int, int, int, int, int, int, ImageStrings),1
+java.lang.ClassLoader.defineClass(String, ByteBuffer, ProtectionDomain),1
+java.lang.invoke.MethodTypeForm.canonicalize(MethodType, int),1
+jdk.internal.loader.BuiltinClassLoader.findMiscResource(String),1
+java.lang.StringLatin1.indexOfChar(byte[], int, int, int),1
+org.apache.commons.cli.PosixParser.flatten(Options, String[], boolean),1
+java.lang.Character.isJavaIdentifierPart(char),1
+java.lang.String.toLowerCase(),1
+sun.launcher.LauncherHelper.getMainClassFromJar(String),1
+jdk.jfr.internal.EventWriter.reserveEventSizeField(),1

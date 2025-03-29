@@ -1,0 +1,592 @@
+sun.java2d.marlin.Renderer._endRendering(int, int),255
+org.apache.batik.ext.awt.image.codec.png.PNGEncodeParam.filterRow(byte[], byte[], byte[][], int, int),157
+org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder.encodePass(OutputStream, Raster, int, int, int, int),42
+sun.java2d.marlin.MarlinTileGenerator.getAlphaRLE(byte[], int, int),41
+java.awt.image.SinglePixelPackedSampleModel.getPixels(int, int, int, int, int[], DataBuffer),34
+sun.java2d.marlin.MarlinCache.copyAARowRLE_WithBlockFlags(int[], int[], int, int, int),23
+sun.java2d.marlin.MarlinCache.copyAARowNoRLE(int[], int, int, int),22
+org.apache.batik.parser.NumberParser.parseFloat(),20
+com.sun.org.apache.xerces.internal.impl.io.UTF8Reader.read(char[], int, int),19
+sun.java2d.marlin.Renderer.addLine(double, double, double, double),18
+sun.java2d.marlin.MarlinTileGenerator.getAlphaNoRLE(byte[], int, int),15
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.scanLiteral(int, XMLString, boolean),14
+java.util.Arrays.fill(byte[], int, int, byte),14
+java.lang.StringLatin1.charAt(byte[], int),13
+org.apache.batik.ext.awt.image.codec.png.PNGImageEncoder.clamp(int, int),11
+org.apache.batik.css.parser.Scanner.nextToken(),10
+java.lang.String.isLatin1(),10
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanStartElement(),10
+java.lang.String.equals(Object),10
+org.apache.batik.ext.awt.image.GraphicsUtil.copyData_INT_PACK(Raster, WritableRaster),9
+sun.java2d.marlin.DMarlinRenderingEngine.pathToLoop(double[], PathIterator, DPathConsumer2D),9
+java.awt.geom.Path2D$Double.<init>(Shape, AffineTransform),9
+org.apache.batik.util.io.StringNormalizingReader.read(),9
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipSpaces(),9
+org.apache.batik.dom.AbstractElement.invalidateElementsByTagName(Node),9
+org.apache.batik.gvt.AbstractGraphicsNode.invalidateGeometryCache(),8
+org.apache.batik.gvt.CompositeGraphicsNode.invalidateGeometryCache(),8
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanDocument(boolean),8
+java.lang.String.startsWith(String, int),8
+java.util.Arrays.fill(int[], int, int, int),7
+org.apache.batik.anim.dom.SVGOMElement.getCascadedXMLBase(Node),7
+org.apache.batik.dom.svg.SVGAnimatedPathDataSupport.handlePathSegList(SVGPathSegList, PathHandler),7
+java.util.HashMap.getNode(Object),7
+java.lang.String.length(),7
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.get(String, String),7
+java.net.URL.<init>(URL, String, URLStreamHandler),7
+sun.java2d.marlin.FloatMath.ceil_int(double),6
+sun.java2d.marlin.FloatMath.min(int, int),6
+sun.java2d.marlin.Renderer.curveBreakIntoLinesAndAdd(double, double, Curve, double, double),6
+sun.java2d.marlin.Helpers$PolyStack.popAll(DPathConsumer2D),6
+java.net.URL.set(String, String, int, String, String, String, String, String),6
+org.apache.batik.css.engine.CSSEngine.getCascadedStyleMap(CSSStylableElement, String),6
+org.apache.batik.gvt.CompositeGraphicsNode.add(Object),6
+java.lang.StringLatin1.indexOf(byte[], int, int),6
+org.apache.batik.anim.dom.AbstractSVGAnimatedValue.<init>(AbstractElement, String, String),6
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.scanQName(QName, XMLScanner$NameType),6
+java.lang.Double.isNaN(double),5
+java.util.Arrays.binarySearch0(Object[], int, int, Object, Comparator),5
+sun.java2d.pipe.AAShapePipe.renderTiles(SunGraphics2D, Shape, AATileGenerator, int[], AAShapePipe$TileState),5
+sun.java2d.marlin.FloatMath.max(int, int),5
+sun.java2d.marlin.DMarlinRenderingEngine$NormalizingPathIterator.currentSegment(double[]),5
+org.apache.batik.gvt.CompositeGraphicsNode.getTransformedPrimitiveBounds(AffineTransform),5
+org.apache.batik.css.parser.Scanner.nextChar(),5
+java.awt.geom.AffineTransform.concatenate(AffineTransform),5
+org.apache.batik.css.engine.CSSEngine.getComputedStyle(CSSStylableElement, String, int),5
+java.awt.geom.Path2D.closePath(),5
+org.apache.batik.bridge.GVTBuilder.buildGraphicsNode(BridgeContext, Element, CompositeGraphicsNode),5
+org.apache.batik.gvt.AbstractGraphicsNode.setTransform(AffineTransform),5
+org.apache.batik.bridge.PaintServer.convertOpacity(Value),5
+org.apache.batik.bridge.GVTBuilder.buildComposite(BridgeContext, Element, CompositeGraphicsNode),5
+java.util.HashMap.hash(Object),5
+java.lang.StringLatin1.hashCode(byte[]),5
+org.apache.batik.dom.util.SAXDocumentFactory.startElement(String, String, String, Attributes),5
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.startElement(QName, XMLAttributes, Augmentations),5
+java.lang.String.coder(),5
+org.apache.batik.ext.awt.image.codec.png.CRC.updateCRC(int, byte[], int, int),4
+jdk.internal.misc.Unsafe.putInt(long, int),4
+sun.java2d.loops.GraphicsPrimitiveMgr$2.compare(Object, Object),4
+java.lang.StrictMath.floorOrCeil(double, double, double, double),4
+org.apache.batik.gvt.AbstractGraphicsNode.getTransformedBounds(AffineTransform),4
+sun.java2d.marlin.TransformingPathConsumer2D$Path2DWrapper.lineTo(double, double),4
+org.apache.batik.gvt.CompositeGraphicsNode.getPrimitiveBounds(),4
+java.awt.geom.Path2D$Double.getBounds2D(),4
+jdk.internal.math.FloatingDecimal.readJavaFormatString(String),4
+java.lang.String.hashCode(),4
+org.apache.batik.bridge.CSSUtilities.getComputedStyle(Element, int),4
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.item(int),4
+org.apache.batik.bridge.SVGUseElementBridge.buildCompositeGraphicsNode(BridgeContext, Element, CompositeGraphicsNode),4
+org.apache.batik.css.engine.StyleMap.<init>(int),4
+org.apache.batik.util.ParsedURLData.<init>(URL),4
+org.apache.batik.dom.svg.AbstractSVGList.getItemImpl(int),4
+java.awt.geom.AffineTransform.transform(double[], int, double[], int, int),4
+jdk.internal.math.FDBigInteger.<init>(long, char[], int, int),4
+org.apache.batik.css.engine.StyleMap.putValue(int, Value),4
+org.apache.batik.css.parser.Parser.parseStyleDeclaration(boolean),4
+java.awt.geom.Path2D$Float.lineTo(float, float),4
+org.apache.batik.dom.AbstractElement.getAttributeNodeNS(String, String),4
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.getNamedItemNS(String, String),4
+com.sun.org.apache.xerces.internal.utils.XMLLimitAnalyzer.addValue(int, String, int),4
+com.sun.org.apache.xerces.internal.util.XMLChar.isSpace(int),4
+org.apache.batik.util.DoublyIndexedTable.put(Object, Object, Object),4
+java.lang.StringConcatHelper.newArray(long),4
+org.apache.batik.dom.AbstractParentNode.getFirstChild(),4
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser$AttributesProxy.getQName(int),4
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.scanContent(XMLString),4
+java.lang.invoke.InvokerBytecodeGenerator.emitImplicitConversion(LambdaForm$BasicType, Class, Object),4
+org.apache.batik.css.engine.CSSEngine.getCSSNextSibling(Node),3
+sun.java2d.pipe.AlphaPaintPipe$TileContext.<init>(SunGraphics2D, PaintContext),3
+org.apache.batik.ext.awt.MultipleGradientPaintContext.interpolate(int, int, int[]),3
+org.apache.batik.ext.awt.RadialGradientPaintContext.fixedPointSimplestCaseNonCyclicFillRaster(int[], int, int, int, int, int, int),3
+java.awt.geom.AffineTransform.calculateType(),3
+java.awt.geom.Path2D$Float.getBounds2D(),3
+java.awt.geom.Path2D$Double.append(PathIterator, boolean),3
+org.apache.batik.anim.dom.SVGOMAnimatedTransformList$BaseSVGTransformList.revalidate(),3
+org.apache.batik.css.engine.StringIntMap.get(String),3
+org.apache.batik.parser.PathParser.parsea(),3
+org.apache.batik.gvt.CompositeGraphicsNode.setRoot(RootGraphicsNode),3
+org.apache.batik.parser.LengthParser.parseLength(),3
+org.apache.batik.bridge.GVTBuilder.build(BridgeContext, Element),3
+org.apache.batik.parser.TransformListParser.doParse(),3
+org.apache.batik.css.parser.ScannerUtilities.isCSSNameCharacter(char),3
+jdk.internal.math.FloatingDecimal$ASCIIToBinaryBuffer.floatValue(),3
+java.awt.BasicStroke.<init>(float, int, int, float, float[], float),3
+java.awt.geom.Path2D$Float.append(PathIterator, boolean),3
+org.apache.batik.css.engine.CSSEngine.getParentCSSStylableElement(Element),3
+org.apache.batik.bridge.AbstractGraphicsNodeBridge.computeTransform(SVGTransformable, BridgeContext),3
+org.apache.batik.parser.AbstractParser.skipCommaSpaces(),3
+org.apache.batik.bridge.PaintServer.convertMarkers(Element, ShapeNode, BridgeContext),3
+org.apache.batik.parser.NumberParser.buildFloat(int, int),3
+org.apache.batik.css.engine.CSSEngine.findStyleSheetNodes(Node),3
+org.apache.batik.dom.AbstractCharacterData.setNodeValue(String),3
+org.apache.batik.dom.AbstractDocument.addIdEntry(Element, String),3
+java.util.LinkedList.isPositionIndex(int),3
+org.apache.batik.anim.dom.AbstractElement.fireDOMAttrModifiedEvent(String, Attr, String, String, short),3
+org.apache.batik.dom.util.DOMUtilities.isValidName(String),3
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$FragmentContentDriver.next(),3
+java.util.zip.ZipFile$Source.getEntryPos(String, boolean),3
+sun.net.www.ParseUtil.firstEncodeIndex(String),3
+java.util.Properties$LineReader.readLine(),3
+java.awt.image.DataBufferInt.getElem(int),2
+java.awt.geom.RectangularShape.getMinY(),2
+jdk.internal.misc.Unsafe.getInt(long),2
+sun.java2d.marlin.Renderer.curveTo(double, double, double, double, double, double),2
+org.apache.batik.ext.awt.MultipleGradientPaintContext.<init>(ColorModel, Rectangle, Rectangle2D, AffineTransform, RenderingHints, float[], Color[], MultipleGradientPaint$CycleMethodEnum, MultipleGradientPaint$ColorSpaceEnum),2
+java.util.HashMap.putMapEntries(Map, boolean),2
+sun.java2d.SurfaceData.validatePipe(SunGraphics2D),2
+sun.java2d.marlin.ByteArrayCache$Reference.putArray(byte[], int, int),2
+sun.java2d.marlin.Renderer.endRendering(),2
+sun.java2d.marlin.Stroker.finish(int),2
+sun.java2d.marlin.Renderer.moveTo(double, double),2
+sun.java2d.SunGraphics2D.validateBasicStroke(BasicStroke),2
+sun.java2d.marlin.MarlinTileGenerator.nextTile(),2
+sun.java2d.marlin.Renderer.copyAARow(int[], int, int, int, boolean),2
+java.awt.geom.Rectangle2D.getPathIterator(AffineTransform),2
+java.awt.geom.AffineTransform.translate(double, double),2
+java.awt.geom.Path2D$Double.lineTo(double, double),2
+java.awt.geom.Path2D$Iterator.isDone(),2
+org.apache.batik.css.parser.Scanner.next(),2
+java.lang.String.<init>(byte[], byte),2
+org.apache.batik.dom.AbstractElement.fireDOMAttrModifiedEvent(String, Attr, String, String, short),2
+org.apache.batik.bridge.PaintServer.convertFillPaint(Element, GraphicsNode, BridgeContext),2
+java.lang.Class.getName(),2
+org.apache.batik.dom.svg.AbstractSVGPathSegList.getItem(int),2
+java.lang.String.isEmpty(),2
+org.apache.batik.bridge.AbstractGraphicsNodeBridge.setTransform(GraphicsNode, Element, BridgeContext),2
+java.net.URLStreamHandler.parseURL(URL, String, int, int),2
+org.apache.batik.bridge.SVGPathElementBridge.buildShape(BridgeContext, Element, ShapeNode),2
+org.apache.batik.bridge.PaintServer.convertFillAndStroke(Element, ShapeNode, BridgeContext),2
+java.lang.Character.toLowerCase(int),2
+jdk.internal.math.FloatingDecimal$ASCIIToBinaryBuffer.<init>(boolean, int, char[], int),2
+org.apache.batik.bridge.BridgeContext.getBridge(String, String),2
+org.apache.batik.bridge.SVGRadialGradientElementBridge.buildGradient(Element, Element, GraphicsNode, MultipleGradientPaint$CycleMethodEnum, MultipleGradientPaint$ColorSpaceEnum, AffineTransform, Color[], float[], BridgeContext),2
+org.apache.batik.gvt.AbstractGraphicsNode.setClip(ClipRable),2
+org.apache.batik.dom.AbstractNode.getOwnerDocument(),2
+org.apache.batik.parser.PathParser._parsel(boolean),2
+org.apache.batik.bridge.PaintServer.convertColor(Value, float),2
+org.apache.batik.css.engine.value.StringValue.<init>(short, String),2
+jdk.internal.math.FDBigInteger.rightInplaceSub(FDBigInteger),2
+java.util.Hashtable.get(Object),2
+org.apache.batik.bridge.AbstractSVGGradientElementBridge.contains(List, ParsedURL),2
+java.awt.geom.Path2D$Double.moveTo(double, double),2
+org.apache.batik.css.engine.CSSEngine.sortRules(ArrayList, Element, String),2
+org.apache.batik.gvt.AbstractGraphicsNode.setComposite(Composite),2
+org.apache.batik.ext.awt.geom.ExtendedGeneralPath.makeRoom(int),2
+org.apache.batik.bridge.AbstractSVGGradientElementBridge$SVGStopElementBridge.createStop(BridgeContext, Element, Element, float),2
+org.apache.batik.css.engine.sac.CSSElementSelector.match(Element, String),2
+org.apache.batik.css.engine.value.LengthManager.computeValue(CSSStylableElement, String, CSSEngine, int, StyleMap, Value),2
+org.apache.batik.bridge.PaintServer.resolveColorComponent(Value),2
+org.apache.batik.parser.PathParser._parseL(boolean),2
+org.apache.batik.css.engine.CSSEngine.importCascadedStyleMaps(Element, CSSEngine, Element),2
+org.apache.batik.dom.AbstractDocument.importNode(Node, boolean, boolean),2
+org.apache.batik.css.engine.StyleMap.isComputed(int),2
+org.apache.batik.dom.AbstractElement.hasAttributes(),2
+org.apache.batik.ext.awt.geom.ExtendedGeneralPath.arcTo(float, float, float, boolean, boolean, float, float),2
+org.apache.batik.css.engine.CSSEngine$StyleDeclarationDocumentHandler.property(String, LexicalUnit, boolean),2
+org.apache.batik.bridge.PaintServer.convertStrokeLinecap(Value),2
+org.apache.batik.dom.svg.AbstractSVGTransform.setTranslate(float, float),2
+java.awt.geom.AffineTransform.getScaleX(),2
+java.awt.geom.ArcIterator.<init>(Arc2D, AffineTransform),2
+org.apache.batik.css.parser.Parser.number(boolean),2
+org.apache.batik.parser.PathParser.doParse(),2
+org.apache.batik.css.engine.StyleMap.getValue(int),2
+org.apache.batik.gvt.CompositeShapePainter.addShapePainter(ShapePainter),2
+org.apache.batik.css.parser.Parser.hexcolor(LexicalUnit),2
+org.apache.batik.bridge.AbstractGraphicsNodeBridge.buildGraphicsNode(BridgeContext, Element, GraphicsNode),2
+org.apache.batik.css.engine.value.AbstractColorManager.createColorComponent(LexicalUnit),2
+org.apache.batik.dom.svg.AbstractSVGTransformList.getAffineTransform(),2
+org.apache.batik.parser.PathParser.parsec(),2
+org.apache.batik.css.engine.CSSEngine.getCSSFirstChild(Node),2
+java.util.zip.Inflater.reset(),2
+org.apache.batik.dom.AbstractElement.setAttributeNS(String, String, String),2
+org.apache.batik.anim.dom.SVGOMElement.createLiveAnimatedPathData(String, String, String),2
+java.util.LinkedList.linkLast(Object),2
+com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.getName(int, QName),2
+org.apache.batik.dom.AbstractParentNode$ChildNodes.append(ExtendedNode),2
+org.apache.batik.anim.dom.AbstractElement.initializeAttributes(),2
+java.lang.StringBuffer.toString(),2
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.skipChar(int, XMLScanner$NameType),2
+org.apache.batik.anim.dom.AbstractElement.getLiveAttributeValue(String, String),2
+org.apache.batik.dom.AbstractAttr.getNodeValue(),2
+org.apache.batik.dom.AbstractParentNode.appendChild(Node),2
+org.apache.batik.dom.AbstractElement$Entry.<init>(int, String, String, Node, AbstractElement$Entry),2
+com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.isOverLimit(int, XMLLimitAnalyzer),2
+com.sun.org.apache.xerces.internal.util.XMLChar.isNameStart(int),2
+com.sun.org.apache.xerces.internal.xni.QName.setValues(QName),2
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.hashCode(String, String),2
+org.apache.batik.util.DoublyIndexedTable.<init>(int),2
+com.sun.org.apache.xerces.internal.impl.XMLScanner.scanAttributeValue(XMLString, XMLString, String, XMLAttributes, int, boolean, String, boolean),2
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.rehash(),2
+org.apache.batik.anim.dom.SVGDOMImplementation.createElementNS(AbstractDocument, String, String),2
+org.apache.batik.anim.dom.AbstractSVGAnimatedValue.addAnimatedAttributeListener(AnimatedAttributeListener),2
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.put(String, String, Node),2
+com.sun.org.apache.xerces.internal.util.NamespaceSupport.getURI(String),2
+java.lang.StringBuffer.append(char[], int, int),2
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.next(),2
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.checkNodeCount(Entity$ScannedEntity),2
+org.apache.batik.anim.dom.SVGOMDocument.createAttributeNS(String, String),2
+org.apache.batik.dom.util.DOMUtilities.getPrefix(String),2
+com.sun.org.apache.xerces.internal.impl.XMLNSDocumentScannerImpl.scanAttribute(XMLAttributesImpl),2
+java.lang.StringConcatHelper.simpleConcat(Object, Object),2
+java.lang.invoke.LambdaForm$Name.<init>(LambdaForm$NamedFunction, Object[]),2
+java.lang.StringLatin1.lastIndexOf(byte[], int, int),2
+sun.net.www.protocol.jar.Handler.parseURL(URL, String, int, int),2
+java.util.jar.JarFile.getVersionedEntry(String, JarEntry),2
+java.lang.String.contains(CharSequence),2
+java.util.zip.ZipFile.getZipEntry(String, int),2
+java.security.SecureClassLoader.getProtectionDomain(CodeSource),2
+sun.invoke.util.BytecodeDescriptor.unparse(Class),2
+java.lang.invoke.DirectMethodHandle.shouldBeInitialized(MemberName),2
+java.lang.StringBuilder.append(String),2
+java.lang.invoke.InvokerBytecodeGenerator.isStaticallyNameable(Class),1
+java.util.concurrent.ConcurrentHashMap.transfer(ConcurrentHashMap$Node[], ConcurrentHashMap$Node[]),1
+org.apache.batik.bridge.AbstractGraphicsNodeBridge.disposeTree(Node, boolean),1
+java.util.zip.Deflater.setInput(byte[], int, int),1
+sun.java2d.marlin.TransformingPathConsumer2D$DeltaTransformFilter.lineTo(double, double),1
+sun.java2d.SunGraphics2D.invalidatePipe(),1
+sun.java2d.SunGraphics2D.getTransform(),1
+sun.java2d.loops.RenderCache$Entry.matches(SurfaceType, CompositeType, SurfaceType),1
+java.lang.ref.ReferenceQueue.remove(),1
+sun.java2d.SunGraphics2D.setPaint(Paint),1
+sun.awt.image.SunWritableRaster.stealTrackable(DataBuffer),1
+java.awt.image.DirectColorModel.createCompatibleWritableRaster(int, int),1
+sun.java2d.marlin.Curve.perpendiculardfddf(double[], int),1
+org.apache.batik.gvt.AbstractGraphicsNode.getTransformedPrimitiveBounds(AffineTransform),1
+java.awt.geom.RectIterator.<init>(Rectangle2D, AffineTransform),1
+sun.java2d.loops.GraphicsPrimitive.getUniqueID(),1
+sun.java2d.marlin.DMarlinRenderingEngine.pathTo(RendererContext, PathIterator, DPathConsumer2D),1
+sun.java2d.SurfaceData.getFillCompositeType(SunGraphics2D),1
+java.awt.geom.AffineTransform.transform(float[], int, double[], int, int),1
+java.awt.RenderingHints.put(Object, Object),1
+sun.java2d.marlin.DMarlinRenderingEngine$NormalizingPathIterator.isDone(),1
+sun.java2d.marlin.Renderer.lineTo(double, double),1
+org.apache.batik.gvt.CompositeGraphicsNode.primitivePaint(Graphics2D),1
+java.awt.geom.AffineTransform.<init>(AffineTransform),1
+java.awt.geom.AffineTransform.createTransformedShape(Shape),1
+sun.java2d.marlin.TransformingPathConsumer2D$PathClipFilter.lineTo(double, double),1
+sun.java2d.marlin.Stroker.computeOffsetCubic(double[], int, double[], double[]),1
+sun.java2d.SunGraphics2D.validateColor(),1
+sun.java2d.marlin.Stroker.lineTo(double, double, boolean),1
+sun.java2d.marlin.TransformingPathConsumer2D$ClosedPathDetector.pathDone(),1
+sun.java2d.marlin.Renderer.closePath(),1
+org.apache.batik.gvt.AbstractGraphicsNode.getBounds(),1
+sun.java2d.pipe.AlphaPaintPipe.renderPathTile(Object, byte[], int, int, int, int, int, int),1
+org.apache.batik.ext.awt.LinearGradientPaintContext.<init>(ColorModel, Rectangle, Rectangle2D, AffineTransform, RenderingHints, Point2D, Point2D, float[], Color[], MultipleGradientPaint$CycleMethodEnum, MultipleGradientPaint$ColorSpaceEnum),1
+sun.java2d.marlin.TransformingPathConsumer2D$ClosedPathDetector.dispose(),1
+sun.java2d.Disposer.add(Object, DisposerRecord),1
+org.apache.batik.ext.awt.geom.ExtendedGeneralPath.getPathIterator(AffineTransform),1
+sun.java2d.marlin.MarlinCache.resetTileLine(int),1
+sun.java2d.SurfaceData.markDirty(),1
+sun.java2d.marlin.Stroker.closePath(),1
+sun.java2d.marlin.MarlinTileGenerator.getTypicalAlpha(),1
+sun.java2d.marlin.MarlinCache.alphaSumInTile(int),1
+sun.awt.image.IntegerComponentRaster.verify(),1
+java.awt.image.Raster.<init>(SampleModel, DataBuffer, Rectangle, Point, Raster),1
+java.awt.image.ColorModel.isAlphaPremultiplied(),1
+java.util.Arrays.rangeCheck(int, int, int),1
+java.util.Hashtable.addEntry(int, Object, Object, int),1
+java.util.HashMap$HashIterator.nextNode(),1
+java.lang.FdLibm$Cbrt.compute(double),1
+sun.java2d.marlin.Helpers.findSubdivPoints(Curve, double[], double[], int, double),1
+sun.java2d.marlin.DMarlinRenderingEngine.strokeTo(RendererContext, Shape, AffineTransform, BasicStroke, boolean, DMarlinRenderingEngine$NormMode, boolean, DPathConsumer2D),1
+sun.java2d.SunGraphics2D.invalidateTransform(),1
+java.lang.ref.Reference.refersToImpl(Object),1
+sun.java2d.marlin.DMarlinRenderingEngine.getAATileGenerator(Shape, AffineTransform, Region, BasicStroke, boolean, boolean, int[]),1
+sun.java2d.marlin.TransformingPathConsumer2D$PathClipFilter.moveTo(double, double),1
+sun.java2d.pipe.AAShapePipe.renderPath(SunGraphics2D, Shape, BasicStroke),1
+java.awt.geom.Rectangle2D.intersects(double, double, double, double),1
+sun.java2d.marlin.Stroker.computeMiter(double, double, double, double, double, double, double, double, double[]),1
+java.awt.geom.AffineTransform.getType(),1
+sun.java2d.marlin.Renderer.endRendering(int),1
+org.apache.batik.gvt.CompositeShapePainter.paint(Graphics2D),1
+sun.java2d.marlin.Curve.falsePositionROCsqMinusX(double, double, double, double),1
+java.util.HashMap.putVal(int, Object, Object, boolean, boolean),1
+sun.java2d.pipe.PixelToParallelogramConverter.draw(SunGraphics2D, Shape),1
+sun.java2d.marlin.TransformingPathConsumer2D$CurveClipSplitter.init(),1
+sun.java2d.pipe.AlphaColorPipe.renderPathTile(Object, byte[], int, int, int, int, int, int),1
+sun.java2d.marlin.Stroker.curveTo(double, double, double, double, double, double),1
+java.awt.geom.RectangularShape.getMaxX(),1
+java.awt.geom.RectIterator.isDone(),1
+java.util.Arrays.copyOf(double[], int),1
+java.lang.FdLibm.__LO(double, int),1
+java.awt.geom.RoundRectIterator.currentSegment(double[]),1
+sun.java2d.marlin.Helpers.filterOutNotInAB(double[], int, int, double, double),1
+sun.java2d.marlin.Stroker.emitCurveToRev(double, double, double, double, double, double),1
+java.lang.invoke.DelegatingMethodHandle.chooseDelegatingForm(MethodHandle),1
+java.util.ArrayList.<init>(int),1
+java.util.Arrays.copyOfRange(byte[], int, int),1
+org.apache.batik.css.engine.value.AbstractValueManager.computeValue(CSSStylableElement, String, CSSEngine, int, StyleMap, Value),1
+org.apache.batik.dom.svg.SVGPathSegItem.setY(float),1
+org.apache.batik.css.parser.Scanner.getStringValue(),1
+org.apache.batik.bridge.BridgeContext.getCSSEngineForElement(Element),1
+java.lang.StringConcatHelper.stringOf(Object),1
+java.awt.geom.ArcIterator.currentSegment(double[]),1
+java.awt.geom.AffineTransform.getShearY(),1
+org.apache.batik.util.ParsedURLData.sameFile(ParsedURLData),1
+org.apache.batik.dom.svg.AbstractSVGList.getNumberOfItems(),1
+java.net.URL.getRef(),1
+org.apache.batik.parser.AWTTransformProducer.matrix(float, float, float, float, float, float),1
+jdk.internal.math.FDBigInteger.multByPow52(int, int),1
+org.apache.batik.dom.AbstractDocument.getRoot(Node),1
+org.apache.batik.anim.dom.SVGOMAnimatedTransformList.check(),1
+org.apache.batik.anim.dom.SVGDOMImplementation$GElementFactory.create(String, Document),1
+java.awt.geom.Path2D$Double.curveTo(double, double, double, double, double, double),1
+org.apache.batik.css.parser.Parser.setSelectorFactory(SelectorFactory),1
+org.apache.batik.css.engine.CSSEngine.getCSSParentNode(Node),1
+java.lang.StringLatin1.trim(byte[]),1
+org.apache.batik.dom.svg.SVGOMMatrix.<init>(AffineTransform),1
+org.apache.batik.util.ParsedURL.parseURL(ParsedURL, String),1
+org.apache.batik.css.parser.ScannerUtilities.isCSSIdentifierStartCharacter(char),1
+org.apache.batik.gvt.AbstractGraphicsNode.setMask(Mask),1
+org.apache.batik.util.ParsedURLDefaultProtocolHandler.constructParsedURLData(URL),1
+org.apache.batik.css.parser.ScannerUtilities.isCSSSpace(char),1
+org.apache.batik.css.engine.StyleSheet.getRule(int),1
+java.lang.String.substring(int, int),1
+org.apache.batik.bridge.SVGUtilities.getChainableAttributeNS(Element, String, String, BridgeContext),1
+org.apache.batik.bridge.BridgeContext.createURIResolver(SVGDocument, DocumentLoader),1
+org.apache.batik.css.engine.value.FloatValue.<init>(short, float),1
+org.apache.batik.ext.awt.geom.ExtendedGeneralPath.lineTo(float, float),1
+java.awt.geom.Path2D$Float.needRoom(boolean, int),1
+java.lang.String.<init>(char[], int, int, Void),1
+org.apache.batik.bridge.AbstractGraphicsNodeBridge.associateSVGContext(BridgeContext, Element, GraphicsNode),1
+org.apache.batik.css.parser.Scanner.endGap(),1
+org.apache.batik.css.parser.ScannerUtilities.isCSSHexadecimalCharacter(char),1
+jdk.internal.math.FDBigInteger.leftShift(int),1
+java.awt.geom.Path2D.expandPointTypes(byte[], int),1
+org.apache.batik.parser.PathParser.parsem(),1
+org.apache.batik.bridge.GVTBuilder.handleGenericBridges(BridgeContext, Element),1
+org.apache.batik.dom.AbstractDocumentFragment.checkChildType(Node, boolean),1
+org.apache.batik.parser.AWTPathProducer.startPath(),1
+org.apache.batik.dom.AbstractNode.getXblParentNode(),1
+org.apache.batik.parser.TransformListParser.parseMatrix(),1
+java.awt.geom.AffineTransform.updateState(),1
+org.apache.batik.anim.dom.SVGOMAnimatedTransformList$AnimSVGTransformList.getNumberOfItems(),1
+sun.net.util.IPAddressUtil.checkHostString(String),1
+org.apache.batik.ext.awt.MultipleGradientPaint.<init>(float[], Color[], MultipleGradientPaint$CycleMethodEnum, MultipleGradientPaint$ColorSpaceEnum, AffineTransform),1
+org.apache.batik.gvt.event.GraphicsNodeChangeEvent.setChangeSrc(GraphicsNode),1
+org.apache.batik.anim.dom.SVGStylableElement.getCSSBase(),1
+java.awt.geom.Point2D.equals(Object),1
+org.apache.batik.util.ParsedURL.toString(),1
+org.apache.batik.bridge.PaintServer.convertStrokeLinejoin(Value),1
+org.apache.batik.anim.dom.SVGOMAnimatedPathData$AnimSVGPathSegList.<init>(SVGOMAnimatedPathData),1
+org.apache.batik.parser.AWTPathProducer.movetoRel(float, float),1
+org.apache.batik.dom.AbstractStylableDocument.getCSSEngine(),1
+org.apache.batik.dom.AbstractDocument.getDocumentElement(),1
+java.lang.StringUTF16.compress(char[], int, int),1
+org.apache.batik.util.ParsedURLDefaultProtocolHandler.parseURL(ParsedURL, String),1
+jdk.internal.math.FDBigInteger.big5pow(int),1
+org.apache.batik.parser.AWTTransformProducer.createAffineTransform(String),1
+java.awt.geom.AffineTransform.getDeterminant(),1
+java.util.ArrayList$Itr.hasNext(),1
+org.apache.batik.dom.AbstractParentNode.<init>(),1
+org.apache.batik.bridge.URIResolver.getNode(String, Element),1
+org.apache.batik.bridge.SVGLinearGradientElementBridge.buildGradient(Element, Element, GraphicsNode, MultipleGradientPaint$CycleMethodEnum, MultipleGradientPaint$ColorSpaceEnum, AffineTransform, Color[], float[], BridgeContext),1
+java.awt.geom.AffineTransform.createInverse(),1
+org.apache.batik.parser.AbstractParser.skipSpaces(),1
+org.apache.batik.dom.svg.AbstractSVGItem.setParent(AbstractSVGList),1
+java.util.ArrayList.add(Object),1
+org.apache.batik.dom.svg.SVGPathSegItem.getY(),1
+org.apache.batik.dom.AbstractDocument.getDocumentURI(),1
+org.apache.batik.css.parser.Parser.parseStyleDeclarationInternal(),1
+org.apache.batik.bridge.SVGGElementBridge.instantiateGraphicsNode(),1
+java.net.URL.getURLStreamHandler(String),1
+org.apache.batik.util.ParsedURLData.getPortStr(),1
+org.apache.batik.bridge.AbstractSVGGradientElementBridge.createPaint(BridgeContext, Element, Element, GraphicsNode, float),1
+org.apache.batik.anim.dom.SVGStylableElement.initializeLiveAttributes(),1
+org.apache.batik.dom.AbstractNode.getXblBoundElement(),1
+org.apache.batik.dom.svg.AbstractSVGTransformList.doParse(String, ListHandler),1
+java.lang.CharacterDataLatin1.getType(int),1
+org.apache.batik.bridge.CSSUtilities.convertClipPath(Element, GraphicsNode, BridgeContext),1
+org.apache.batik.bridge.SVGGElementBridge.createGraphicsNode(BridgeContext, Element),1
+java.util.ArrayList.<init>(),1
+org.apache.batik.dom.svg.AbstractSVGTransformList$TransformListBuilder.<init>(ListHandler),1
+org.apache.batik.anim.dom.SVGOMAnimatedPathData.getAnimatedPathSegList(),1
+org.apache.batik.css.parser.Scanner.<init>(String),1
+org.apache.batik.bridge.AbstractSVGGradientElementBridge.extractStop(Element, float, BridgeContext),1
+org.apache.batik.gvt.FillShapePainter.<init>(Shape),1
+org.apache.batik.dom.util.XLinkSupport.getXLinkHref(Element),1
+java.awt.geom.Path2D$Float.moveTo(float, float),1
+java.awt.geom.AffineTransform.setToRotation(double, double, double),1
+org.apache.batik.bridge.CSSUtilities.convertStopColor(Element, float, BridgeContext),1
+java.awt.Color.<init>(int, int, int, int),1
+org.apache.batik.css.engine.value.svg.EnableBackgroundManager.getDefaultValue(),1
+org.apache.batik.css.engine.StyleDeclaration.<init>(),1
+jdk.jfr.events.AbstractJDKEvent.<init>(),1
+org.apache.batik.dom.svg.AbstractSVGPathSegList$SVGPathSegArcItem.getSweepFlag(),1
+org.apache.batik.bridge.CSSUtilities.convertFillRule(Element),1
+org.apache.batik.bridge.AbstractSVGGradientElementBridge$Stop.<init>(Color, float),1
+org.apache.batik.anim.dom.SVGStylableElement.getOverrideStyleDeclarationProvider(),1
+org.apache.batik.util.ParsedURLDefaultProtocolHandler.parseURL(String),1
+java.lang.CharacterDataLatin1.toLowerCase(int),1
+org.apache.batik.dom.svg.AbstractSVGTransformList$SVGTransformItem.setMatrix(SVGMatrix),1
+org.apache.batik.bridge.BridgeContext.getSVGContext(Node),1
+org.apache.batik.dom.AbstractNode.getBaseURI(),1
+org.apache.batik.dom.AbstractDocument.getChildElementById(Node, String),1
+org.apache.batik.bridge.PaintServer.convertURIPaint(Element, GraphicsNode, Value, float, BridgeContext),1
+java.lang.Long.parseLong(String, int),1
+org.apache.batik.css.parser.ScannerUtilities.isCSSURICharacter(char),1
+org.apache.batik.bridge.SVGUtilities.parseCoordinateSystem(Element, String, String, BridgeContext),1
+org.apache.batik.dom.AbstractDocumentFragment.<init>(),1
+java.util.LinkedList$ListItr.hasNext(),1
+org.apache.batik.parser.LengthParser.<init>(),1
+jdk.internal.math.FloatingDecimal.parseFloat(String),1
+org.apache.batik.anim.dom.SVGOMDocument$AnimAttrListener.animatedAttributeChanged(Element, AnimatedLiveAttributeValue),1
+org.apache.batik.css.engine.StyleMap.putParentRelative(int, boolean),1
+org.apache.batik.parser.TransformListParser.parseTranslate(),1
+org.apache.batik.dom.svg.AbstractSVGMatrix.getA(),1
+org.apache.batik.bridge.AbstractSVGGradientElementBridge.extractLocalStop(Element, float, BridgeContext),1
+org.apache.batik.util.ParsedURL.parseURL(String, String),1
+org.apache.batik.dom.AbstractNode.getPrefix(),1
+org.apache.batik.css.engine.CSSEngine.addMatchingRules(List, StyleSheet, Element, String),1
+java.awt.geom.Path2D$Float.<init>(int, int),1
+org.apache.batik.bridge.CSSUtilities.computeStyleAndURIs(Element, Element, String),1
+java.util.Arrays.copyOf(float[], int),1
+org.apache.batik.css.engine.value.svg.ClipPathManager.getDefaultValue(),1
+org.apache.batik.dom.AbstractNode.fireUserDataHandlers(short, Node, Node),1
+org.apache.batik.bridge.BridgeContext.isInteractive(),1
+java.lang.invoke.DirectMethodHandle.make(byte, Class, MemberName, Class),1
+jdk.internal.math.FDBigInteger.multAddMe(int, int),1
+org.apache.batik.bridge.SVGShapeElementBridge.createShapePainter(BridgeContext, Element, ShapeNode),1
+org.apache.batik.dom.svg.AbstractSVGTransformList$TransformListBuilder.startTransformList(),1
+org.apache.batik.gvt.AbstractGraphicsNode.fireGraphicsNodeChangeStarted(),1
+org.apache.batik.gvt.AbstractGraphicsNode.fireGraphicsNodeChangeCompleted(),1
+org.apache.batik.ext.awt.geom.ExtendedGeneralPath.<init>(int),1
+java.awt.geom.ArcIterator.btan(double),1
+org.apache.batik.dom.svg.AbstractSVGTransformList$TransformListBuilder.matrix(float, float, float, float, float, float),1
+org.apache.batik.util.io.StringNormalizingReader.close(),1
+org.apache.batik.bridge.PaintServer.convertStroke(Element),1
+java.awt.geom.Arc2D.<init>(int),1
+org.apache.batik.util.io.StringNormalizingReader.<init>(String),1
+java.awt.geom.Path2D$Iterator.next(),1
+java.lang.String.toLowerCase(),1
+java.awt.geom.Path2D$Double$CopyIterator.currentSegment(float[]),1
+org.apache.batik.css.engine.StyleMap.putComputed(int, boolean),1
+java.awt.geom.AffineTransform.setToRotation(double),1
+org.apache.batik.dom.svg.AbstractSVGTransform.setMatrix(SVGMatrix),1
+org.apache.batik.css.engine.StyleMap.putNullCascaded(int, boolean),1
+org.apache.batik.css.engine.value.IdentifierManager.createValue(LexicalUnit, CSSEngine),1
+java.awt.Color.testColorValueRange(int, int, int, int),1
+org.apache.batik.gvt.AbstractGraphicsNode.fireGraphicsNodeChangeStarted(GraphicsNode),1
+org.apache.batik.css.engine.CSSEngine.addRules(Element, String, StyleMap, ArrayList, short),1
+org.apache.batik.dom.svg.ListBuilder.getList(),1
+org.apache.batik.gvt.AbstractGraphicsNode.fireGraphicsNodeChangeStarted(GraphicsNodeChangeEvent),1
+org.apache.batik.parser.PathParser.<init>(),1
+org.apache.batik.bridge.CSSUtilities.convertColorRendering(Element, RenderingHints),1
+jdk.internal.math.FDBigInteger.mult(int[], int, int, int[]),1
+org.apache.batik.anim.dom.SVGStylableElement.getOverrideStyle(),1
+org.apache.batik.anim.dom.SVGOMAnimatedPathData$BaseSVGPathSegList.getValueAsString(),1
+org.apache.batik.dom.svg.AbstractSVGPathSegList$SVGPathSegMovetoLinetoItem.setX(float),1
+org.apache.batik.dom.svg.AbstractSVGTransform.<init>(),1
+org.apache.batik.dom.svg.AbstractSVGPathSegList$SVGPathSegCurvetoCubicItem.setY1(float),1
+org.apache.batik.dom.svg.ListBuilder.item(SVGItem),1
+org.apache.batik.bridge.PaintServer.convertStrokePaint(Element, GraphicsNode, BridgeContext),1
+org.apache.batik.css.parser.Scanner.number(),1
+org.apache.batik.bridge.AnimatableGenericSVGBridge.handleElement(BridgeContext, Element),1
+org.apache.batik.dom.AbstractParentChildNode.getNextSibling(),1
+org.apache.batik.dom.AbstractNode.getXblNextSibling(),1
+java.util.concurrent.ConcurrentHashMap.tabAt(ConcurrentHashMap$Node[], int),1
+org.apache.batik.css.engine.value.svg.SVGValueConstants.<clinit>(),1
+java.util.zip.InflaterInputStream.<init>(InputStream, Inflater, int),1
+sun.net.www.protocol.jar.Handler.canonicalizeString(String, int),1
+java.net.URLStreamHandler.toExternalForm(URL),1
+java.nio.HeapCharBuffer.<init>(char[], int, int, MemorySegmentProxy),1
+java.io.File.<init>(String, String),1
+java.lang.invoke.MethodHandleNatives.linkMethodHandleConstant(Class, int, Class, String, Object),1
+java.lang.Class.getConstructor(Class[]),1
+java.util.zip.ZipFile.ensureOpen(),1
+org.apache.batik.anim.dom.SVGOMElement.fireBaseAttributeListeners(String, String),1
+org.apache.batik.anim.dom.AbstractElement.attrAdded(Attr, String),1
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.checkBeforeLoad(Entity$ScannedEntity, int, int),1
+java.util.LinkedList.add(Object),1
+org.apache.batik.dom.util.HashTableStack.get(String),1
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.endNamespaceMapping(),1
+org.apache.batik.util.DoublyIndexedTable$Entry.<init>(int, Object, Object, Object, DoublyIndexedTable$Entry),1
+org.apache.batik.anim.dom.AbstractElement$ExtendedNamedNodeHashMap.<init>(AbstractElement),1
+org.apache.batik.dom.util.SAXDocumentFactory.characters(char[], int, int),1
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.checkDepth(String),1
+com.sun.org.apache.xerces.internal.xni.XMLString.toString(),1
+org.apache.batik.dom.AbstractCharacterData.<init>(),1
+org.apache.batik.util.HaltingThread.hasBeenHalted(Thread),1
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.checkLimit(XMLSecurityManager$Limit, Entity$ScannedEntity, int, int),1
+org.apache.batik.anim.dom.SVGOMDocument.createElementNS(String, String),1
+org.apache.batik.anim.dom.SVGOMElement.createLiveAnimatedTransformList(String, String, String),1
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.normalizeNewlines(short, XMLString, boolean, boolean, XMLScanner$NameType),1
+java.lang.AbstractStringBuilder.appendChars(char[], int, int),1
+com.sun.org.apache.xerces.internal.util.SymbolTable.addSymbol(char[], int, int),1
+java.lang.StringBuffer.setLength(int),1
+java.lang.String.indexOf(int, int),1
+java.lang.StringLatin1.canEncode(int),1
+org.apache.batik.dom.AbstractDocument.getEventsEnabled(),1
+com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.checkDuplicatesNS(),1
+org.apache.batik.anim.dom.SVGOMElement.createLiveAnimatedString(String, String),1
+org.apache.batik.anim.dom.SVGOMDocument.isId(Attr),1
+java.util.zip.ZipFile$Source.zipCoderForPos(int),1
+org.apache.batik.dom.AbstractAttr.setOwnerElement(AbstractElement),1
+com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.setValue(int, String, XMLString),1
+java.util.LinkedList.indexOf(Object),1
+com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.getQName(int),1
+com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.refresh(),1
+com.sun.org.apache.xerces.internal.util.SymbolTable.hash(char[], int, int),1
+com.sun.org.apache.xerces.internal.util.XMLAttributesImpl.addAttributeNS(QName, String, String),1
+org.apache.batik.anim.dom.SVGOMLinearGradientElement.initializeLiveAttributes(),1
+org.apache.batik.util.DoublyIndexedTable.get(Object, Object),1
+com.sun.org.apache.xerces.internal.utils.XMLSecurityManager.isNoLimit(int),1
+org.apache.batik.dom.AbstractParentNode.fireDOMSubtreeModifiedEvent(),1
+org.apache.batik.anim.dom.SVGOMElement.createLiveAnimatedLength(String, String, String, short, boolean),1
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.setNamedItemNS(Node),1
+org.apache.batik.dom.AbstractParentNode.checkAndRemove(Node, boolean),1
+org.apache.batik.anim.dom.AbstractSVGAnimatedValue.fireBaseAttributeListeners(),1
+org.apache.batik.anim.dom.SVGOMAnimatedString.attrAdded(Attr, String),1
+java.util.HashMap.resize(),1
+com.sun.org.apache.xerces.internal.parsers.AbstractSAXParser.endElement(QName, Augmentations),1
+org.apache.batik.dom.util.SAXDocumentFactory.appendStringData(),1
+org.apache.batik.anim.dom.SVGOMElement.getNodeName(),1
+org.apache.batik.dom.AbstractDocument$IdSoftRef.<init>(AbstractDocument, Object, String),1
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.scanEndElement(),1
+org.apache.batik.dom.AbstractElement.nodeAdded(Node),1
+com.sun.org.apache.xerces.internal.util.NamespaceSupport.pushContext(),1
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl$ElementStack.nextElement(),1
+org.apache.batik.dom.AbstractElement$NamedNodeHashMap.<init>(AbstractElement),1
+java.util.LinkedList.node(int),1
+com.sun.org.apache.xerces.internal.impl.XMLDocumentFragmentScannerImpl.getString(),1
+com.sun.org.apache.xerces.internal.util.XMLChar.isContent(int),1
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.scanChar(XMLScanner$NameType),1
+com.sun.org.apache.xerces.internal.impl.XMLEntityScanner.checkEntityLimit(XMLScanner$NameType, Entity$ScannedEntity, int, int),1
+java.lang.ClassLoader.compareCerts(Certificate[], Certificate[]),1
+java.util.zip.ZipFile$Source.readAt(byte[], int, int, long),1
+java.lang.String.toLowerCase(Locale),1
+java.util.WeakHashMap.put(Object, Object),1
+com.sun.org.apache.xerces.internal.impl.XMLErrorReporter.setProperty(String, Object),1
+jdk.internal.loader.URLClassPath$JarLoader$2.getCodeSigners(),1
+java.lang.invoke.LambdaFormEditor.getInCache(LambdaFormEditor$TransformKey),1
+jdk.internal.reflect.Reflection.verifyMemberAccess(Class, Class, Class, int),1
+java.lang.invoke.ClassSpecializer$Factory.chooseFieldName(Class, int),1
+java.lang.invoke.MethodHandles$Lookup.resolveOrFail(byte, Class, String, MethodType),1
+jdk.internal.jimage.ImageStringsReader.unmaskedHashCode(String, int),1
+java.lang.ClassLoader.checkCerts(String, CodeSource),1
+java.util.jar.JarEntry.<init>(String),1
+java.util.jar.Attributes.get(Object),1
+java.lang.invoke.MemberName.getType(),1
+sun.nio.cs.UTF_8$Encoder.encodeArrayLoop(CharBuffer, ByteBuffer),1
+java.util.zip.ZipFile$ZipFileInputStream.<init>(ZipFile, byte[], int),1
+java.util.zip.ZipCoder$UTF8ZipCoder.toString(byte[], int, int),1
+java.util.LinkedHashMap.get(Object),1
+java.lang.AbstractStringBuilder.ensureCapacityInternal(int),1
+jdk.internal.jimage.ImageLocation.verifyName(String, String, int, int, int, int, int, int, ImageStrings),1
+jdk.internal.jimage.ImageStringsReader.stringFromByteBufferMatches(ByteBuffer, int, String, int),1
+java.util.stream.Nodes.<clinit>(),1
+java.lang.invoke.MethodHandles$Lookup.revealDirect(MethodHandle),1
+java.util.zip.ZipFile.getInputStream(ZipEntry),1
+java.lang.AbstractStringBuilder.append(String),1
+jdk.internal.ref.PhantomCleanable.<init>(Object, Cleaner),1
+jdk.internal.org.objectweb.asm.SymbolTable.addConstantMemberReference(int, String, String, String),1
+java.nio.DirectIntBufferU.get(int),1
+org.dacapo.parser.ConfigFileTokenManager.jjStopAtPos(int, int),1
+jdk.internal.jimage.ImageLocation.verify(String, String, ByteBuffer, int, ImageStrings),1
+java.lang.invoke.DirectMethodHandle.preparedLambdaForm(MemberName, boolean),1
+java.lang.invoke.BoundMethodHandle$Species_L.copyWithExtendJ(MethodType, LambdaForm, long),1
+java.util.stream.Collectors.toList(),1
+org.dacapo.harness.CommandLineArgs.extractBenchmarkSet(),1
+jdk.internal.reflect.ReflectionFactory.newConstructorAccessor(Constructor),1
+java.nio.DirectByteBuffer.ix(int),1
+jdk.internal.loader.BuiltinClassLoader.defineClass(String, Resource),1
