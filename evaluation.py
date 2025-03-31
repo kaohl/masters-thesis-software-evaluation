@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from random import randrange
 import shutil
+from subprocess import TimeoutExpired
 import tempfile
 
 from executor import load_state, save_state, do_files
@@ -268,7 +269,7 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
         raise e
     except TypeError as e:
         raise e
-    except subprocess.TimeoutExpired as e:
+    except TimeoutExpired as e:
         log.warning("--- Benchmark failure (timeout) ---")
         log.warning("Please tune configured timeouts, if needed.")
         log.warning("The error has been written to the FAILURE file.")
