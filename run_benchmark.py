@@ -2,6 +2,7 @@
 
 import argparse
 from multiprocessing import Process
+import json
 import os
 from pathlib import Path
 import re
@@ -10,6 +11,43 @@ import tempfile
 
 import patch
 import tools
+
+# Timeout configuration json object (integer timeouts in seconds):
+# { 'default' : int, 'defaults' : { '<bm>' : int }, '<bm>' : { '<wl>' : int } }
+
+_empty                     = dict()
+_default_timeout           = 30 # 30 seconds covers all small and default workloads that we use on our machines.
+_configured_timeout        = None
+_configured_timeout_path   = Path('timeout.config')
+
+def get_configured_benchmark_timeout(configuration):
+    global _configured_timeout_path
+    global _configured_timeout
+    global _default_timeout
+    global _empty
+
+    if _configured_timeout is None and _configured_timeout_path.exists():
+        with open(_configured_timeout_path, 'r') as f:
+            _configured_timeout = json.load(f)
+
+    if _configured_timeout is None:
+        print(f"Using default benchmark timeout: {_default_timeout} seconds")
+        print(f"Please create '{_configured_timeout_path}' to customize benchmark timeouts.")
+        return int(_default_timeout)
+
+    bm_timeout = _configured_timeout.get(configuration.bm(), _empty)
+    wl_timeout = bm_timeout.get(configuration.bm_workload(), None)
+
+    if not wl_timeout is None:
+        return int(wl_timeout)
+
+    defaults   = _configured_timeout.get('defaults', _empty)
+    bm_default = defaults.get(configuration.bm(), None)
+
+    if not bm_default is None:
+        return int(bm_default)
+
+    return int(_configured_timeout.get('default', _default_timeout))
 
 def get_runtime_options(configuration):
     java_options = []
@@ -105,7 +143,8 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
         shell      = True,
         executable = '/bin/bash',
         stdout     = subprocess.PIPE,
-        stderr     = subprocess.STDOUT
+        stderr     = subprocess.STDOUT,
+        timeout    = get_configured_benchmark_timeout(configuration) # Raises subprocess.TimeoutExpired.
     )
     text = result.stdout.decode('utf-8')
     if result.returncode != 0:

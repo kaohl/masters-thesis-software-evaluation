@@ -226,6 +226,8 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
     store              = data_location / 'stats' / configuration.id()
     failure            = store / 'FAILURE'
     success            = store / 'SUCCESS'
+    timeout_hint       = store / 'TIMEOUT'
+    generic_hint       = store / 'GENERIC'
     jfr_save           = store / 'flight.jfr'
     metrics_save       = store / 'metrics.txt'
     configuration_save = store / 'configuration.txt'
@@ -266,12 +268,29 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
         raise e
     except TypeError as e:
         raise e
-    except Exception as e:
-        log.warning("Benchmark failure")
-        log.warning(configuration._values)
+    except subprocess.TimeoutExpired as e:
+        log.warning("--- Benchmark failure (timeout) ---")
+        log.warning("Please tune configured timeouts, if needed.")
+        log.warning("The error has been written to the FAILURE file.")
+        log.warning("data:", str(store))
+        log.warning("conf:", configuration._values)
+        log.warning("-------------------------")
         with open(failure, 'w') as f:
             f.write(str(e))
-        return False
+        with open(timeout_hint, 'w') as e:
+            pass
+    except Exception as e:
+        log.warning("--- Benchmark failure (generic) ---")
+        log.warning("The error has been written to the FAILURE file.")
+        log.warning("data:", str(store))
+        log.warning("conf:", configuration._values)
+        log.warning("-------------------------")
+        with open(failure, 'w') as f:
+            f.write(str(e))
+        # Generic hint.
+        with open(generic_hint, 'w') as f:
+            pass
+    return False
 
 def get_valid_configurations_of(args, x, bm, workload):
     configs    = []
