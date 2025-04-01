@@ -93,6 +93,10 @@ def compute_results(args):
                                             variables.add(k)
                                 break
                         break
+
+        if len(results) == 0:
+            continue
+
         results_location.mkdir(exist_ok = True, parents = True)
         with open(results_location / (name + '.results'), 'w') as f:
             for result in results:
