@@ -377,7 +377,8 @@ def get_benchmark_execution_plan(args):
                                 plan.append((x, b, opportunity, refactoring, execution, configuration))
                                 keys.add(key)
                     break
-    return random.Random(0).shuffle(plan)
+    random.Random(0).shuffle(plan)
+    return plan
 
 # Usage:
 #   ./evaluation.py [--data <data=experiments>] --xs <xs> --bs <bs> --n <n>
