@@ -277,8 +277,8 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
         log.warning("--- Benchmark failure (timeout) ---")
         log.warning("Please tune configured timeouts, if needed.")
         log.warning("The error has been written to the FAILURE file.")
-        log.warning("data:", str(store))
-        log.warning("conf:", configuration._values)
+        log.warning("data: %s", str(store))
+        log.warning("conf: %s", str(configuration._values))
         log.warning("-------------------------")
         with open(failure, 'w') as f:
             f.write(str(e))
@@ -287,8 +287,8 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
     except Exception as e:
         log.warning("--- Benchmark failure (generic) ---")
         log.warning("The error has been written to the FAILURE file.")
-        log.warning("data:", str(store))
-        log.warning("conf:", configuration._values)
+        log.warning("data: %s", str(store))
+        log.warning("conf: %s", str(configuration._values))
         log.warning("-------------------------")
         with open(failure, 'w') as f:
             f.write(str(e))
