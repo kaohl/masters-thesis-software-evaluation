@@ -230,27 +230,11 @@ class ListsGenerator:
         ListsGenerator.shuffle_list(list / 'descriptors.txt')
 
     def shuffle_list(path):
-        # The block size here is based on what the python 'random.shuffle' function
-        # documentation mentions as the period of a specific pseudo random number
-        # generator. The documentation specifies a period of 2080, we use blocks
-        # of size 2048.
-
         # We guard against duplicate entries here since opportunity
         # query result sets may overlap.
 
-        # We assume here that all opportunties can be loaded into memory.
-        # If that becomes an issue, we could write blocks into files and
-        # read them line by line. However, if we make that change later
-        # we need to reverse the entries before writing them to file to
-        # preserve backwards compatibility with the current setup where
-        # we pop() entries from the back of each block.
-
-        ids        = set()
-        blocks     = []
-        entries    = []
-        block      = 0
-        block_size = 2048
-        r          = random.Random(0) # Fixed seed to get reproducible lists and experiments.
+        ids     = set()
+        entries = []
         with open(path, 'r') as f:
             for line in f:
                 descriptor = RefactoringDescriptor(line)
@@ -258,20 +242,15 @@ class ListsGenerator:
                 if not id in ids:
                     ids.add(id)
                     entries.append(line.strip())
-                    if len(entries) >= block_size:
-                        r.shuffle(entries)
-                        blocks.append(entries)
-                        entries = []
-            if len(entries) > 0:
-                r.shuffle(entries)
-                blocks.append(entries)
+
+        # Fixed seed to get reproducible lists.
+        # Reproducibility here is not that important.
+        # We need to shuffle to avoid selection bias, assuming that we have more refactoring opportunities than we have time to benchmark.
+
+        random.Random(0).shuffle(entries)
 
         with open(path, 'w') as f:
-            while len(blocks) > 0:
-                i    = r.randrange(len(blocks))
-                line = blocks[i].pop()
-                if len(blocks[i]) == 0:
-                    del blocks[i]
+            for line in entries:
                 f.write(line + os.linesep)
 
 if __name__ == '__main__':

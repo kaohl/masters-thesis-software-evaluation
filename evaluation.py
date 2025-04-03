@@ -2,8 +2,10 @@
 
 import argparse
 import configuration
+import itertools
 import logging
 import os
+import random
 from pathlib import Path
 from random import randrange
 import shutil
@@ -72,15 +74,17 @@ def get_x_bm_wl_lists(args, x, bm, workload):
 #
 def get_x_workload_configuration(args, x, bm, workload):
     config = configuration.Configuration().load(x_location(args) / x / 'workloads' / bm / workload / 'parameters.txt')
-    # Add default values given by resource organisation.
+
+    # Note, probably a bad idea to have defaults here since it affects the configuration ID.
+
     if config.bm() is None:
-        config.bm(bm)
+        raise ValueError("Missing benchmark name in configuration")
 
     if config.bm_version() is None:
-        config.bm_version('1.0')
+        raise ValueError("Missing benchmark version in configuration")
 
     if config.bm_workload() is None:
-        config.bm_workload(workload)
+        raise ValueError("Missing workload name in benchmark configuration")
 
     return config
 
@@ -349,6 +353,8 @@ def get_benchmark_execution_plan(args):
             # All lists in the same (x,b,w)-tuple share the configuration set.
             # All refactorings on all lists in the same (x,b,w)-tuple should be benchmarked with these configurations.
             configurations[(x, b, w)] = get_valid_configurations_of(args, x, b, w)
+        if not l_path.exists():
+            continue
         with open(l_path, 'r') as f:
             for line in f:
                 descriptor  = opportunity_cache.RefactoringDescriptor(line)
@@ -356,7 +362,7 @@ def get_benchmark_execution_plan(args):
                 refactoring = descriptor.id()
                 data        = x_location(args) / 'data' / b / opportunity / refactoring
                 if not data.exists():
-                    break # No more refactorings available from this list.
+                    continue # Scan remainder of list just to be sure. (Different seeding parameters could move things around.)
                 for dir1, executions, files1 in os.walk(data):
                     for execution in executions:
                         if (Path(dir1) / execution / 'FAILURE').exists():
@@ -371,7 +377,7 @@ def get_benchmark_execution_plan(args):
                                 plan.append((x, b, opportunity, refactoring, execution, configuration))
                                 keys.add(key)
                     break
-    return plan
+    return random.Random(0).shuffle(plan)
 
 # Usage:
 #   ./evaluation.py [--data <data=experiments>] --xs <xs> --bs <bs> --n <n>
