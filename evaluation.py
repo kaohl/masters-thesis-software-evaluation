@@ -228,7 +228,7 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
     bm                 = configuration.bm()
     workload           = configuration.bm_workload()
 
-    store              = data_location / 'stats' / configuration.id()
+    store              = data_location / 'stats' / configuration.params_id()
     failure            = store / 'FAILURE'
     success            = store / 'SUCCESS'
     timeout_hint       = store / 'TIMEOUT'
@@ -368,8 +368,8 @@ def get_benchmark_execution_plan(args):
                         if (Path(dir1) / execution / 'FAILURE').exists():
                             continue # The refactoring could not be applied.
                         for configuration in configurations[(x, b, w)]:
-                            stats_c = Path(dir1) / execution / 'stats' / configuration.id()
-                            key     = (b, opportunity, refactoring, execution, configuration.id())
+                            stats_c = Path(dir1) / execution / 'stats' / configuration.params_id()
+                            key     = (b, opportunity, refactoring, execution, configuration.params_id())
                             # NOTE: 'key' MUST NOT include 'x' or 'w' because refactorings of a
                             #        benchmark can be shared between experiments and workloads.
                             if not stats_c.exists() and not key in keys:
@@ -392,7 +392,7 @@ def benchmark(args):
 
     for (x, bm, opportunity, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
         print()
-        print(f"Benchmark ({i+1}/{n}) {'/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.id()])}")
+        print(f"Benchmark ({i+1}/{n}) {'/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.params_id()])}")
         print()
         data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / opportunity / refactoring / execution
         build_and_benchmark(args, x, configuration, data_location)

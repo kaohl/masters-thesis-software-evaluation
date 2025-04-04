@@ -18,7 +18,7 @@ def decimals(num):
     return n
 
 def get_cache_location(configuration):
-    return Path('steering') / configuration.id()
+    return Path('steering') / configuration.id() # Steering depends on the workload. So, we should use 'id()' rather than 'params_id()'.
 
 def get_cache_stem(configuration):
     return '-'.join([configuration.bm(), configuration.bm_workload()])

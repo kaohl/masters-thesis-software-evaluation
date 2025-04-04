@@ -119,6 +119,21 @@ class Configuration(ConfigurationBase):
     HEAP_SIZE      = 'heap_size'
     STACK_SIZE     = 'stack_size'
 
+    # These attributes should be considered when computing
+    # a unique ID for the experimental configuration. This
+    # is used to name configuration folders in 'stats'
+    # folders when storing benchmark results to avoid
+    # duplicating executions for shared refactorings
+    # between workloads and experiments.
+    _experimental_parameters = set({
+        SOURCE_VERSION,
+        TARGET_VERSION,
+        JDK,
+        JRE,
+        HEAP_SIZE,
+        STACK_SIZE
+    })
+
     size_option_pattern = re.compile("(\\d+)([KkMmGg])")
 
     # TODO: Configuration constraints should be loaded from file.
@@ -308,6 +323,13 @@ class Configuration(ConfigurationBase):
     def is_valid(self):
         self._raise_errors()
         return self._check_constraints()
+
+    def params_id(self):
+        with io.StringIO() as text:
+            for k, v in sorted(self._values.items(), key = lambda it: it[0]):
+                if k in Configuration._experimental_parameters:
+                    text.write('='.join([str(k), str(v)]) + os.linesep)
+            return hashlib.md5(bytes(text.getvalue(), encoding = 'utf-8')).hexdigest()
 
     def __init__(self):
         super().__init__(Configuration)
