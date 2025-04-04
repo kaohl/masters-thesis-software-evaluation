@@ -238,6 +238,7 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
     configuration_save = store / 'configuration.txt'
 
     store.mkdir(parents = True, exist_ok = True)
+    configuration.store(configuration_save)
 
     try:
         clean = True
@@ -254,8 +255,6 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
 
             with open(metrics_save, 'w') as f:
                 f.write("EXECUTION_TIME=" + str(exectime) + os.linesep)
-
-            configuration.store(configuration_save)
 
             # ATTENTION
             # The captured flight recording is not for the benchmark

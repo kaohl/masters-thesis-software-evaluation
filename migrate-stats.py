@@ -24,16 +24,19 @@ def main():
     for stats_path in paths:
         for dir, ids, files in os.walk(stats_path):
             for id in ids:
-                config   = configuration.Configuration().load(Path(dir) / id / 'configuration.txt')
-                old_path = Path(dir) / id
-                new_path = Path(dir) / config.params_id()
-                if new_path.exists():
-                    if old_path != new_path:
-                        print(f"Remove duplicate measurement: {old_path}")
-                        shutil.rmtree(old_path)
-                    continue
-                print(f"Move {old_path}{os.linesep}  to {new_path}")
-                shutil.move(old_path, new_path)
+                try:
+                    config   = configuration.Configuration().load(Path(dir) / id / 'configuration.txt')
+                    old_path = Path(dir) / id
+                    new_path = Path(dir) / config.params_id()
+                    if new_path.exists():
+                        if old_path != new_path:
+                            print(f"Remove duplicate measurement: {old_path}")
+                            shutil.rmtree(old_path)
+                        continue
+                    print(f"Move {old_path}{os.linesep}  to {new_path}")
+                    shutil.move(old_path, new_path)
+                except:
+                    pass # Old failures does not contain the 'configuration.txt' file.
             break
 
 if __name__ == '__main__':
