@@ -24,7 +24,7 @@ def main():
     for stats_path in paths:
         for dir, ids, files in os.walk(stats_path):
             for id in ids:
-                config   = configuration.Configuration().load(Path(dir) / id / 'parameters.txt')
+                config   = configuration.Configuration().load(Path(dir) / id / 'configuration.txt')
                 old_path = Path(dir) / id
                 new_path = Path(dir) / config.params_id()
                 if new_path.exists():
