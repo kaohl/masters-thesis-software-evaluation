@@ -9,8 +9,153 @@ from patsy import dmatrices
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
 
-import configuration
+from configuration import Configuration, Metrics
 from opportunity_cache import RefactoringDescriptor
+
+# TODO
+# Write script that go through all lists and collect all
+# referenced data folders, and then print a list of all
+# data that is no longer referenced by any list.
+#   This is needed when we update descriptors in a
+# way that modify parameters such that the ID changes.
+# We probably need to discard such refactorings since
+# they are no longer relevant to our results.
+#
+# TODO
+# Write a script that captures all refactoring failures,
+# and all benchmark failures and assembles a report with
+# all errors in it so that it is easy to page through them.
+#
+# TODO
+# Add method signature to meta data of all descriptors so
+# that we can determine our coverage across the set of
+# sampled methods.
+
+class Results:
+
+    def __init__(self, x_location, bm, wl, ls):
+        self._x_location = x_location
+        self._bm         = bm
+        self._wl         = wl
+        self._ls         = ls
+
+        self._variables   = set()
+        self._i_variables = set()
+        self._d_variables = set()
+        self._results     = []
+
+    def add_benchmark(self, descriptor, location):
+        if (location / 'FAILURE').exists():
+            return
+        config   = Configuration().load(location / 'configuration.txt')
+        metrics  = Metrics().load(location / 'metrics.txt')
+        identity = { 'data' : str(location) }
+        params   = config.parameters()
+        self._results.append({ **identity, **params, **metrics._values })
+        if len(self._variables) == 0:
+            for k, v in params.items():
+                self._i_variables.add(k)
+                self._variables.add(k)
+            for k, v in metrics._values.items():
+                self._d_variables.add(k)
+                self._variables.add(k)
+
+    def compute_statistics(self):
+        if len(self._results) == 0:
+            return
+
+        results_location = Path(self._x_location) / 'results' / self._bm / self._wl
+        results_location.mkdir(exist_ok = True, parents = True)
+
+        with open(results_location / (self._ls + '.results'), 'w') as f:
+            for result in self._results:
+                f.write(str(result) + os.linesep)
+
+        csv_path = results_location / (self._ls + '.csv')
+        with open(csv_path, 'w') as f:
+            header = ','.join(sorted(self._variables))
+            f.write(header + os.linesep)
+            for result in self._results:
+                f.write(','.join([ result[var] for var in sorted(self._variables) ]) + os.linesep)
+
+        anova(self._i_variables, self._d_variables, csv_path)
+
+def get_opportunities(location):
+    for dir, folders, files in os.walk(location):
+        return [ Path(dir) / folder for folder in folders ]
+    return []
+
+def get_instances(opportunity):
+    for dir, folders, files in os.walk(opportunity):
+        return [ Path(dir) / folder for folder in folders ]
+    return []
+
+def get_descriptor(instance):
+    return RefactoringDescriptor.load(instance / 'descriptor.txt')
+
+def get_executions(instance):
+    for dir, folders, files in os.walk(instance):
+        return [ Path(dir) / folder for folder in folders ]
+    return []
+
+def get_configurations(execution):
+    for dir, folders, files in os.walk(execution / 'stats'):
+        return [ Path(dir) / folder for folder in folders ]
+    return []
+
+# Compute results per benchmark, ignoring lists.
+def compute_all(args):
+    x_location    = Path(args.x_location) / args.x
+    data_location = Path(args.x_location) / 'data' / args.bm
+    results       = Results(x_location, args.bm, args.workload, 'all')
+
+    opportunities = get_opportunities(data_location)
+    for opportunity in opportunities:
+        instances = get_instances(opportunity)
+        for instance in instances:
+            descriptor = get_descriptor(instance)
+            executions = get_executions(instance)
+            for execution in executions:
+                configurations = get_configurations(execution)
+                for configuration in configurations:
+                    results.add_benchmark(descriptor, configuration)
+    results.compute_statistics()
+
+def compute_progress(args):
+    x_location = Path(args.x_location) / args.x
+    bm         = args.bm
+    workload   = args.workload
+    lists_location = x_location / 'workloads' / bm / workload / 'lists'
+    n_combinations = len(Configuration().load(x_location / 'workloads' / bm / workload / 'parameters.txt').get_all_combinations())
+    for dir1, lists, files1 in os.walk(lists_location):
+        for lst in lists:
+            list_descriptors = lists_location / lst / 'descriptors.txt'
+            if not list_descriptors.exists():
+                continue
+            n_success = 0
+            n_failure = 0
+            n_total   = 0
+            n_benched = 0
+            with open(list_descriptors, 'r') as f:
+                for line in f:
+                    descriptor    = RefactoringDescriptor(line)
+                    data_location = Path(args.x_location) / 'data' / bm / descriptor.opportunity_id() / descriptor.id()
+                    n_total       = n_total + 1
+                    if not data_location.exists():
+                        continue
+                    if (data_location / 'FAILURE').exists():
+                        n_failure = n_failure + 1
+                        continue
+                    n_success = n_success + 1
+                    for dir2, executions, files2 in os.walk(data_location):
+                        for execution in executions:
+                            for dir3, configurations, files3 in os.walk(Path(dir2) / 'stats' / execution):
+                                n_benched = n_benched + len(configurations)
+                                break
+                        break
+            result = f"{(bm, workload, lst)}: {n_success}/{n_failure}/{n_total}, {n_benched}/{n_total * n_combinations}"
+            print(result)
+        break
 
 def compute_results(args):
     x_location     = Path(args.x_location) / args.x
@@ -43,9 +188,11 @@ def compute_results(args):
                     data_location = Path(args.x_location) / 'data' / bm / descriptor.opportunity_id() / descriptor.id()
                     if not data_location.exists():
                         # We have not yet created the corresponding refactoring.
-                        # Since lists are processed sequentially from start to
-                        # end there is nothing more to add from this list.
-                        break
+                        # However, if the refactoring framework changes, or the
+                        # seed for shuffling opportunities, then there might be
+                        # refactorings ahead that we would miss unless we process
+                        # the whole list. Therefore, we continue down the list.
+                        continue
 
                     # Validate the stored descriptor.
                     stored_id = RefactoringDescriptor.load(data_location / 'descriptor.txt').id()
@@ -75,8 +222,8 @@ def compute_results(args):
                                     #
                                     # TODO: Consider which parameters and meta attributes are of interest in the analysis, if any.
                                     #
-                                    config   = configuration.Configuration().load(Path(dir2) / id / 'configuration.txt')
-                                    metrics  = configuration.Metrics().load(Path(dir2) / id / 'metrics.txt')
+                                    config   = Configuration().load(Path(dir2) / id / 'configuration.txt')
+                                    metrics  = Metrics().load(Path(dir2) / id / 'metrics.txt')
                                     identity = { 'data' : '/'.join([descriptor.opportunity_id(), descriptor.id(), execution, 'stats', id]) }
                                     results.append({ **identity, **config._values, **metrics._values })
                                     if len(variables) == 0:
@@ -111,29 +258,27 @@ def compute_results(args):
 
         anova(results_independent_variables, results_dependent_variables, csv_path)
 
+def setdftype(df, name, type):
+    if name in df:
+        df[name] = df[name].astype(type)
+
 def anova(i_vars, d_vars, csv_path):
     # metrics.txt gives all the dependent variables
     # parameters.txt gives all independent categorical variables and their value sets
     # configuration.txt gives a specific combination of the independent variables
     #
     df = pandas.read_csv(csv_path)
-    df['EXECUTION_TIME'] = df['EXECUTION_TIME'].astype(int)
-    df['bm']             = df['bm'].astype(str)
-    df['bm_version']     = df['bm_version'].astype(str)
-    df['bm_workload']    = df['bm_workload'].astype(str)
-    df['heap_size']      = df['heap_size'].astype(str)
-    df['jdk']            = df['jdk'].astype(str)
-    df['jre']            = df['jre'].astype(str)
-    df['source_version'] = df['source_version'].astype(str)
-    if 'stack_size' in df:
-        df['stack_size']     = df['stack_size'].astype(str)
-    df['target_version'] = df['target_version'].astype(str)    
-
+    setdftype(df, 'EXECUTION_TIME', int)
+    setdftype(df, 'bm'            , str)
+    setdftype(df, 'bm_version'    , str)
+    setdftype(df, 'bm_workload'   , str)
+    setdftype(df, 'heap_size'     , str)
+    setdftype(df, 'jdk'           , str)
+    setdftype(df, 'jre'           , str)
+    setdftype(df, 'source_version', str)
+    setdftype(df, 'target_version', str)
+    setdftype(df, 'stack_size'    , str)
     #print(df.dtypes)
-
-    # TODO: I suspect this is not how we should handle multiple
-    #       independent dependent variables. Skip loop and join
-    #       on left-hand side as well?
 
     for d_var in d_vars:
         ## https://www.statsmodels.org/stable/gettingstarted.html
@@ -160,6 +305,19 @@ if __name__ == '__main__':
         help = "Benchmark name")
     parser.add_argument('--workload', required = False,
         help = "Benchmark workload")
+    parser.add_argument('--compute-results', required = False, action = 'store_true',
+        help = "Compute benchmark results by processing views")
+    parser.add_argument('--show-progress', required = False, action = 'store_true',
+        help = "Print list progress")
     args = parser.parse_args()
-    compute_results(args)
+
+    if args.compute_results:
+        compute_results(args)
+        compute_all(args)
+
+    if args.show_progress:
+        compute_progress(args)
+
+    if not args.compute_results and not args.show_progress:
+        parser.print_help()
 

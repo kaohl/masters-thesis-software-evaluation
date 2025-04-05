@@ -331,6 +331,9 @@ class Configuration(ConfigurationBase):
                     text.write('='.join([str(k), str(v)]) + os.linesep)
             return hashlib.md5(bytes(text.getvalue(), encoding = 'utf-8')).hexdigest()
 
+    def parameters(self):
+        return dict({ (k, v) for k, v in self._values.items() if k in Configuration._experimental_parameters })
+
     def __init__(self):
         super().__init__(Configuration)
 
