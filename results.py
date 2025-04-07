@@ -13,19 +13,90 @@ from configuration import Configuration, Metrics
 from opportunity_cache import RefactoringDescriptor
 
 # TODO
-# Write script that go through all lists and collect all
-# referenced data folders, and then print a list of all
-# data that is no longer referenced by any list.
-#   This is needed when we update descriptors in a
-# way that modify parameters such that the ID changes.
-# We probably need to discard such refactorings since
-# they are no longer relevant to our results.
-#
-# TODO
 # Add method signature to meta data of all descriptors so
 # that we can determine our coverage across the set of
 # sampled methods.
 
+def get_bm_workloads(args):
+    bm = args.bm
+    for dir, experiments, files in os.walk(args.x_location):
+        for experiment in experiments:
+            for dir1, benchmarks, files1 in os.walk(Path(dir) / experiment / 'workloads'):
+                for benchmark in benchmarks:
+                    if not benchmark == bm:
+                        continue
+                    for dir2, workloads, files2 in os.walk(Path(dir1) / benchmark):
+                        return [ Path(dir2) / workload for workload in workloads ]
+                break
+        break
+    return []
+
+def get_refactorings_and_benchmarks(args):
+    data_location = Path(args.x_location) / 'data' / args.bm
+    refactorings  = set()
+    benchmarks    = set()
+    opportunities = get_opportunities(data_location)
+    for opportunity in opportunities:
+        instances = get_instances(opportunity)
+        for instance in instances:
+            refactorings.add((opportunity.name, instance.name))
+            for execution in get_executions(instance):
+                for configuration in get_configurations(execution):
+                    # Executions don't matter here. We add all configurations
+                    # that exists below the refactoring in all executions.
+                    benchmarks.add((opportunity.name, instance.name, configuration.name))
+    return refactorings, benchmarks
+
+# Print all refactorings and/or benchmarks that no
+# longer match a descriptor list entry or an active
+# configuration.
+#   This is useful when configuration changes in a
+# way that invalidates descriptors or configurations.
+def show_deprecated(args):
+    x_location    = Path(args.x_location) / args.x
+    data_location = Path(args.x_location) / 'data' / args.bm
+
+    refactorings, benchmarks = get_refactorings_and_benchmarks(args)
+
+    listed_refactorings = set()
+    listed_benchmarks   = set()
+
+    for w_location in get_bm_workloads(args):
+        lists_location = w_location / 'lists'
+        combinations   = Configuration().load(w_location / 'parameters.txt').get_all_combinations()
+        for dir1, lists, files1 in os.walk(lists_location):
+            for lst in lists:
+                list_descriptors = lists_location / lst / 'descriptors.txt'
+                if not list_descriptors.exists():
+                    continue
+                with open(list_descriptors, 'r') as f:
+                    for line in f:
+                        descriptor = RefactoringDescriptor(line)
+                        key        = (descriptor.opportunity_id(), descriptor.id())
+                        if not key in refactorings:
+                            # The refactoring has not yet been created
+                            # and is therefore irrelevant here.
+                            continue
+                        listed_refactorings.add(key)
+
+                        # Add all valid configurations for which we have
+                        # already captured measurements.
+                        for configuration in combinations:
+                            if (*key, configuration.id()) in benchmarks:
+                                listed_benchmarks.add((*key, configuration.id()))
+            break
+
+    deprecated_refactorings = refactorings - listed_refactorings
+    deprecated_benchmarks   = benchmarks   - listed_benchmarks
+
+    for (opportunity_id, instance_id) in deprecated_refactorings:
+        instance = data_location / opportunity_id / instance_id
+        print(f"Deprecated: {instance}")
+
+    for (opportunity_id, instance_id, configuration_id) in deprecated_benchmarks:
+        instance = data_location / opportunity_id / instance_id
+        for execution in get_executions(instance):
+            print(f"Deprecated: {execution / 'stats' / configuration_id}")
 
 class FailureReport:
     def __init__(self):
@@ -373,6 +444,8 @@ if __name__ == '__main__':
         help = "Compute benchmark results by processing views")
     parser.add_argument('--show-progress', required = False, action = 'store_true',
         help = "Print list progress")
+    parser.add_argument('--show-deprecated', required = False, action = 'store_true',
+        help = "Print deprectated refactorings and benchmarks")
     parser.add_argument('--report', required = False, nargs = '+', choices = ['refactor', 'timeout', 'generic'],
         help = "Print failure report")
 
@@ -388,6 +461,9 @@ if __name__ == '__main__':
     if args.report:
         create_failure_report(args)
 
-    if not args.compute_results and not args.show_progress and not args.report:
+    if args.show_deprecated:
+        show_deprecated(args)
+
+    if not args.compute_results and not args.show_progress and not args.report and not args.show_deprecated:
         parser.print_help()
 
