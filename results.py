@@ -22,14 +22,78 @@ from opportunity_cache import RefactoringDescriptor
 # they are no longer relevant to our results.
 #
 # TODO
-# Write a script that captures all refactoring failures,
-# and all benchmark failures and assembles a report with
-# all errors in it so that it is easy to page through them.
-#
-# TODO
 # Add method signature to meta data of all descriptors so
 # that we can determine our coverage across the set of
 # sampled methods.
+
+
+class FailureReport:
+    def __init__(self):
+        self._r_failure         = []
+        self._b_generic_failure = []
+        self._b_timeout_failure = []
+        self._b_unknown_failure = []
+
+    def refactoring_failure(self, descriptor, path):
+        self._r_failure.append((descriptor, path))
+
+    def benchmark_failure(self, descriptor, path):
+        if (path / 'GENERIC').exists():
+            self._b_generic_failure.append((descriptor, path))
+        elif (path / 'TIMEOUT').exists():
+            self._b_generic_failure.append((descriptor, path))
+        else:
+            self._b_unknown_failure.append((descriptor, path))
+
+    def publish(self, r = False, g = False, t = False):
+        if r:
+            print("Refactoring Failures")
+            for e in self._r_failure:
+                with open(e[1] / 'refactoring-output.txt', 'r') as f:
+                    print('-' * 20)
+                    print(f"{e[0].line()}")
+                    print(''.join(f.readlines()))
+                    print('-' * 20)
+        if g:
+            print("Benchmark Generic Failures")
+            for e in self._b_generic_failure:
+                with open(e[1] / 'FAILURE', 'r') as f:
+                    print('-' * 20)
+                    print(f"{e[0].line()}")
+                    print(''.join(f.readlines()))
+                    print('-' * 20)
+        if t:
+            print("Benchmark Timeout Failures")
+            for e in self._b_timeout_failure:
+                with open(e[1] / 'FAILURE', 'r') as f:
+                    print('-' * 20)
+                    print(f"{e[0].line()}")
+                    print(''.join(f.readlines()))
+                    print('-' * 20)
+
+def create_failure_report(args):
+    x_location    = Path(args.x_location) / args.x
+    data_location = Path(args.x_location) / 'data' / args.bm
+    report        = FailureReport()
+
+    opportunities = get_opportunities(data_location)
+    for opportunity in opportunities:
+        instances = get_instances(opportunity)
+        for instance in instances:
+            descriptor = get_descriptor(instance)
+            if (instance / 'FAILURE').exists():
+                report.refactoring_failure(descriptor, instance)
+            executions = get_executions(instance)
+            for execution in executions:
+                configurations = get_configurations(execution)
+                for configuration in configurations:
+                    if (configuration / 'FAILURE').exists():
+                        report.benchmark_failure(descriptor, configuration)
+    report.publish(
+        'refactor' in args.report,
+        'generic'  in args.report,
+        'timeout'  in args.report
+    )
 
 class Results:
 
@@ -309,6 +373,9 @@ if __name__ == '__main__':
         help = "Compute benchmark results by processing views")
     parser.add_argument('--show-progress', required = False, action = 'store_true',
         help = "Print list progress")
+    parser.add_argument('--report', required = False, nargs = '+', choices = ['refactor', 'timeout', 'generic'],
+        help = "Print failure report")
+
     args = parser.parse_args()
 
     if args.compute_results:
@@ -318,6 +385,9 @@ if __name__ == '__main__':
     if args.show_progress:
         compute_progress(args)
 
-    if not args.compute_results and not args.show_progress:
+    if args.report:
+        create_failure_report(args)
+
+    if not args.compute_results and not args.show_progress and not args.report:
         parser.print_help()
 
