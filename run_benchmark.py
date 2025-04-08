@@ -98,13 +98,9 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
     options  = []
     features = []
 
-    # TODO
-    # I belive this works only for java 8.
-    # Need other options with later versions.
-    #
-    # Seems to be working for java 17 (tem and oracle) as well but get a deprecation warning.
-    #
-
+    # https://developers.redhat.com/blog/2020/08/25/get-started-with-jdk-flight-recorder-in-openjdk-8u#
+    # https://docs.redhat.com/en/documentation/red_hat_build_of_openjdk/17/html/using_jdk_flight_recorder_with_red_hat_build_of_openjdk/configure-jfr-options#configure-jfr-options
+    
     if jfr:
         jfr_options = [
             "samplethreads=true",
@@ -116,12 +112,9 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
             "settings=jfr/custom-profile.jfr"
         ]
         features.extend([
-            # TODO: Looks like this option is only for Oracle < 11.
-            #"-XX:+UnlockCommercialFeatures",
-
-            "-XX:+UnlockDiagnosticVMOptions",
-            "-XX:+DebugNonSafepoints",
-            "-XX:+FlightRecorder",
+            #"-XX:+UnlockDiagnosticVMOptions",
+            #"-XX:+DebugNonSafepoints",
+            #"-XX:+FlightRecorder",
             "-XX:FlightRecorderOptions=" + ",".join(jfr_options),
             "-XX:StartFlightRecording=" + ",".join(jfr_start_options)
         ])
