@@ -284,7 +284,7 @@ def compute_progress(args):
                     n_success = n_success + 1
                     for dir2, executions, files2 in os.walk(data_location):
                         for execution in executions:
-                            for dir3, configurations, files3 in os.walk(Path(dir2) / 'stats' / execution):
+                            for dir3, configurations, files3 in os.walk(Path(dir2) / execution / 'stats'):
                                 n_benched = n_benched + len(configurations)
                                 break
                         break
