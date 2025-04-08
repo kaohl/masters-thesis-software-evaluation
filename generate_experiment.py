@@ -232,8 +232,8 @@ def main(args):
         'bm_workload'    : 'mzc18_1',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'],
         'stack_size'     : ['1M']
     }
@@ -245,8 +245,8 @@ def main(args):
         'bm_workload'    : 'mzc18_2',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'],
         'stack_size'     : ['1M']
     }
@@ -258,8 +258,8 @@ def main(args):
         'bm_workload'    : 'mzc18_3',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'],
         'stack_size'     : ['1M']
     }
@@ -271,8 +271,8 @@ def main(args):
         'bm_workload'    : 'mzc18_4',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'],
         'stack_size'     : ['1M']
     }
@@ -291,8 +291,8 @@ def main(args):
     #    'bm_workload'    : 'mzc18_6',
     #    'source_version' : '8',
     #    'target_version' : ['17'],
-    #    'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-    #    'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+    #    'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+    #    'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
     #    'heap_size'      : ['2G'],
     #    'stack_size'     : ['4M']
     #}
@@ -308,8 +308,8 @@ def main(args):
         'bm_workload'    : 'small',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -321,8 +321,8 @@ def main(args):
         'bm_workload'    : 'default',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -338,8 +338,8 @@ def main(args):
         'bm_workload'    : 'small',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -351,8 +351,8 @@ def main(args):
         'bm_workload'    : 'default',
         'source_version' : '8',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -368,8 +368,8 @@ def main(args):
         'bm_workload'    : 'small',
         'source_version' : '11',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -381,8 +381,8 @@ def main(args):
         'bm_workload'    : 'default',
         'source_version' : '11',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -398,8 +398,8 @@ def main(args):
         'bm_workload'    : 'small',
         'source_version' : '11',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
@@ -411,8 +411,8 @@ def main(args):
         'bm_workload'    : 'default',
         'source_version' : '11',
         'target_version' : ['17'],
-        'jdk'            : ['17.0.12-oracle', '17.0.14-tem'],
-        'jre'            : ['17.0.12-oracle', '17.0.14-tem'],
+        'jdk'            : ['17.0.9-graalce', '17.0.14-tem'],
+        'jre'            : ['17.0.9-graalce', '17.0.14-tem'],
         'heap_size'      : ['2G'], # Using explicit default.
         'stack_size'     : ['1M']  # Using explicit default.
     }
