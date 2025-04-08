@@ -11,4 +11,4 @@
 #   find . -exec 'bash' 'find_all_occurrences.sh' '<KEYWORD>' '{}' ';'
 #
 
-test -f $2 && grep -H $1 $2
+test -f $2 && grep -iH $1 $2
