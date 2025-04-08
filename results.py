@@ -183,6 +183,9 @@ class Results:
         if (location / 'FAILURE').exists():
             return
         config   = Configuration().load(location / 'configuration.txt')
+        # Only include data for specified workload to get all comparable results.
+        if not config.bm_workload() == self._wl:
+            return
         metrics  = Metrics().load(location / 'metrics.txt')
         identity = { 'data' : str(location) }
         params   = config.parameters()
@@ -358,6 +361,11 @@ def compute_results(args):
                                     # TODO: Consider which parameters and meta attributes are of interest in the analysis, if any.
                                     #
                                     config   = Configuration().load(Path(dir2) / id / 'configuration.txt')
+
+                                    # Only include measurements for the specified workload.
+                                    if not config.bm_workload() == workload:
+                                        continue
+
                                     metrics  = Metrics().load(Path(dir2) / id / 'metrics.txt')
                                     identity = { 'data' : '/'.join([descriptor.opportunity_id(), descriptor.id(), execution, 'stats', id]) }
                                     results.append({ **identity, **config._values, **metrics._values })
