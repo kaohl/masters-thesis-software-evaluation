@@ -70,9 +70,10 @@ DEFAULT_REFACTORING_PARAMETERS = {
         "references" : "true"
     },
     RENAME_METHOD_ID : {
-        "name"      : "_x_",
-        "delegate"  : "false",
-        "deprecate" : "false"
+        "name"       : "_x_",
+        "delegate"   : "false",
+        "deprecate"  : "false",
+        "references" : "true"
     },
     RENAME_TYPE_ID : {
         "name"                : "X",
@@ -184,9 +185,8 @@ def create_workload(args, x, parameters, lists_and_views):
     w_lists.mkdir(exist_ok = True)
     w_views.mkdir(exist_ok = True)
 
-    if not (w_lists / 'default.args').exists():
-        with open(w_lists / 'default.args', 'w') as f:
-            f.write(json.dumps(DEFAULT_REFACTORING_PARAMETERS, sort_keys = True) + os.linesep)
+    with open(w_lists / 'default.args', 'w') as f:
+        f.write(json.dumps(DEFAULT_REFACTORING_PARAMETERS, sort_keys = True) + os.linesep)
 
     Configuration().init_from_dict(parameters).store_options(w_params)
 
