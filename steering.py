@@ -9,30 +9,30 @@ import tempfile
 import run_benchmark as bm_script
 import collect_hot_methods as jfr
 
-def get_all_sampled_methods(configuration):
-    return [m for (m,_,_) in _filter_methods(configuration, 0.0)]
+def get_all_sampled_methods(cache_location, configuration):
+    return [m for (m,_,_) in _filter_methods(cache_location, configuration, 0.0)]
 
 def decimals(num):
     s = str(num)
     n = len(s[s.rfind('.')+1:])
     return n
 
-def get_cache_location(configuration):
-    return Path('steering') / configuration.id() # Steering depends on the workload. So, we should use 'id()' rather than 'params_id()'.
+def get_cache_location(cache_location, configuration):
+    return cache_location / configuration.id()
 
 def get_cache_stem(configuration):
     return '-'.join([configuration.bm(), configuration.bm_workload()])
 
-def get_cache_methods(configuration):
-    return get_cache_location(configuration) / (get_cache_stem(configuration) + '.methods.summary.txt')
+def get_cache_methods(cache_location, configuration):
+    return get_cache_location(cache_location, configuration) / (get_cache_stem(configuration) + '.methods.summary.txt')
 
-def get_cache_jfr(configuration):
-    return get_cache_location(configuration) / (get_cache_stem(configuration) + '.jfr')
+def get_cache_jfr(cache_location, configuration):
+    return get_cache_location(cache_location, configuration) / (get_cache_stem(configuration) + '.jfr')
 
 # Return list of methods with a sample count
 # above or equal to the specified threshold.
-def _filter_methods(configuration, sample_threshold):
-    total, methods = _load_method_samples(configuration)
+def _filter_methods(cache_location, configuration, sample_threshold):
+    total, methods = _load_method_samples(cache_location, configuration)
     filtered_methods = []
     n                = decimals(sample_threshold)
     for m, c in methods:
@@ -42,14 +42,10 @@ def _filter_methods(configuration, sample_threshold):
             filtered_methods.append((m, c, frac2))
     return filtered_methods
 
-def _load_method_samples(configuration):
-    bm       = configuration.bm()
-    workload = configuration.bm_workload()
-    name     = '-'.join([bm, workload])
-    steering = Path('steering')
-    summary  = get_cache_methods(configuration) # steering / (name + '.methods.summary.txt')
+def _load_method_samples(cache_location, configuration):
+    summary  = get_cache_methods(cache_location, configuration)
     if not summary.exists():
-        _generate_steering_for_workload(configuration)
+        _generate_steering_for_workload(cache_location, configuration)
 
     total   = 0
     methods = []
@@ -63,19 +59,19 @@ def _load_method_samples(configuration):
             methods.append((method.strip(), samples))
     return total, methods
 
-def _save_method_samples(configuration, method__count):
-    summary = get_cache_methods(configuration) # steering / (name + '.methods.summary.txt')
+def _save_method_samples(cache_location, configuration, method__count):
+    summary = get_cache_methods(cache_location, configuration)
     with open(summary, 'w') as f:
         for m, c in reversed(sorted(method__count.items(), key = lambda it: it[1])):
             f.write('{},{}'.format(m, c) + os.linesep)
 
-def _generate_steering_for_workload(configuration):
-    location = get_cache_location(configuration)
+def _generate_steering_for_workload(cache_location, configuration):
+    location = get_cache_location(cache_location, configuration)
     if not location.exists():
         location.mkdir(parents = True)
 
-    summary  = get_cache_methods(configuration)
-    jfr_save = get_cache_jfr(configuration)
+    summary  = get_cache_methods(cache_location, configuration)
+    jfr_save = get_cache_jfr(cache_location, configuration)
     clean    = True
     with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as location:
         temp_location = Path(location)
@@ -90,44 +86,44 @@ def _generate_steering_for_workload(configuration):
 
         method__count = jfr.get_method_samples(str(jfr_file))
 
-        _save_method_samples(configuration, method__count)
+        _save_method_samples(cache_location, configuration, method__count)
 
-def _main(args):
-    bm        = args.bm
-    workload  = args.workload
-    threshold = args.threshold
-    methods   = _filter_methods(bm, workload, threshold)
-
-    pad_count = lambda str_c: str_c if len(str_c) >= 8 else (' '*(8-len(str_c)) + str_c)
-
-    n = decimals(threshold)
-    
-    if not args.table and not args.methods:
-        print("--- SAMPLES(n), n/N, METHOD ---")
-        for (m, c, frac) in methods:
-            print(pad_count(str(c)), ('{:.' + str(n) + 'f}').format(round(frac, n)), m)
-        print("-------------------------------")
-
-    if args.methods:
-        for (m, c, frac) in methods:
-            print(m)
-
-    if args.table:
-        for (m, c, frac) in methods:
-            print(pad_count(str(c)), '&', ('{:.' + str(n) + 'f}').format(round(frac, n)), '&', m)
-    
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--bm', required = True,
-        help = "Benchmark name")
-    parser.add_argument('--workload', required = True,
-        help = "The workload to run when benchmarking.")
-    parser.add_argument('--threshold', required = False, type=float, default=0.0,
-        help = "The method sample threshold to apply in range [0, 1].")
-    parser.add_argument('--methods', required = False, action = 'store_true',
-        help = "If specified, the output will be a list of methods ordered by decreasing sample count.")
-    parser.add_argument('--table', required = False, action = 'store_true',
-        help = "Print table rows for report.")
-    args = parser.parse_args()
-
-    _main(args)
+#def _main(args):
+#    bm        = args.bm
+#    workload  = args.workload
+#    threshold = args.threshold
+#    methods   = _filter_methods(bm, workload, threshold)
+#
+#    pad_count = lambda str_c: str_c if len(str_c) >= 8 else (' '*(8-len(str_c)) + str_c)
+#
+#    n = decimals(threshold)
+#    
+#    if not args.table and not args.methods:
+#        print("--- SAMPLES(n), n/N, METHOD ---")
+#        for (m, c, frac) in methods:
+#            print(pad_count(str(c)), ('{:.' + str(n) + 'f}').format(round(frac, n)), m)
+#        print("-------------------------------")
+#
+#    if args.methods:
+#        for (m, c, frac) in methods:
+#            print(m)
+#
+#    if args.table:
+#        for (m, c, frac) in methods:
+#            print(pad_count(str(c)), '&', ('{:.' + str(n) + 'f}').format(round(frac, n)), '&', m)
+#    
+#if __name__ == '__main__':
+#    parser = argparse.ArgumentParser()
+#    parser.add_argument('--bm', required = True,
+#        help = "Benchmark name")
+#    parser.add_argument('--workload', required = True,
+#        help = "The workload to run when benchmarking.")
+#    parser.add_argument('--threshold', required = False, type=float, default=0.0,
+#        help = "The method sample threshold to apply in range [0, 1].")
+#    parser.add_argument('--methods', required = False, action = 'store_true',
+#        help = "If specified, the output will be a list of methods ordered by decreasing sample count.")
+#    parser.add_argument('--table', required = False, action = 'store_true',
+#        help = "Print table rows for report.")
+#    args = parser.parse_args()
+#
+#    _main(args)

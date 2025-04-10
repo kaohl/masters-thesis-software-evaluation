@@ -38,6 +38,8 @@ def get_experiments(args):
     xs = []
     for dir, folders, files in os.walk(x_location(args)):
         for x in folders:
+            if x == 'steering':
+                continue
             xs.append(x)
         break
     return xs
@@ -88,11 +90,11 @@ def get_x_workload_configuration(args, x, bm, workload):
 
     return config
 
-def add_x_workload_steering(configuration, workspace_src):
+def add_x_workload_steering(args, configuration, workspace_src):
     target  = workspace_src / 'methods.config'
     if target.exists():
         return
-    methods = steering.get_all_sampled_methods(configuration)
+    methods = steering.get_all_sampled_methods(x_location(args) / 'steering', configuration)
     with open(target, 'w') as f:
         for method in methods:
             for filter_text in _method_filters[configuration.bm()]:
@@ -105,7 +107,7 @@ def add_x_workspace_configuration(args, x, bm, workload, workspace):
     config        = x_location(args) / x / 'workloads' / bm / workload / 'config'
     configuration = get_x_workload_configuration(args, x, bm, workload)
     src.mkdir(parents = True, exist_ok = True)
-    add_x_workload_steering(configuration, src)
+    add_x_workload_steering(args, configuration, src)
     # Copy workspace configuration for top-level targeted refactoring
     # (not always provided; lists of packages and units).
     for dir, folders, files in os.walk(config):

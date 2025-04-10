@@ -21,6 +21,8 @@ def get_bm_workloads(args):
     bm = args.bm
     for dir, experiments, files in os.walk(args.x_location):
         for experiment in experiments:
+            if experiment == 'steering':
+                continue
             for dir1, benchmarks, files1 in os.walk(Path(dir) / experiment / 'workloads'):
                 for benchmark in benchmarks:
                     if not benchmark == bm:
