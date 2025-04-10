@@ -291,7 +291,6 @@ def build_and_benchmark(args, x, configuration, data_location, capture_flight_re
         log.warning("-------------------------")
         with open(failure, 'w') as f:
             f.write(str(e))
-        # Generic hint.
         with open(generic_hint, 'w') as f:
             pass
     return False
@@ -369,8 +368,12 @@ def get_benchmark_execution_plan(args):
                         for configuration in configurations[(x, b, w)]:
                             stats_c = Path(dir1) / execution / 'stats' / configuration.params_id()
                             key     = (b, opportunity, refactoring, execution, configuration.params_id())
-                            # NOTE: 'key' MUST NOT include 'x' or 'w' because refactorings of a
-                            #        benchmark can be shared between experiments and workloads.
+                            # NOTE: 'key' MUST NOT include 'x' because refactorings of a
+                            #        benchmark can be shared between experiments.
+                            # NOTE:  Opportunities and refactorings can be shared between
+                            #        benchmark workloads. We separate their measurements
+                            #        by including the workload name in the configuration.
+                            #        Therefore, 'params_id' must depend on the workload.
                             if not stats_c.exists() and not key in keys:
                                 # Here we can include 'x' in the result. ('w' is not needed.)
                                 plan.append((x, b, opportunity, refactoring, execution, configuration))
@@ -394,7 +397,8 @@ def benchmark(args):
         print(f"Benchmark ({i+1}/{n}) {'/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.params_id()])}")
         print()
         data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / opportunity / refactoring / execution
-        build_and_benchmark(args, x, configuration, data_location)
+        enable_jfr    = False
+        build_and_benchmark(args, x, configuration, data_location, enable_jfr)
         i = i + 1
         if i >= n:
             break

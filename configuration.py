@@ -325,11 +325,14 @@ class Configuration(ConfigurationBase):
         return self._check_constraints()
 
     def params_id(self):
-        with io.StringIO() as text:
-            for k, v in sorted(self._values.items(), key = lambda it: it[0]):
-                if k in Configuration._experimental_parameters:
-                    text.write('='.join([str(k), str(v)]) + os.linesep)
-            return hashlib.md5(bytes(text.getvalue(), encoding = 'utf-8')).hexdigest()
+        # Note: We need to have the params_id() depend on workload.
+        #       The following is incorrect. We should return 'self.id()'.
+        #with io.StringIO() as text:
+        #    for k, v in sorted(self._values.items(), key = lambda it: it[0]):
+        #        if k in Configuration._experimental_parameters:
+        #            text.write('='.join([str(k), str(v)]) + os.linesep)
+        #    return hashlib.md5(bytes(text.getvalue(), encoding = 'utf-8')).hexdigest()
+        return self.id()
 
     def parameters(self):
         return dict({ (k, v) for k, v in self._values.items() if k in Configuration._experimental_parameters })
