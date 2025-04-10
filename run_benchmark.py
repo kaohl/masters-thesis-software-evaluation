@@ -100,8 +100,26 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
 
     # https://developers.redhat.com/blog/2020/08/25/get-started-with-jdk-flight-recorder-in-openjdk-8u#
     # https://docs.redhat.com/en/documentation/red_hat_build_of_openjdk/17/html/using_jdk_flight_recorder_with_red_hat_build_of_openjdk/configure-jfr-options#configure-jfr-options
-    
+
     if jfr:
+        # Seems like different JDKs ship different default configurations (atleast by checksum).
+        # Best to generate a configuration that is compatible with the one that is actually used.
+        result = subprocess.run(
+            tools.sdk_run(
+                configuration.jre(),
+                "${JAVA_HOME}/bin/jfr configure --output jfr/custom.jfc method-profiling=max"
+            ),
+            shell      = True,
+            executable = '/bin/bash',
+            stdout     = subprocess.PIPE,
+            stderr     = subprocess.STDOUT,
+            timeout    = 10 # Raises subprocess.TimeoutExpired.
+        )
+
+        if result.returncode != 0:
+            text = result.stdout.decode('utf-8')
+            raise ValueError("Benchmark failed. Failed to configure JFR.", text)
+
         jfr_options = [
             "samplethreads=true",
         ]
@@ -109,12 +127,9 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
             "disk=false",
             "dumponexit=true",
             "filename=" + jfr_file,
-            "settings=jfr/custom-profile.jfr"
+            "settings=jfr/custom.jfc"
         ]
         features.extend([
-            #"-XX:+UnlockDiagnosticVMOptions",
-            #"-XX:+DebugNonSafepoints",
-            #"-XX:+FlightRecorder",
             "-XX:FlightRecorderOptions=" + ",".join(jfr_options),
             "-XX:StartFlightRecording=" + ",".join(jfr_start_options)
         ])
