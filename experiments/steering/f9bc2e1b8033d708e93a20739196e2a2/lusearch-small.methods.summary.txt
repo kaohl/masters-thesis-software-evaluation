@@ -1,0 +1,162 @@
+org.apache.lucene.util.compress.LZ4.decompress(DataInput, int, byte[], int),40
+org.apache.lucene.store.ByteBufferIndexInput.readBytes(byte[], int, int),10
+sun.security.provider.SHA.implCompress0(byte[], int),8
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader$BlockState.doReset(int),7
+sun.security.provider.DigestBase.engineUpdate(byte[], int, int),5
+org.apache.lucene.store.ByteBufferIndexInput.readShort(),4
+java.util.DualPivotQuicksort.sort(DualPivotQuicksort$Sorter, int[], int, int, int),3
+org.dacapo.harness.FileDigest.getText(File, boolean, File),3
+org.apache.lucene.queryparser.classic.QueryParserTokenManager.jjMoveNfa_2(int, int),3
+org.apache.lucene.store.ByteBufferIndexInput.readVInt(),3
+java.util.Arrays.fill(long[], int, int, long),3
+org.apache.lucene.backward_codecs.lucene90.Lucene90PostingsReader$BlockDocsEnum.refillDocs(),3
+sun.net.www.ParseUtil.firstEncodeIndex(String),3
+java.io.BufferedReader.readLine(boolean, boolean[]),2
+org.apache.lucene.store.ByteBufferIndexInput.readByte(),2
+org.apache.lucene.util.fst.FST.readArc(FST$Arc, FST$BytesReader),2
+org.apache.lucene.document.StoredField.<init>(String, String, FieldType),2
+org.apache.lucene.util.UnicodeUtil.maxUTF8Length(int),2
+java.util.HashMap.<init>(Map),2
+org.apache.lucene.store.ByteBufferGuard.getBytes(ByteBuffer, byte[], int, int),2
+org.apache.lucene.store.ByteBufferGuard.getByte(ByteBuffer, int),2
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.seekExact(BytesRef),2
+org.apache.lucene.util.compress.LowercaseAsciiCompression.decompress(DataInput, byte[], int),2
+org.apache.lucene.store.ByteBufferIndexInput.newCloneInstance(String, ByteBuffer[], int, long),2
+java.util.concurrent.ConcurrentHashMap.transfer(ConcurrentHashMap$Node[], ConcurrentHashMap$Node[]),2
+java.lang.StringBuilder.<init>(),2
+java.lang.StringLatin1.lastIndexOf(byte[], int, int),2
+java.net.URL.set(String, String, int, String, String, String, String, String),2
+java.util.jar.JarFile$JarFileEntry.<init>(JarFile, String),2
+java.nio.DirectByteBuffer.ix(int),2
+java.util.zip.ZipFile.getInputStream(ZipEntry),2
+java.lang.invoke.MethodHandles$Lookup$ClassOption.optionsToFlag(Set),1
+jdk.internal.org.objectweb.asm.AnnotationWriter.create(SymbolTable, String, AnnotationWriter),1
+java.lang.invoke.InvokerBytecodeGenerator.clinit(ClassWriter, String, List),1
+org.dacapo.harness.LatencyReporter.printRequestTime(int),1
+org.dacapo.harness.LatencyReporter.partition(int, int),1
+sun.security.provider.DigestBase.engineUpdate(byte),1
+sun.security.provider.DigestBase.engineReset(),1
+sun.security.provider.DigestBase.implCompressMultiBlock(byte[], int, int),1
+sun.nio.cs.StreamDecoder.readBytes(),1
+java.lang.invoke.VarHandle.getTypesAndInvokers(),1
+sun.security.provider.ByteArrayAccess.b2iBig64(byte[], int, int[]),1
+java.lang.constant.ConstantDescs.<clinit>(),1
+org.apache.lucene.util.ArrayUtil.growExact(byte[], int),1
+org.apache.lucene.search.ImpactsDISI.nextDoc(),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.<init>(FieldReader),1
+jdk.internal.misc.Unsafe.allocateUninitializedArray0(Class, int),1
+org.apache.lucene.util.PriorityQueue.<init>(int, Supplier),1
+org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.slice(String, long, long),1
+org.apache.lucene.util.fst.FST.findTargetArc(int, FST$Arc, FST$Arc, FST$BytesReader),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.getArc(int),1
+org.dacapo.lusearch.Search$QueryProcessor.run(),1
+java.util.Arrays.compareUnsigned(byte[], int, int, byte[], int, int),1
+org.apache.lucene.store.ByteBufferIndexInput$SingleBufferImpl.readByte(long),1
+org.apache.lucene.util.PriorityQueue.updateTop(),1
+org.apache.lucene.store.DataInput.readVLong(boolean),1
+org.apache.lucene.search.TermScorer.score(),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.<init>(SegmentTermsEnum, int),1
+org.apache.lucene.search.TopScoreDocCollector$SimpleTopScoreDocCollector$1.collect(int),1
+org.apache.lucene.queryparser.classic.QueryParserBase.addClause(List, int, int, Query),1
+java.lang.StringConcatHelper.newArray(long),1
+java.lang.CharacterDataLatin1.toLowerCase(int),1
+java.util.Objects.requireNonNull(Object),1
+org.apache.lucene.analysis.standard.StandardTokenizer.reset(),1
+org.apache.lucene.util.fst.ReverseRandomAccessReader.readBytes(byte[], int, int),1
+java.nio.Buffer.scope(),1
+org.apache.lucene.queryparser.classic.QueryParser.Query(String),1
+java.nio.Buffer.position(int),1
+org.apache.lucene.search.TermScorer.<init>(Weight, ImpactsEnum, LeafSimScorer, boolean),1
+java.lang.StringLatin1.inflate(byte[], int, char[], int, int),1
+org.apache.lucene.backward_codecs.lucene90.PForUtil.expand32(long[]),1
+org.apache.lucene.search.ImpactsDISI.setMinCompetitiveScore(float),1
+org.apache.lucene.search.HitQueue.lessThan(ScoreDoc, ScoreDoc),1
+org.apache.lucene.index.CodecReader.terms(String),1
+org.apache.lucene.search.IndexSearcher.searchAfter(ScoreDoc, Query, int),1
+java.lang.String.compareTo(String),1
+org.apache.lucene.queryparser.classic.QueryParser.TopLevelQuery(String),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnumFrame.loadBlock(),1
+java.nio.ByteBuffer.get(byte[], int, int),1
+org.apache.lucene.search.BulkScorer.score(LeafCollector, Bits),1
+org.apache.lucene.analysis.standard.StandardTokenizerImpl.getNextToken(),1
+org.apache.lucene.search.Weight.bulkScorer(LeafReaderContext),1
+org.apache.lucene.search.TopScoreDocCollectorManager.reduce(Collection),1
+java.lang.ClassValue.match(ClassValue$Entry),1
+org.apache.lucene.search.TermQuery$TermWeight$2.<init>(TermQuery$TermWeight, LeafReaderContext, TermsEnum, int),1
+org.apache.lucene.search.CollectionStatistics.<init>(String, long, long, long, long),1
+java.lang.ClassValue.get(Class),1
+org.apache.lucene.util.PriorityQueue.pop(),1
+org.apache.lucene.document.DocumentStoredFieldVisitor.stringField(FieldInfo, String),1
+org.apache.lucene.search.TaskExecutor$TaskGroup.lambda$createTask$0(AtomicBoolean, Callable),1
+org.dacapo.harness.LatencyReporter.endIdx(int),1
+org.apache.lucene.util.fst.ReverseRandomAccessReader.<init>(RandomAccessInput),1
+org.apache.lucene.search.TopDocsCollector.topDocs(int, int),1
+org.apache.lucene.search.BooleanClause.<init>(Query, BooleanClause$Occur),1
+org.apache.lucene.codecs.lucene90.LZ4WithPresetDictCompressionMode$LZ4WithPresetDictDecompressor.decompress(DataInput, int, int, int, BytesRef),1
+org.apache.lucene.util.AttributeSource$State.clone(),1
+org.apache.lucene.codecs.lucene90.blocktree.SegmentTermsEnum.pushFrame(FST$Arc, long, int),1
+org.dacapo.lusearch.Search$QueryProcessor.doPagingSearch(Query),1
+java.lang.Long.bitCount(long),1
+org.apache.lucene.queryparser.charstream.FastCharStream.refill(),1
+java.nio.ByteBuffer.position(int),1
+org.apache.lucene.store.ByteBufferGuard.getByte(ByteBuffer),1
+org.apache.lucene.analysis.LowerCaseFilter.incrementToken(),1
+org.apache.lucene.document.FieldType.<init>(IndexableFieldType),1
+org.apache.lucene.codecs.lucene90.compressing.Lucene90CompressingStoredFieldsReader.serializedDocument(int),1
+java.lang.StringLatin1.charAt(byte[], int),1
+org.apache.lucene.analysis.TokenFilter.<init>(TokenStream),1
+java.util.LinkedHashMap.get(Object),1
+java.util.zip.Inflater.needsInput(),1
+jdk.internal.org.objectweb.asm.ClassWriter.toByteArray(),1
+java.util.concurrent.ConcurrentHashMap.addCount(long, int),1
+sun.nio.cs.StreamDecoder.<init>(InputStream, Object, CharsetDecoder),1
+java.util.zip.ZipFile$Source.get(File, boolean, ZipCoder),1
+java.lang.ModuleLayer.layers(ClassLoader),1
+java.util.jar.Manifest.getTrustedAttributes(String),1
+java.lang.invoke.MethodHandleImpl.makeConstantHandle(int),1
+org.apache.lucene.util.RamUsageEstimator.<clinit>(),1
+java.util.jar.JavaUtilJarAccessImpl.ensureInitialization(JarFile),1
+jdk.internal.loader.BuiltinClassLoader.getAndVerifyPackage(String, Manifest, URL),1
+java.nio.HeapByteBuffer.compact(),1
+org.apache.lucene.codecs.simpletext.SimpleTextFieldInfosFormat.<clinit>(),1
+java.util.Spliterators$IntArraySpliterator.forEachRemaining(IntConsumer),1
+java.lang.invoke.DelegatingMethodHandle.chooseDelegatingForm(MethodHandle),1
+jdk.internal.loader.BuiltinClassLoader.defineOrCheckPackage(String, Manifest, URL),1
+java.net.URL.<init>(URL, String, URLStreamHandler),1
+java.util.zip.ZipFile.getZipEntry(String, int),1
+java.lang.invoke.BootstrapMethodInvoker.invoke(Class, MethodHandle, String, Object, Object, Class),1
+java.lang.String.getBytes(byte[], int, byte),1
+java.lang.invoke.LambdaForm$NamedFunction.intrinsicName(),1
+org.apache.lucene.store.MappedByteBufferIndexInputProvider.unmapHackImpl(),1
+java.lang.invoke.MethodHandles$Lookup.revealDirect(MethodHandle),1
+java.net.URLStreamHandler.toExternalForm(URL),1
+java.lang.Runtime$Version.toString(),1
+java.util.jar.Attributes.get(Object),1
+java.lang.invoke.MethodTypeForm.<init>(MethodType),1
+jdk.internal.org.objectweb.asm.Frame.pop(int),1
+java.lang.invoke.ConstantCallSite.<init>(MethodHandle),1
+java.util.zip.ZipFile$Source.getEntryPos(String, boolean),1
+java.lang.invoke.InvokerBytecodeGenerator.getInternalName(Class),1
+java.util.zip.InflaterInputStream.read(byte[], int, int),1
+java.lang.invoke.LambdaForm$Name.<init>(LambdaForm$NamedFunction, Object[]),1
+java.lang.invoke.InvokerBytecodeGenerator.emitImplicitConversion(LambdaForm$BasicType, Class, Object),1
+jdk.internal.org.objectweb.asm.MethodWriter.putMethodInfo(ByteVector),1
+sun.invoke.util.VerifyType.isNullType(Class),1
+java.lang.StringUTF16.checkIndex(int, byte[]),1
+java.lang.invoke.LambdaForm.methodType(),1
+org.dacapo.parser.ConfigFileTokenManager.jjMoveNfa_0(int, int),1
+org.dacapo.parser.SimpleCharStream.backup(int),1
+org.dacapo.parser.ConfigFileTokenManager.getNextToken(),1
+java.lang.System$2.newStringUTF8NoRepl(byte[], int, int),1
+java.lang.AbstractStringBuilder.append(char),1
+jdk.internal.jimage.ImageStringsReader.match(int, String, int),1
+jdk.internal.jimage.ImageReader.verifyLocation(String, String),1
+java.util.ArrayList.clear(),1
+jdk.internal.loader.URLClassPath$JarLoader.checkResource(String, boolean, JarEntry),1
+java.util.zip.Inflater.setInput(byte[], int, int),1
+java.io.RandomAccessFile.read(byte[], int, int),1
+jdk.internal.jimage.ImageStringsReader.unmaskedHashCode(String, int),1
+java.util.jar.Manifest$FastInputStream.readLine(byte[], int, int),1
+jdk.jfr.internal.RequestEngine.doChunkBegin(),1
+jdk.jfr.internal.EventWriter.putString(String, StringPool),1
+java.lang.CharacterDataLatin1.digit(int, int),1

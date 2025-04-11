@@ -1,0 +1,209 @@
+org.jacop.constraints.netflow.simplex.Node.markTree(boolean),429
+org.jacop.constraints.netflow.simplex.NetworkSimplex.dualPivot(Arc),244
+org.jacop.constraints.netflow.simplex.NetworkSimplex.cost(long),217
+org.jacop.constraints.netflow.simplex.Danzig.next(),173
+org.jacop.constraints.netflow.simplex.Node.computePotentials(),158
+org.jacop.constraints.netflow.simplex.NetworkSimplex.augmentFlow(Node, Node, int),145
+org.jacop.constraints.netflow.simplex.NetworkSimplex.updateTree(Arc, Arc),97
+org.jacop.constraints.netflow.simplex.NetworkSimplex.decrementDegree(Node),86
+org.jacop.constraints.netflow.Pruning.analyzeArc(Arc, int),70
+org.jacop.constraints.netflow.simplex.Node.rightMostLeaf(),68
+org.jacop.core.Store.addChanged(Var, int, int),64
+java.util.PriorityQueue.siftDownComparable(int, Object, Object[], int),45
+org.jacop.constraints.netflow.simplex.Node.predecessorOnThread(),42
+org.jacop.constraints.netflow.simplex.NetworkSimplex.networkSimplex(int),42
+org.jacop.constraints.netflow.simplex.Node.lca(Node),40
+java.util.HashMap$HashIterator.nextNode(),39
+org.jacop.constraints.netflow.Pruning.analyze(int),32
+java.util.PriorityQueue.siftUpComparable(int, Object, Object[]),29
+org.jacop.constraints.netflow.Pruning.analyzeArcHelper(Arc, int),29
+org.jacop.constraints.netflow.simplex.Arc.longCost(),29
+java.util.PriorityQueue.poll(),27
+org.jacop.core.IntVar.min(),27
+org.jacop.constraints.Sum.consistency(Store),26
+java.util.HashMap.putVal(int, Object, Object, boolean, boolean),24
+org.jacop.constraints.netflow.simplex.NetworkSimplex.removeArc(Arc),23
+org.jacop.core.IntVar.max(),23
+org.jacop.constraints.netflow.simplex.Arc.addFlow(int),22
+org.jacop.constraints.binpacking.Binpacking.consistency(Store),21
+java.util.ArrayList.add(Object, Object[], int),19
+org.jacop.constraints.netflow.simplex.NetworkSimplex.primalStep(Arc),18
+org.jacop.constraints.binpacking.Binpacking.lbBins(int[], int, int),18
+org.jacop.constraints.netflow.ArcCompanion.compareTo(Object),17
+org.jacop.constraints.netflow.NetworkFlow.consistency(Store),17
+org.jacop.core.IntervalBasedBacktrackableManager.removeLevel(int),15
+java.util.HashSet.iterator(),15
+org.jacop.constraints.netflow.Pruning$PercentStrategy.next(),15
+org.jacop.core.Store.consistency(),15
+org.jacop.constraints.netflow.simplex.Arc.getCompanion(),13
+org.jacop.core.Store.removeLevel(int),13
+org.jacop.util.SimpleHashSet.add(Object),12
+org.jacop.constraints.netflow.Network.modified(ArcCompanion),11
+java.util.LinkedHashMap$LinkedKeySet.iterator(),11
+org.jacop.constraints.netflow.Network.backtrack(),11
+org.jacop.util.SimpleHashSet.hash(Object),10
+org.jacop.core.IntervalDomain.inMax(int, Var, int),10
+org.jacop.constraints.SumInt.pruneLtEq(long),10
+java.util.HashMap$HashIterator.<init>(HashMap),9
+org.jacop.constraints.SumInt.computeInit(),9
+org.jacop.constraints.netflow.simplex.NetworkSimplex.addArcWithFlow(Arc),9
+java.util.HashMap.getNode(Object),9
+org.jacop.constraints.CountBounds.consistency(Store),8
+org.jacop.core.IntDomain.removeModelConstraint(int, Var, Constraint),8
+org.jacop.core.SmallDenseDomain.in(int, Var, int, int),8
+org.jacop.core.IntervalDomain.inComplement(int, Var, int),8
+java.util.HashMap.get(Object),7
+org.jacop.core.IntVar.singleton(),7
+org.jacop.core.Store.getFirstChanged(),7
+org.jacop.core.SmallDenseDomain.previousValue(int),7
+java.util.AbstractQueue.addAll(Collection),7
+org.jacop.constraints.netflow.Pruning.pruneNodesWithSmallDegree(),7
+org.jacop.constraints.netflow.ArcCompanion.processEvent(IntVar, MutableNetwork),7
+org.jacop.constraints.ChannelReif.consistency(Store),7
+java.util.LinkedHashMap$LinkedKeyIterator.next(),6
+org.jacop.core.IntervalDomain.in(int, Var, IntDomain),6
+org.jacop.core.TimeStamp.addLast(Object, int),6
+org.jacop.util.SimpleHashSet$Entry.add(Object),6
+org.jacop.constraints.netflow.NetworkFlow.updateGraph(),6
+org.jacop.core.IntVar.singleton(int),6
+java.util.HashMap.removeNode(int, Object, Object, boolean, boolean),6
+java.util.Collections$UnmodifiableCollection$1.hasNext(),6
+org.jacop.constraints.SumInt.propagate(int),5
+org.jacop.constraints.SumInt.pruneGtEq(long),5
+org.jacop.core.SmallDenseDomain.inComplement(int, Var, int),5
+org.jacop.core.IntVar.remove(int),5
+org.jacop.core.SmallDenseDomain.adaptMin(),4
+org.jacop.core.SmallDenseDomain.inMax(int, Var, int),4
+org.jacop.core.IntervalDomain.inValue(int, IntVar, int),4
+org.jacop.constraints.netflow.Network.remove(Arc),4
+java.util.Collections$UnmodifiableCollection$1.next(),4
+org.jacop.constraints.XmulYeqZ.consistency(Store),4
+org.jacop.util.SparseSet.addMember(int),4
+org.jacop.core.Store.recordChange(Var),4
+java.util.PriorityQueue.siftUp(int, Object),4
+org.jacop.core.IntervalDomain.in(int, Var, int, int),4
+org.jacop.constraints.netflow.Pruning$PercentStrategy.init(),4
+org.jacop.core.IntervalDomain.max(),4
+java.util.HashMap$KeyIterator.next(),3
+org.jacop.constraints.SumInt.pruneMax(IntVar, long),3
+org.jacop.core.TimeStamp.removeLevel(int),3
+java.util.LinkedHashMap.keySet(),3
+java.util.HashMap.put(Object, Object),3
+org.jacop.core.SmallDenseDomain.contains(int),3
+java.util.HashSet.clear(),3
+org.jacop.constraints.netflow.Network.needsUpdate(int),3
+org.jacop.constraints.netflow.NetworkFlow.queueVariable(int, Var),3
+org.jacop.core.IntervalDomain.<init>(int),3
+java.util.PriorityQueue$Itr.next(),3
+org.jacop.constraints.netflow.ArcCompanion.changeMaxCapacity(int),3
+org.jacop.util.SimpleHashSet.removeFirst(),3
+java.util.PriorityQueue.offer(Object),3
+java.util.HashMap.hash(Object),3
+java.util.LinkedHashMap.linkNodeLast(LinkedHashMap$Entry),2
+org.jacop.core.SmallDenseDomain.inValue(int, IntVar, int),2
+org.jacop.constraints.netflow.Network.add(Arc),2
+org.jacop.core.Store.setLevel(int),2
+org.jacop.core.SmallDenseDomain.removeLevel(int, Var),2
+java.util.ArrayList.clear(),2
+org.jacop.constraints.Constraint.removeConstraint(),2
+org.jacop.constraints.ChannelReif.swap(int, int),2
+org.jacop.core.IntVar.value(),2
+org.jacop.core.IntervalDomain.inMin(int, Var, int),2
+java.util.LinkedHashMap$Entry.<init>(int, Object, Object, HashMap$Node),2
+org.jacop.core.IntervalDomain.min(),2
+org.jacop.core.IntervalDomain.singleton(int),2
+org.jacop.core.BoundDomain.in(int, Var, IntDomain),2
+java.util.DualPivotQuicksort.insertionSort(int[], int, int),2
+org.jacop.core.Store.addChanged(Constraint),2
+org.jacop.constraints.netflow.ArcCompanion.changeCapacity(int, int),2
+org.jacop.core.IntervalDomain.inShift(int, Var, IntDomain, int),2
+org.jacop.core.IntervalDomain.contains(int),2
+org.jacop.fz.OutputArrayAnnotation.toString(),2
+java.util.HashMap.keySet(),2
+org.jacop.core.TimeStamp.update(Object),2
+org.jacop.constraints.netflow.ArcCompanion.setFlow(int),2
+org.jacop.constraints.netflow.simplex.NetworkSimplex.incrementDegree(Node, Arc),2
+org.jacop.constraints.netflow.ArcCompanion.changeMinCapacity(int),2
+org.jacop.fz.ParserTokenManager.jjMoveNfa_0(int, int),2
+org.jacop.fz.SimpleCharStream.UpdateLineColumn(char),2
+sun.net.util.URLUtil.urlNoFragString(URL),2
+java.lang.invoke.InvokerBytecodeGenerator.isStaticallyNameable(Class),2
+java.lang.invoke.MethodTypeForm.<init>(MethodType),1
+java.lang.invoke.InvokerBytecodeGenerator.emitStaticInvoke(MemberName, LambdaForm$Name),1
+sun.security.jca.ProviderList.getService(String, String),1
+java.util.concurrent.ConcurrentHashMap.transfer(ConcurrentHashMap$Node[], ConcurrentHashMap$Node[]),1
+org.jacop.core.IntervalDomain.singleton(),1
+org.jacop.core.IntervalDomain.addDom(IntDomain),1
+org.jacop.core.IntVar.domainHasChanged(int),1
+org.jacop.core.BooleanVar.domainHasChanged(int),1
+org.jacop.constraints.netflow.Pruning.xVarInMax(ArcCompanion, int),1
+org.jacop.core.SmallDenseDomain.<init>(),1
+java.util.DualPivotQuicksort.sort(int[], int, int, int),1
+java.util.LinkedHashMap$LinkedHashIterator.nextNode(),1
+org.jacop.constraints.binpacking.Binpacking.queueVariable(int, Var),1
+org.jacop.constraints.Max.consistency(Store),1
+org.jacop.constraints.binpacking.Binpacking.getNumberBins(BinItem[]),1
+org.jacop.core.IntervalDomain.removeLevel(int, Var),1
+org.jacop.core.IntDomain.divIntBounds(int, int, int, int),1
+org.jacop.fz.constraints.Support$3.consistency(Store),1
+java.util.Arrays.spliterator(Object[], int, int),1
+org.jacop.constraints.netflow.Pruning.pruneArc(int, int, boolean, ArcCompanion),1
+java.util.Arrays.fill(Object[], Object),1
+org.jacop.core.IntVar.dom(),1
+org.jacop.constraints.netflow.simplex.NetworkSimplex.addArc(Arc),1
+org.jacop.core.IntervalDomain.<init>(int, int),1
+org.jacop.core.IntervalBasedBacktrackableManager.computeIntervals(),1
+java.util.LinkedHashMap.newNode(int, Object, Object, HashMap$Node),1
+org.jacop.constraints.netflow.ArcCompanion.restore(MutableNetwork),1
+java.util.ArrayList$Itr.next(),1
+java.util.ArrayList$Itr.hasNext(),1
+org.jacop.core.IntervalDomain.unionAdapt(int, int),1
+org.jacop.constraints.netflow.NetworkFlow.removeLevelLate(int),1
+org.jacop.constraints.netflow.Network.cost(long),1
+org.jacop.constraints.netflow.simplex.Arc.set(int, int),1
+java.util.HashMap$KeyIterator.<init>(HashMap),1
+org.jacop.core.BoundDomain.inValue(int, IntVar, int),1
+org.jacop.core.Store.recordBooleanChange(BooleanVar),1
+java.util.HashMap.clear(),1
+org.jacop.constraints.netflow.ArcCompanion.compareTo(ArcCompanion),1
+org.jacop.search.SmallestMin.compare(double, Var),1
+org.jacop.search.SimpleSelect.getChoiceVariable(int),1
+java.util.DualPivotQuicksort.sort(DualPivotQuicksort$Sorter, int[], int, int, int),1
+org.jacop.constraints.netflow.Network.restore(ArcCompanion),1
+java.security.SecureClassLoader.defineClass(String, byte[], int, int, CodeSource),1
+org.jacop.fz.Constraints.generateAllConstraints(SimpleNode),1
+org.jacop.fz.constraints.Support.fzXneqCReified(IntVar, int, IntVar),1
+java.lang.invoke.MethodHandles$Lookup.checkMethod(byte, Class, MemberName),1
+org.jacop.constraints.binpacking.Binpacking.<init>(IntVar[], IntVar[], int[]),1
+org.jacop.constraints.netflow.NetworkBuilder.addArc(Node, Node, int, int, int),1
+org.jacop.core.SmallDenseDomain.max(),1
+java.lang.String.decodeASCII(byte[], int, char[], int, int),1
+org.jacop.fz.Parser.flat_exprs(),1
+org.jacop.fz.JJTParserState.popNode(),1
+java.lang.StringBuilder.toString(),1
+org.jacop.fz.ParserTokenManager.jjStartNfaWithStates_0(int, int, int),1
+org.jacop.fz.ASTAnnotation.<init>(int),1
+org.jacop.fz.VariablesParameters.getScalarFlatExpr_var(Store, SimpleNode, int),1
+org.jacop.fz.SimpleNode.jjtAddChild(Node, int),1
+org.jacop.core.IntVar.commonInitialization(Store, String, IntDomain),1
+org.jacop.fz.Parser.jj_3_2(),1
+org.jacop.fz.Parser.jj_ntk(),1
+java.util.StringTokenizer.nextToken(),1
+java.lang.String.indexOf(int, int),1
+java.util.jar.JarFile.getManifestFromReference(),1
+jdk.internal.loader.Resource.cachedInputStream(),1
+java.util.zip.ZipFile$Source.getEntryPos(String, boolean),1
+java.util.Arrays.copyOfRange(byte[], int, int),1
+java.lang.String.concat(String),1
+java.util.zip.ZipFile$CleanableResource.getInflater(),1
+java.lang.invoke.MethodHandles.argumentsWithCombinerChecks(int, boolean, MethodType, MethodType, int[]),1
+java.lang.invoke.MethodType.dropParameterTypes(int, int),1
+java.util.jar.Attributes.getValue(Attributes$Name),1
+org.dacapo.parser.ConfigFileTokenManager.jjCheckNAdd(int),1
+java.lang.String.getBytes(byte[], int, int, byte, int),1
+java.lang.invoke.InvokerBytecodeGenerator.isStaticallyInvocable(MemberName),1
+jdk.internal.org.objectweb.asm.Frame.execute(int, int, Symbol, SymbolTable),1
+java.lang.invoke.DirectMethodHandle.shouldBeInitialized(MemberName),1
+java.util.Arrays.hashCode(byte[]),1
+jdk.internal.loader.URLClassPath$JarLoader.getResource(String, boolean),1
+jdk.jfr.internal.PlatformRecorder.writeMetaEvents(),1

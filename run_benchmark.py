@@ -16,7 +16,7 @@ import tools
 # { 'default' : int, 'defaults' : { '<bm>' : int }, '<bm>' : { '<wl>' : int } }
 
 _empty                     = dict()
-_default_timeout           = 30 # 30 seconds covers all small and default workloads that we use on our machines.
+_default_timeout           = 40 # 40 seconds covers all small and default workloads that we use on our machines.
 _configured_timeout        = None
 _configured_timeout_path   = Path('timeout.config')
 
