@@ -4,9 +4,12 @@ import argparse
 import json
 import os
 import pandas
-from pathlib import Path
-from patsy import dmatrices
+import shutil
 import statsmodels.api as sm
+
+from functools               import reduce
+from pathlib                 import Path
+from patsy                   import dmatrices
 from statsmodels.formula.api import ols
 
 from configuration import Configuration, Metrics
@@ -63,6 +66,13 @@ def show_deprecated(args):
     listed_refactorings = set()
     listed_benchmarks   = set()
 
+    output_location = Path('temp/deprecated')
+    if output_location.exists():
+        shutil.rmtree(output_location)
+    output_location.mkdir(parents = True)
+
+    statistics = dict() # { refactoring-id : count }
+
     for w_location in get_bm_workloads(args):
         lists_location = w_location / 'lists'
         combinations   = Configuration().load(w_location / 'parameters.txt').get_all_combinations()
@@ -81,6 +91,11 @@ def show_deprecated(args):
                             continue
                         listed_refactorings.add(key)
 
+                        ref_id = descriptor.refactoring_id()
+                        if not ref_id in statistics:
+                            statistics[ref_id] = 0
+                        statistics[ref_id] = statistics[ref_id] + 1
+
                         # Add all valid configurations for which we have
                         # already captured measurements.
                         for configuration in combinations:
@@ -88,17 +103,24 @@ def show_deprecated(args):
                                 listed_benchmarks.add((*key, configuration.id()))
             break
 
+    with open(output_location / 'counts.txt', 'w') as f:
+        for k, v in statistics.items():
+            f.write(f"{k}={v}{os.linesep}")
+        f.write(f"all={reduce(lambda x,y: x+y, statistics.values(), 0)}{os.linesep}")
+
     deprecated_refactorings = refactorings - listed_refactorings
     deprecated_benchmarks   = benchmarks   - listed_benchmarks
 
-    for (opportunity_id, instance_id) in deprecated_refactorings:
-        instance = data_location / opportunity_id / instance_id
-        print(f"Deprecated: {instance}")
+    with open(output_location / 'refactorings.txt', 'w') as f:
+        for (opportunity_id, instance_id) in deprecated_refactorings:
+            instance = data_location / opportunity_id / instance_id
+            f.write(f"{instance}{os.linesep}")
 
-    for (opportunity_id, instance_id, configuration_id) in deprecated_benchmarks:
-        instance = data_location / opportunity_id / instance_id
-        for execution in get_executions(instance):
-            print(f"Deprecated: {execution / 'stats' / configuration_id}")
+    with open(output_location / 'benchmarks.txt', 'w') as f:
+        for (opportunity_id, instance_id, configuration_id) in deprecated_benchmarks:
+            instance = data_location / opportunity_id / instance_id
+            for execution in get_executions(instance):
+                f.write(f"{execution / 'stats' / configuration_id}{os.linesep}")
 
 class FailureReport:
     def __init__(self):
