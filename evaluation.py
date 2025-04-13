@@ -38,7 +38,7 @@ def get_experiments(args):
     xs = []
     for dir, folders, files in os.walk(x_location(args)):
         for x in folders:
-            if x == 'steering':
+            if x == 'steering' or x == 'data':
                 continue
             xs.append(x)
         break
