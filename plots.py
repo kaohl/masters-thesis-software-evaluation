@@ -11,14 +11,22 @@ from pathlib import Path
 from configuration     import Configuration, Metrics, RefactoringConfiguration
 from opportunity_cache import RefactoringDescriptor
 
+# Violin plots for speedup graphs.
+#
+# I have adapted example code from the following resources to plot graphs:
+#   https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.violinplot.html
+#   https://matplotlib.org/stable/gallery/statistics/customized_violin.html#sphx-glr-gallery-statistics-customized-violin-py
+#
+# Compare with 'Plot.show()' below.
+
 #
 # Speedup plots:
 #
 # - speedup 1 (independent of refactoring configurations):
-#   - x: (refactoring type, {workload}={one,all}, {configuration}={one,all})
+#   - x: ((refactoring type, refactoring configuration={all}), {workload}={one,all}, {configuration}={one,all})
 #
 # - speedup 2 (depends on refactoring configuration):
-#   - x: ((refactoring type, refactoring configuration), {workload}={one,all}, {configuration}={one,all})
+#   - x: ((refactoring type, refactoring configuration={one}), {workload}={one,all}, {configuration}={one,all})
 #
 
 class ColumnConstraints:
@@ -28,6 +36,15 @@ class ColumnConstraints:
         self.c  = c
         self.t  = t
         self.tc = tc
+
+    def title_from_constraints(self):
+        return ';'.join([
+            ('All' if self.b  == None else 'One') + ' B',
+            ('All' if self.w  == None else 'One') + ' W',
+            ('All' if self.c  == None else 'One') + ' C',
+            ('All' if self.t  == None else 'One') + ' T',
+            ('All' if self.tc == None else 'One') + ' R',
+        ])
 
 class Column:
     def __init__(self, t, tc, data, count, constraints):
@@ -58,7 +75,7 @@ class Plot:
             return
 
         fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True)
-        ax.set_title(self.title)
+        ax.set_title(self.columns[0].constraints.title_from_constraints())
         ax.set_ylabel("Speedup (baseline/measure)")
         ax.violinplot([ column.data for column in sorted(self.columns, key = lambda it: it.ref_type) ])
 
@@ -67,7 +84,18 @@ class Plot:
         ax.set_xlim(0.25, len(labels) + 0.75)
         ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
 
-        plt.show()
+        #plt.show()
+        
+        p = Path('figures')
+        saved = False
+        for i in range(10000):
+            x = p / (str(i) + '.png')
+            if not x.exists():
+                plt.savefig(x)
+                saved = True
+                break
+        if not saved:
+            raise ValueError("Too many figures!")
 
 class Experiments:
     def __init__(self, location):
@@ -116,13 +144,13 @@ class Experiments:
         target_b                         = constraints.b
         target_w                         = constraints.w
         target_configuration             = constraints.c
-        target_refactoring_ids           = constraints.t
+        target_refactoring_id            = constraints.t
         target_refactoring_configuration = constraints.tc
 
-        baseline            = self.get_baseline()
-        benchmarks          = dict() # { (<refactoring id>, <refactoring config id>) : (refactoring_config, [<data path>]) }
-        #targeted_workloads  = set() # Note: This is now 'count.keys()'
-        #count               = dict() # { (b, w) : nbr_included_benchmarks }
+        print("Compute", target_b, target_w, target_configuration, target_refactoring_id, target_refactoring_configuration)
+
+        baseline   = self.get_baseline()
+        benchmarks = dict() # { (<refactoring id>, <refactoring config id>) : (refactoring_config, [<data path>], count) }
         for b in self.get_folders(self.location / 'data'):
             if target_b != None and b != target_b:
                 continue
@@ -131,7 +159,7 @@ class Experiments:
                 for instance in self.get_folders(data_b / opportunity):
                     for execution in self.get_folders(data_b / opportunity / instance):
                         for configuration_id in self.get_folders(data_b / opportunity / instance / execution / 'stats'):
-                            print("Found benchmark", data_b / opportunity / instance / execution / 'stats' / configuration_id)
+                            #print("Found benchmark", data_b / opportunity / instance / execution / 'stats' / configuration_id)
                             instance_location = data_b / opportunity / instance
                             data_descriptor = RefactoringDescriptor.load(
                                 instance_location / 'descriptor.txt'
@@ -143,6 +171,8 @@ class Experiments:
                                 instance_location / execution / 'stats' / configuration_id / 'metrics.txt'
                             )
                             if target_w != None and data_configuration.bm_workload() != target_w:
+                                continue
+                            if target_refactoring_id != None and data_descriptor.refactoring_id() != target_refactoring_id:
                                 continue
                             if target_configuration != None:
                                 is_match = True
@@ -167,24 +197,10 @@ class Experiments:
 
                             bw_key                     = (data_configuration.bm(), data_configuration.bm_workload())
                             benchmarks[key][2][bw_key] = (benchmarks[key][2][bw_key] + 1) if bw_key in benchmarks[key][2] else 1
-                            # targeted_workloads.add(bw_key) # This is now 'count.keys()'.
 
                             baseline_key = '-'.join([data_configuration.bm(), data_configuration.bm_workload(), data_configuration.id()])
                             benchmarks[key][1].append(int(data_metrics._values['EXECUTION_TIME']) / int(baseline[baseline_key]))
-
         return [ Column(t, tc, data, count, constraints) for (t, tc_id), (tc, data, count) in benchmarks.items() ]
-
-        #print(
-        #    "Compute",
-        #    f"BS: {target_b if target_b else 'All'}",
-        #    f"WS: {target_w if target_w else 'All'}",
-        #    xlabel[0],
-        #    xlabel[1],
-        #    xlabel[2]
-        #)
-        #if len(benchmarks) == 0:
-        #    print("    No data for plot.")
-        #    return
 
 def _main(args):
     repo = Experiments(args.x_location)
@@ -212,8 +228,8 @@ def _main(args):
             break
         break # We only need to load one since all are the same.
 
-    bs        = set([ b for x, b, w in xbw ])
-    ws        = set([ (b, w) for x, b, w in xbw ])
+    bs        = set([ b for x, b, w in xbw if b in args.bs ])
+    ws        = set([ (b, w) for x, b, w in xbw if b in args.bs ])
     ref_types = [ k for k in ref_config.keys() ]
 
     # Note: There is only one benchmark per experiment folder.
@@ -221,71 +237,89 @@ def _main(args):
 
     # All benchmarks; All workloads; All configurations; All refactoring configurations.
     print('-' * 20)
-    Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(None, None, None, ref_types, None))).show()
+    Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(None, None, None, None, None))).show()
 
     # For each benchmark (all workloads); All configurations; All refactoring configurations.
     print('-' * 20)
     for b in bs:
-        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, None, None, ref_types, None))).show()
+        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, None, None, None, None))).show()
 
     # For each workload; All configurations; All refactoring configurations.
     print('-' * 20)
     for b, w in ws:
-        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, None, ref_types, None))).show()
+        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, None, None, None))).show()
 
     # All workloads; foreach configuration; All refactoring configurations.
     print('-' * 20)
     for xc in exp_config:
-        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(None, None, xc, ref_types, None))).show()
+        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(None, None, xc, None, None))).show()
 
     # For each benchmark (all workloads); For each configuration; All refactoring configurations.
     print('-' * 20)
     for b in bs:
         for xc in exp_config:
-            Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, ref_types, None))).show()
+            Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, None, None))).show()
 
     # For each workload; foreach configuration.
     print('-' * 20)
     for b, w in ws:
         for xc in exp_config:
-            Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, ref_types, None))).show()
+            Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, None, None))).show()
 
-    #for type in ref_types:
-    #    
-    #    # For each refactoring type; All refactoring configurations
-    #    # 1. Across all benchmarks and workloads
-    #    #    - for each and all configurations
-    #    # 2. Across all workloads for the same benchmark
-    #    #    - for each and all configurations
-    #    #
-    #    # For each refactoring type; For each refactoring configuration.
-    #    # 1. All benchmarks; All workloads
-    #    #    - All / One configurations
-    #    # 2. One benchmark ; All workloads
-    #    #    - All / One configurations
-    #    
-    #    # TODO: Här vill man ju ha en kolumn per refactoring configuration istället för refactoring type
-    #    # eftersom man jobbar med (refactoring type, refactoring configuration)-par. Alltså, [type] är
-    #    # konstant.
-    #    
-    #    for b in bs:
-    #        # One benchmark; All workloads; All configurations; One type; One refactoring configuration.
-    #        repo.for_workloads_and_configurations(b, None, None, [type], ref_config[type])
-    #        for xc in exp_config:
-    #            # One benchmark; All workloads; One configuration; One type; One refactoring configuration.
-    #            repo.for_workloads_and_configuration(b, None, xc, [type], ref_config[type])
-    #    
-    #    for b, w in ws:
-    #        # One benchmark; One workload; All configurations; One type; One refactoring configuration.
-    #        repo.for_workloads_and_configurations(b, w, None, [type], ref_config[type])
-    #        for xc in exp_config:
-    #            # One benchmark; One workload; One configuration; One type; One refactoring configuration.
-    #            repo.for_workloads_and_configuration(b, w, xc, [type], ref_config[type])
+    for type in ref_types:
+
+        # For each refactoring type; All refactoring configurations
+        # 1. Across all benchmarks and workloads
+        #    - for each and all configurations
+        # 2. Across all workloads for the same benchmark
+        #    - for each and all configurations
+        #
+        # For each refactoring type; For each refactoring configuration.
+        # 1. All benchmarks; All workloads
+        #    - All / One configurations
+        # 2. One benchmark ; All workloads
+        #    - All / One configurations
+
+        # Here we collect one column per refactoring type and configuration for different settings.
+
+        columns = []
+        for rc in ref_config[type]:
+            columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(None, None, None, type, rc)))
+        Plot("All B, All W, All C, One type, One Refactoring Configuration", columns).show()
+
+        for b in bs:
+            # One benchmark; All workloads; All configurations; One type; One refactoring configuration.
+            columns = []
+            for rc in ref_config[type]:
+                columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, None, None, type, rc)))
+            Plot("Title", columns).show()
+
+            for xc in exp_config:
+                columns = []
+                for rc in ref_config[type]:
+                    # One benchmark; All workloads; One configuration; One type; One refactoring configuration.
+                    columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, type, rc)))
+
+        for b, w in ws:
+            columns = []
+            for rc in ref_config[type]:
+                # One benchmark; One workload; All configurations; One type; One refactoring configuration.
+                columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, w, None, type, rc)))
+            Plot("Title", columns).show()
+
+            for xc in exp_config:
+                columns = []
+                for rc in ref_config[type]:
+                    # One benchmark; One workload; One configuration; One type; One refactoring configuration.
+                    columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, type, rc)))
+                Plot("Title", columns).show()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--x-location', default = 'experiments', required = False,
-        help = "Path to  location.")
+    parser.add_argument('--x-location', required = False, default = 'experiments',
+        help = "Path to location.")
+    parser.add_argument('--bs', required = False, nargs = '+', default = [],
+        help = "Benchmarks to plot.")
     args = parser.parse_args()
     _main(args)
 
