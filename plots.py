@@ -21,21 +21,25 @@ from opportunity_cache import RefactoringDescriptor
 #   - x: ((refactoring type, refactoring configuration), {workload}={one,all}, {configuration}={one,all})
 #
 
-class SpeedupConstraints:
+class ColumnConstraints:
     def __init__(self, b, w, c, t, tc):
-        self.bm 
-        pass
+        self.b  = b
+        self.w  = w
+        self.c  = c
+        self.t  = t
+        self.tc = tc
 
-class SpeedupColumnMeta:
+class ColumnMeta:
     def __init__(self):
         self.count = dict() # { (b, w): count }
 
-class SpeedupColumn:
-    def __init__(self, data, constraints):
-        self.data        = None
-        self.constraints = None
+class Column:
+    def __init__(self, meta, data, constraints):
+        self.meta        = meta
+        self.data        = data
+        self.constraints = constraints
 
-class SpeedupPlot:
+class Plot:
     def __init__(self, title, columns):
         self.title   = title
         self.columns = columns
@@ -83,7 +87,13 @@ class Experiments:
         with open('baseline.txt', 'r') as f:
             return json.load(f)
 
-    def for_workloads_and_configurations(self, target_b, target_w, target_configuration, target_refactoring_ids, target_refactoring_configuration):
+    def for_workloads_and_configurations(self, constraints):
+        target_b                         = constraints.b
+        target_w                         = constraints.w
+        target_configuration             = constraints.c
+        target_refactoring_ids           = constraints.t
+        target_refactoring_configuration = constraints.tc
+
         baseline            = self.get_baseline()
         benchmarks          = dict() # { (<refactoring id>, <refactoring config id>) : (refactoring_config, [<data path>]) }
         targeted_workloads  = set()
@@ -204,34 +214,34 @@ def _main(args):
 
     # All benchmarks; All workloads; All configurations; All refactoring configurations.
     print('-' * 20)
-    repo.for_workloads_and_configurations(None, None, None, ref_types, None)
+    repo.for_workloads_and_configurations(ColumnConstraints(None, None, None, ref_types, None))
 
     # For each benchmark (all workloads); All configurations; All refactoring configurations.
     print('-' * 20)
     for b in bs:
-        repo.for_workloads_and_configurations(b, None, None, ref_types, None)
+        repo.for_workloads_and_configurations(ColumnConstraints(b, None, None, ref_types, None))
 
     # For each workload; All configurations; All refactoring configurations.
     print('-' * 20)
     for b, w in ws:
-        repo.for_workloads_and_configurations(b, w, None, ref_types, None)
+        repo.for_workloads_and_configurations(ColumnConstraints(b, w, None, ref_types, None))
 
     # All workloads; foreach configuration; All refactoring configurations.
     print('-' * 20)
     for xc in exp_config:
-        repo.for_workloads_and_configurations(None, None, xc, ref_types, None)
+        repo.for_workloads_and_configurations(ColumnConstraints(None, None, xc, ref_types, None))
 
     # For each benchmark (all workloads); For each configuration; All refactoring configurations.
     print('-' * 20)
     for b in bs:
         for xc in exp_config:
-            repo.for_workloads_and_configurations(b, None, xc, ref_types, None)
+            repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, ref_types, None))
 
     # For each workload; foreach configuration.
     print('-' * 20)
     for b, w in ws:
         for xc in exp_config:
-            repo.for_workloads_and_configurations(b, w, xc, ref_types, None)
+            repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, ref_types, None))
 
     #for type in ref_types:
     #    
