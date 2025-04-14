@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import matplotlib.pyplot as plt
+import numpy             as np
 import os
 
 from pathlib import Path
@@ -18,6 +20,25 @@ from opportunity_cache import RefactoringDescriptor
 # - speedup 2 (depends on refactoring configuration):
 #   - x: ((refactoring type, refactoring configuration), {workload}={one,all}, {configuration}={one,all})
 #
+
+class SpeedupConstraints:
+    def __init__(self, b, w, c, t, tc):
+        self.bm 
+        pass
+
+class SpeedupColumnMeta:
+    def __init__(self):
+        self.count = dict() # { (b, w): count }
+
+class SpeedupColumn:
+    def __init__(self, data, constraints):
+        self.data        = None
+        self.constraints = None
+
+class SpeedupPlot:
+    def __init__(self, title, columns):
+        self.title   = title
+        self.columns = columns
 
 class Experiments:
     def __init__(self, location):
@@ -58,25 +79,25 @@ class Experiments:
             return [ f for f in folders ]
         return []
 
-    def for_workloads_and_configurations(self, target_b, target_w, target_configuration, target_refactoring_ids, target_refactoring_configuration = None):
-        print(
-            "Compute",
-            target_b,
-            target_w,
-            "TC" if target_configuration != None else None,
-            "RC" if target_refactoring_configuration != None else None
-        )
-        visited    = set()
-        benchmarks = dict() # { (<refactoring id>, <refactoring config id>) : (refactoring_config, [<data path>]) }
+    def get_baseline(self):
+        with open('baseline.txt', 'r') as f:
+            return json.load(f)
+
+    def for_workloads_and_configurations(self, target_b, target_w, target_configuration, target_refactoring_ids, target_refactoring_configuration):
+        baseline            = self.get_baseline()
+        benchmarks          = dict() # { (<refactoring id>, <refactoring config id>) : (refactoring_config, [<data path>]) }
+        targeted_workloads  = set()
+        count               = dict() # { (b, w) : nbr_included_benchmarks }
         for b in self.get_folders(self.location / 'data'):
             if target_b != None and b != target_b:
                 continue
-            for opportunity in self.get_folders(self.location / 'data' / b):
-                for instance in self.get_folders(self.location / 'data' / b / opportunity):
-                    for execution in self.get_folders(self.location / 'data' / b / opportunity / instance):
-                        for configuration_id in self.get_folders(self.location / 'data' / b / opportunity / instance / execution / 'stats'):
-                            print("Found benchmark", self.location / 'data' / b / opportunity / instance / execution / 'stats' / configuration_id)
-                            instance_location = self.location / 'data' / b / opportunity / instance
+            data_b = self.location / 'data' / b
+            for opportunity in self.get_folders(data_b):
+                for instance in self.get_folders(data_b / opportunity):
+                    for execution in self.get_folders(data_b / opportunity / instance):
+                        for configuration_id in self.get_folders(data_b / opportunity / instance / execution / 'stats'):
+                            print("Found benchmark", data_b / opportunity / instance / execution / 'stats' / configuration_id)
+                            instance_location = data_b / opportunity / instance
                             data_descriptor = RefactoringDescriptor.load(
                                 instance_location / 'descriptor.txt'
                             )
@@ -86,7 +107,7 @@ class Experiments:
                             data_metrics = Metrics().load(
                                 instance_location / execution / 'stats' / configuration_id / 'metrics.txt'
                             )
-                            if not (data_configuration.bm() == target_b and data_configuration.bm_workload() == target_w):
+                            if target_w != None and data_configuration.bm_workload() != target_w:
                                 continue
                             if target_configuration != None:
                                 is_match = True
@@ -109,12 +130,44 @@ class Experiments:
                             if not key in benchmarks:
                                 benchmarks[key] = (target_refactoring_configuration, [])
 
-                            benchmarks[key][1].append(data_metrics._values['EXECUTION_TIME'])
+                            bw_key        = (data_configuration.bm(), data_configuration.bm_workload())
+                            count[bw_key] = count[bw_key] if bw_key in count else 1
+                            targeted_workloads.add(bw_key)
+
+                            baseline_key = '-'.join([data_configuration.bm(), data_configuration.bm_workload(), data_configuration.id()])
+                            benchmarks[key][1].append(int(data_metrics._values['EXECUTION_TIME']) / int(baseline[baseline_key]))
+
+        xlabel = []
+        xlabel.append(f"W:{';'.join([ '-'.join([b, w]) + '(' + str(count[(b, w)]) + ')'for b, w in sorted(targeted_workloads) ])}")
+        xlabel.append(f"P:{target_configuration.key_value_string() if target_configuration != None else 'All'}")
+        xlabel.append(f"R:{target_refactoring_configuration.key_value_string() if target_refactoring_configuration != None else 'All'}")
+
+        print(
+            "Compute",
+            f"BS: {target_b if target_b else 'All'}",
+            f"WS: {target_w if target_w else 'All'}",
+            xlabel[0],
+            xlabel[1],
+            xlabel[2]
+        )
+
         if len(benchmarks) == 0:
             print("    No data for plot.")
             return
 
         print(benchmarks)
+
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True)
+        ax.set_title("Title")
+        ax.set_ylabel("Speedup (baseline/measure)")
+        ax.violinplot([ value[1] for key, value in sorted(benchmarks.items(), key = lambda it: it[0][0]) ])
+
+        labels = [ key[0][len('org.eclipse.jdt.ui.'):] for key, value in sorted(benchmarks.items(), key = lambda it: it[0][0]) ]
+        ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
+        ax.set_xlim(0.25, len(labels) + 0.75)
+        ax.set_xlabel(','.join(xlabel))
+
+        plt.show()
 
 def _main(args):
     repo = Experiments(args.x_location)
@@ -142,31 +195,75 @@ def _main(args):
             break
         break # We only need to load one since all are the same.
 
+    bs        = set([ b for x, b, w in xbw ])
     ws        = set([ (b, w) for x, b, w in xbw ])
     ref_types = [ k for k in ref_config.keys() ]
 
     # Note: There is only one benchmark per experiment folder.
     # Note: The experiment folder is named after the benchmark.
 
-    # All workloads; all configurations.
+    # All benchmarks; All workloads; All configurations; All refactoring configurations.
     print('-' * 20)
     repo.for_workloads_and_configurations(None, None, None, ref_types, None)
 
-    # For each workload; all configurations.
+    # For each benchmark (all workloads); All configurations; All refactoring configurations.
+    print('-' * 20)
+    for b in bs:
+        repo.for_workloads_and_configurations(b, None, None, ref_types, None)
+
+    # For each workload; All configurations; All refactoring configurations.
     print('-' * 20)
     for b, w in ws:
         repo.for_workloads_and_configurations(b, w, None, ref_types, None)
 
-    # All workloads; foreach configuration.
+    # All workloads; foreach configuration; All refactoring configurations.
     print('-' * 20)
     for xc in exp_config:
         repo.for_workloads_and_configurations(None, None, xc, ref_types, None)
 
-    # Foreach workload; foreach configuration.
+    # For each benchmark (all workloads); For each configuration; All refactoring configurations.
+    print('-' * 20)
+    for b in bs:
+        for xc in exp_config:
+            repo.for_workloads_and_configurations(b, None, xc, ref_types, None)
+
+    # For each workload; foreach configuration.
     print('-' * 20)
     for b, w in ws:
         for xc in exp_config:
             repo.for_workloads_and_configurations(b, w, xc, ref_types, None)
+
+    #for type in ref_types:
+    #    
+    #    # For each refactoring type; All refactoring configurations
+    #    # 1. Across all benchmarks and workloads
+    #    #    - for each and all configurations
+    #    # 2. Across all workloads for the same benchmark
+    #    #    - for each and all configurations
+    #    #
+    #    # For each refactoring type; For each refactoring configuration.
+    #    # 1. All benchmarks; All workloads
+    #    #    - All / One configurations
+    #    # 2. One benchmark ; All workloads
+    #    #    - All / One configurations
+    #    
+    #    # TODO: Här vill man ju ha en kolumn per refactoring configuration istället för refactoring type
+    #    # eftersom man jobbar med (refactoring type, refactoring configuration)-par. Alltså, [type] är
+    #    # konstant.
+    #    
+    #    for b in bs:
+    #        # One benchmark; All workloads; All configurations; One type; One refactoring configuration.
+    #        repo.for_workloads_and_configurations(b, None, None, [type], ref_config[type])
+    #        for xc in exp_config:
+    #            # One benchmark; All workloads; One configuration; One type; One refactoring configuration.
+    #            repo.for_workloads_and_configuration(b, None, xc, [type], ref_config[type])
+    #    
+    #    for b, w in ws:
+    #        # One benchmark; One workload; All configurations; One type; One refactoring configuration.
+    #        repo.for_workloads_and_configurations(b, w, None, [type], ref_config[type])
+    #        for xc in exp_config:
+    #            # One benchmark; One workload; One configuration; One type; One refactoring configuration.
+    #            repo.for_workloads_and_configuration(b, w, xc, [type], ref_config[type])
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()

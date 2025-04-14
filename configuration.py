@@ -98,6 +98,9 @@ class ConfigurationBase:
             for key, options in sorted(self._options.items(), key = lambda it: it[0]):
                 f.write((' '*(largest_n - len(key)) + ' = ').join([key, ', '.join(options)]) + os.linesep)
 
+    def key_value_string(self):
+        return ';'.join([ f"{key}={value}" for key, value in sorted(self._values.items(), key = lambda it: it[0]) ])
+
 # Experimental build and runtime parameters.
 #
 # NOTE
