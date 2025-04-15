@@ -266,53 +266,53 @@ def _main(args):
         for xc in exp_config:
             Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, None, None))).show()
 
-    for type in ref_types:
-
-        # For each refactoring type; All refactoring configurations
-        # 1. Across all benchmarks and workloads
-        #    - for each and all configurations
-        # 2. Across all workloads for the same benchmark
-        #    - for each and all configurations
-        #
-        # For each refactoring type; For each refactoring configuration.
-        # 1. All benchmarks; All workloads
-        #    - All / One configurations
-        # 2. One benchmark ; All workloads
-        #    - All / One configurations
-
-        # Here we collect one column per refactoring type and configuration for different settings.
-
-        columns = []
-        for rc in ref_config[type]:
-            columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(None, None, None, type, rc)))
-        Plot("All B, All W, All C, One type, One Refactoring Configuration", columns).show()
-
-        for b in bs:
-            # One benchmark; All workloads; All configurations; One type; One refactoring configuration.
-            columns = []
-            for rc in ref_config[type]:
-                columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, None, None, type, rc)))
-            Plot("Title", columns).show()
-
-            for xc in exp_config:
-                columns = []
-                for rc in ref_config[type]:
-                    # One benchmark; All workloads; One configuration; One type; One refactoring configuration.
-                    columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, type, rc)))
-
-        for b, w in ws:
-            columns = []
-            for rc in ref_config[type]:
-                # One benchmark; One workload; All configurations; One type; One refactoring configuration.
-                columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, w, None, type, rc)))
-            Plot("Title", columns).show()
-
-            for xc in exp_config:
-                columns = []
-                for rc in ref_config[type]:
-                    # One benchmark; One workload; One configuration; One type; One refactoring configuration.
-                    columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, type, rc)))
-                Plot("Title", columns).show()
+    #for type in ref_types:
+    #
+    #    # For each refactoring type; All refactoring configurations
+    #    # 1. Across all benchmarks and workloads
+    #    #    - for each and all configurations
+    #    # 2. Across all workloads for the same benchmark
+    #    #    - for each and all configurations
+    #    #
+    #    # For each refactoring type; For each refactoring configuration.
+    #    # 1. All benchmarks; All workloads
+    #    #    - All / One configurations
+    #    # 2. One benchmark ; All workloads
+    #    #    - All / One configurations
+    #
+    #    # Here we collect one column per refactoring type and configuration for different settings.
+    #
+    #    columns = []
+    #    for rc in ref_config[type]:
+    #        columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(None, None, None, type, rc)))
+    #    Plot("All B, All W, All C, One type, One Refactoring Configuration", columns).show()
+    #
+    #    for b in bs:
+    #        # One benchmark; All workloads; All configurations; One type; One refactoring configuration.
+    #        columns = []
+    #        for rc in ref_config[type]:
+    #            columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, None, None, type, rc)))
+    #        Plot("Title", columns).show()
+    #
+    #        for xc in exp_config:
+    #            columns = []
+    #            for rc in ref_config[type]:
+    #                # One benchmark; All workloads; One configuration; One type; One refactoring configuration.
+    #                columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, type, rc)))
+    #
+    #    for b, w in ws:
+    #        columns = []
+    #        for rc in ref_config[type]:
+    #            # One benchmark; One workload; All configurations; One type; One refactoring configuration.
+    #            columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, w, None, type, rc)))
+    #        Plot("Title", columns).show()
+    #
+    #        for xc in exp_config:
+    #            columns = []
+    #            for rc in ref_config[type]:
+    #                # One benchmark; One workload; One configuration; One type; One refactoring configuration.
+    #                columns.extend(repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, type, rc)))
+    #            Plot("Title", columns).show()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
