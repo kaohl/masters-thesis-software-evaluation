@@ -125,7 +125,7 @@ class Plot:
                 ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
                 ax.set_xlim(0.25, len(labels) + 0.75)
                 #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
-                caption.append(','.join([ column.get_xlabel() for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
+                caption.append(','.join([ column.get_xlabel(f"{i}{column.ref_type}") for i, column in enumerate(sorted(plot.columns, key = lambda it: it.ref_type)) ]))
         else:
             fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
             plot    = plots[0]
@@ -137,7 +137,7 @@ class Plot:
             ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
             ax.set_xlim(0.25, len(labels) + 0.75)
             #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
-            caption.append(','.join([ column.get_xlabel() for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
+            caption.append(','.join([ column.get_xlabel(column.ref_type) for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
 
         #plt.show()
 
