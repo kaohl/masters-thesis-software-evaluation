@@ -119,7 +119,15 @@ class Plot:
                     continue
                 #ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
                 #ax.set_ylabel("Speedup (baseline/measure)")
-                ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+                vp = ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+
+                medians = vp['cmedians'].get_paths()[0].vertices
+                plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
+
+                means   = vp['cmeans'].get_paths()[0].vertices
+                plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
+
+                ax.legend()
 
                 labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
                 ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
@@ -131,7 +139,15 @@ class Plot:
             plot    = plots[0]
             # ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
             ax.set_ylabel("Speedup (baseline/measure)")
-            ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+            vp = ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+
+            medians = vp['cmedians'].get_paths()[0].vertices
+            plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
+
+            means   = vp['cmeans'].get_paths()[0].vertices
+            plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
+
+            ax.legend()
 
             labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
             ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
@@ -139,7 +155,7 @@ class Plot:
             #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
             caption.append(','.join([ column.get_xlabel(Plot._labels[column.ref_type]) for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
 
-        plt.axhline(y = 1.0, color = 'r', linestyle = '-')
+        plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
             
         #plt.show()
 
