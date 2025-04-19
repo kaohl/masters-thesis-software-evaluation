@@ -64,7 +64,7 @@ class Column:
         configurations     = target_configuration.key_value_string() if target_configuration != None else 'All'
         ref_configurations = target_refactoring_configuration.key_value_string() if target_refactoring_configuration != None else 'All'
         xlabel = [
-            f"{tag}) Shows {len(self.data)} measurements across {len(self.count)} workload(s) for benchmark(s): {benchmarks} using parameters: {configurations}, and refactoring parameters: {ref_configurations}"
+            f"{tag}) Shows {len(self.data)} measurements across {len(self.count)} workload(s) for benchmark(s): {benchmarks}, using parameters: {configurations}, and refactoring parameters: {ref_configurations}"
         ]
         #xlabel.append(f"W:{';'.join([ '-'.join([b, w]) + '(' + str(self.count[(b, w)]) + ')'for b, w in sorted(targeted_workloads) ])}")
         #xlabel.append(f"{len(self.data)} measurements across workloads: {workloads}")
