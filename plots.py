@@ -63,8 +63,10 @@ class Column:
         benchmarks         = ','.join(sorted(set([ b for b, w in sorted(targeted_workloads) ])))
         configurations     = target_configuration.key_value_string() if target_configuration != None else 'All'
         ref_configurations = target_refactoring_configuration.key_value_string() if target_refactoring_configuration != None else 'All'
+        outliers           = [ x for x in self.data if x <= 0.5 or x >= 1.5 ]
+        outliers_message   = f"Removed {len(outliers)} outliers." if len(outliers) > 0 else ""
         xlabel = [
-            f"{tag}) Shows {len(self.data)} measurements across {len(self.count)} workload(s) for benchmark(s): {benchmarks}, using parameters: {configurations}, and refactoring parameters: {ref_configurations}"
+            f"{tag}) Shows {len(self.data)} measurements across {len(self.count)} workload(s) for benchmark(s): {benchmarks}, using parameters: {configurations}, and refactoring parameters: {ref_configurations}.{outliers_message}"
         ]
         #xlabel.append(f"W:{';'.join([ '-'.join([b, w]) + '(' + str(self.count[(b, w)]) + ')'for b, w in sorted(targeted_workloads) ])}")
         #xlabel.append(f"{len(self.data)} measurements across workloads: {workloads}")
@@ -119,7 +121,7 @@ class Plot:
                     continue
                 #ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
                 #ax.set_ylabel("Speedup (baseline/measure)")
-                vp = ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+                vp = ax.violinplot([ [ x for x in column.data if x > 0.5 and x < 1.5 ] for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
 
                 medians = vp['cmedians'].get_paths()[0].vertices
                 plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
@@ -139,7 +141,7 @@ class Plot:
             plot    = plots[0]
             # ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
             ax.set_ylabel("Speedup (baseline/measure)")
-            vp = ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+            vp = ax.violinplot([ [ x for x in column.data if x > 0.5 and x < 1.5 ] for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
 
             medians = vp['cmedians'].get_paths()[0].vertices
             plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
@@ -174,7 +176,8 @@ class Plot:
     \\caption{@CAPTION}
     \\label{fig:@NAME}
 \\end{figure}
-                    """.replace("@NAME", str(i)).replace("@CAPTION", '\newline'.join([ str(i) + ") " + cap for cap in caption])))
+                    """.replace("@NAME", str(i)).replace("@CAPTION", '\\newline'.join(caption)))
+                    # .replace("@CAPTION", '\newline'.join([ str(i) + ") " + cap for cap in caption])))
                 
                 break
         plt.close()
