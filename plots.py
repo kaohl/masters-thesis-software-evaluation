@@ -54,15 +54,22 @@ class Column:
         self.count       = count
         self.constraints = constraints
 
-    def get_xlabel(self):
+    # The 'tag' could be 'a' or '1a' etc.
+    def get_xlabel(self, tag):
         target_configuration             = self.constraints.c
         target_refactoring_configuration = self.constraints.tc
         targeted_workloads               = set(self.count.keys())
 
-        xlabel = []
-        xlabel.append(f"W:{';'.join([ '-'.join([b, w]) + '(' + str(self.count[(b, w)]) + ')'for b, w in sorted(targeted_workloads) ])}")
-        xlabel.append(f"P:{target_configuration.key_value_string() if target_configuration != None else 'All'}")
-        xlabel.append(f"R:{target_refactoring_configuration.key_value_string() if target_refactoring_configuration != None else 'All'}")
+        benchmarks         = ','.join(sorted(set([ b for b, w in sorted(targeted_workloads) ])))
+        configurations     = target_configuration.key_value_string() if target_configuration != None else 'All'
+        ref_configurations = target_refactoring_configuration.key_value_string() if target_refactoring_configuration != None else 'All'
+        xlabel = [
+            f"{tag}) Shows {len(self.data)} measurements across {len(self.count)} workload(s) for benchmark(s): {benchmarks} using parameters: {configurations}, and refactoring parameters: {ref_configurations}"
+        ]
+        #xlabel.append(f"W:{';'.join([ '-'.join([b, w]) + '(' + str(self.count[(b, w)]) + ')'for b, w in sorted(targeted_workloads) ])}")
+        #xlabel.append(f"{len(self.data)} measurements across workloads: {workloads}")
+        #xlabel.append(f"P:{configurations}")
+        #xlabel.append(f"R:{ref_configurations}")
         return ','.join(xlabel)
 
 class Plot:
