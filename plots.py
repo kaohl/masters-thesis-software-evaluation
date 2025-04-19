@@ -66,6 +66,22 @@ class Column:
         return ','.join(xlabel)
 
 class Plot:
+
+    _labels = {
+        'org.eclipse.jdt.ui.inline.constant'         : 'IC',
+        'org.eclipse.jdt.ui.inline.method'           : 'IM',
+        'org.eclipse.jdt.ui.inline.temp'             : 'IT',
+        'org.eclipse.jdt.ui.extract.constant'        : 'EC',
+        'org.eclipse.jdt.ui.extract.method'          : 'EM',
+        'org.eclipse.jdt.ui.extract.temp'            : 'ET',
+        'org.eclipse.jdt.ui.introduce.indirection'   : 'II',
+        'org.eclipse.jdt.ui.rename.field'            : 'RF',
+        'org.eclipse.jdt.ui.rename.local.variable'   : 'RV',
+        'org.eclipse.jdt.ui.rename.method'           : 'RM',
+        'org.eclipse.jdt.ui.rename.type'             : 'RT',
+        'org.eclipse.jdt.ui.rename.type.parameter'   : 'TP'
+    }
+
     def __init__(self, title, columns):
         self.title   = title
         self.columns = columns
@@ -73,19 +89,48 @@ class Plot:
     def show(self):
         if len(self.columns) == 0:
             return
+        Plot.show_plots([self])
 
-        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True)
-        ax.set_title(self.columns[0].constraints.title_from_constraints())
-        ax.set_ylabel("Speedup (baseline/measure)")
-        ax.violinplot([ column.data for column in sorted(self.columns, key = lambda it: it.ref_type) ])
+    def show_plots(plots, nrows = 1, ncols = 1):
+        plots = [ plot for plot in plots if len(plot.columns) > 0 ]
 
-        labels = [ column.ref_type[len('org.eclipse.jdt.ui.'):] for column in sorted(self.columns, key = lambda it: it.ref_type) ]
-        ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
-        ax.set_xlim(0.25, len(labels) + 0.75)
-        ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
+        #fig, xs = plt.subplots(nrows = nrows, ncols = ncols, figsize = (9, 4), sharey = True, sharex = True)
+
+        #showmeans=True, showmedian=True
+        #quantiles=None
+
+        caption = []
+        if len(plots) > 1:
+            fig, xs = plt.subplots(nrows = nrows, ncols = ncols, figsize = (9, 4), sharey = True, sharex = True)
+            # fig.suptitle("Title")
+            for i, ax in enumerate(xs.flat):
+                plot = plots[i] if len(plots) > i else None
+                if plot is None:
+                    continue
+                #ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
+                #ax.set_ylabel("Speedup (baseline/measure)")
+                ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+
+                labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
+                ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
+                ax.set_xlim(0.25, len(labels) + 0.75)
+                #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
+                caption.append(','.join([ column.get_xlabel() for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
+        else:
+            fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
+            plot    = plots[0]
+            ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
+            ax.set_ylabel("Speedup (baseline/measure)")
+            ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
+
+            labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
+            ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
+            ax.set_xlim(0.25, len(labels) + 0.75)
+            #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
+            caption.append(','.join([ column.get_xlabel() for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
 
         #plt.show()
-        
+
         p = Path('figures')
         saved = False
         for i in range(10000):
@@ -93,6 +138,16 @@ class Plot:
             if not x.exists():
                 plt.savefig(x)
                 saved = True
+                with open(p / (str(i) + '.tex'), 'w') as f:
+                    f.write("""
+\\begin{figure}[h]
+    \\centering
+    \\includegraphics[width=0.25\\textwidth]{mesh}
+    \\caption{@CAPTION}
+    \\label{fig:@NAME}
+\\end{figure}
+                    """.replace("@NAME", str(i)).replace("@CAPTION", '\newline'.join([ str(i) + ") " + cap for cap in caption])))
+                
                 break
         if not saved:
             raise ValueError("Too many figures!")
@@ -161,6 +216,10 @@ class Experiments:
                         for configuration_id in self.get_folders(data_b / opportunity / instance / execution / 'stats'):
                             #print("Found benchmark", data_b / opportunity / instance / execution / 'stats' / configuration_id)
                             instance_location = data_b / opportunity / instance
+
+                            if (instance_location / execution / 'stats' / configuration_id / 'FAILURE').exists():
+                                continue
+                            
                             data_descriptor = RefactoringDescriptor.load(
                                 instance_location / 'descriptor.txt'
                             )
@@ -251,20 +310,26 @@ def _main(args):
 
     # All workloads; foreach configuration; All refactoring configurations.
     print('-' * 20)
+    plots = []
     for xc in exp_config:
-        Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(None, None, xc, None, None))).show()
+        plots.append(Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(None, None, xc, None, None))))
+    Plot.show_plots(plots, 2, 2)
 
     # For each benchmark (all workloads); For each configuration; All refactoring configurations.
     print('-' * 20)
+    plots = []
     for b in bs:
         for xc in exp_config:
-            Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, None, None))).show()
+            plots.append(Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, None, xc, None, None))))
+    Plot.show_plots(plots, 2, 2)
 
     # For each workload; foreach configuration.
     print('-' * 20)
+    plots = []
     for b, w in ws:
         for xc in exp_config:
-            Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, None, None))).show()
+            plots.append(Plot("Title", repo.for_workloads_and_configurations(ColumnConstraints(b, w, xc, None, None))))
+    Plot.show_plots(plots, 2, 2)
 
     #for type in ref_types:
     #
