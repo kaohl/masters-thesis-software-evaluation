@@ -94,6 +94,9 @@ class Plot:
     def show_plots(plots, nrows = 1, ncols = 1):
         plots = [ plot for plot in plots if len(plot.columns) > 0 ]
 
+        if len(plots) == 0:
+            return
+
         #fig, xs = plt.subplots(nrows = nrows, ncols = ncols, figsize = (9, 4), sharey = True, sharex = True)
 
         #showmeans=True, showmedian=True
