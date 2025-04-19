@@ -129,7 +129,7 @@ class Plot:
         else:
             fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
             plot    = plots[0]
-            ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
+            # ax.set_title("Title") # plot.columns[0].constraints.title_from_constraints())
             ax.set_ylabel("Speedup (baseline/measure)")
             ax.violinplot([ column.data for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
 
@@ -161,6 +161,7 @@ class Plot:
                     """.replace("@NAME", str(i)).replace("@CAPTION", '\newline'.join([ str(i) + ") " + cap for cap in caption])))
                 
                 break
+        plt.close()
         if not saved:
             raise ValueError("Too many figures!")
 
