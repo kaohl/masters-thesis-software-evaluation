@@ -290,8 +290,8 @@ def _main(args):
             break
         break # We only need to load one since all are the same.
 
-    bs        = set([ b for x, b, w in xbw if b in args.bs ])
-    ws        = set([ (b, w) for x, b, w in xbw if b in args.bs ])
+    bs        = set([ b for x, b, w in xbw if len(args.bs) == 0 or b in args.bs ])
+    ws        = set([ (b, w) for x, b, w in xbw if len(args.bs) == 0 or b in args.bs ])
     ref_types = [ k for k in ref_config.keys() ]
 
     # Note: There is only one benchmark per experiment folder.
