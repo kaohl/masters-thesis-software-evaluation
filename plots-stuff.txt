@@ -1,0 +1,106 @@
+# guide.get_expression({ ... })
+
+guide = create_constellation_guide()
+
+# TODO: Generate data file where each line is a json object holding configuration for each parameter set.
+# {
+#   'T'    : { 'type' : '<type>' },
+#   'B'    : { 'name' : '<bm>'   },
+#   'W'    : { 'name' : '<workload>' },
+#   'X'    : { 'jdk' : '<jdk>', 'jre' : '<jre>' },
+#   '<R>'  : { ... }, # Name is decided by type.
+#   'data' : { 'EXECUTION_TIME' : '<time>' },
+#   'meta' : { 'location' : '<path>' }              # Could be nice to print when we discard outliers. (Print to file?: <plot-name>.outliers)
+# }
+# Produce data list and run plotting code to query for violins.
+Plot().title("").yrange((0.5, 1.5)).violins([
+    { 'T' : { 'type' : ['IC'] } }                          # All.
+] + [
+    { 'T' : { 'type' : ['IC'] }, 'B' : { 'name' : [bm] } } # Per benchmark.
+    for bm in bms
+])
+
+        TODO: Consider changing to indices on the x-axis and then use 1) 2) 3) 4) notation in the caption.
+        1) The T1 constellation with N1 measurements,
+        2) The T1/B1 constellation with N2 measurements, and
+        3) The T1/B2 constellation with N3 measurements.
+
+# TODO: Generate latex table for all parameter sets. Use horizontal layout when the set only have one parameter, vertical otherwise.
+
+T  1   2   3   4
+V  IC  IT  IM  ...
+
+B    1     2     3       4        5
+name batik jacop luindex lusearch xalan
+
+X   jdk   jre
+1   sdk1  sdk1
+2   sdk1  sdk2
+3   sdk2  sdk1
+4   sdk2  sdk2
+
+# We said not to dig too deeply into refactoring configurations.
+# Could do this for extract method to check if visibility matters and for rename type to see if name length matters.
+# TODO: We can also look at the tables if we add the refactoring parameters there.
+
+RT   1 2    3
+name X Xxxx Xxxxxxxx
+
+EM visibility
+1  0
+2  1
+3  2
+4  3
+
+
+
+
+
+class ParameterSet:
+    def __init__(self, name, configuration):
+        self.name           = name
+        self.configuration  = configuration
+        self.configurations = configuration.get_all_combinations() # This list must be reproducible.
+
+class ConstellationGuide:
+    def __init__(self, parameter_sets):
+        self.sets         = parameter_sets
+        self.sets_by_name = dict([ (s.name, s) for s in parameter_sets ])
+
+    def get_expression(self, constraints):
+        #{ 'B' : { 'name' : {'batik'} },
+        #  'W' : { 'name' : {'small'} },
+        #  'X' : { 'jre' : {'...'}, 'jdk' : {'...'} },
+        #  'R' : { 'visibility' : {'1'} }
+        #  }
+
+        matches = dict()
+        for name, value_dict in constraints.items():
+            if len(value_dict) == 0:
+                continue # All matched by default. (Star'ed).
+            matches[name] = []
+            for i, c in enumerate(self.sets_by_name[name].configurations):
+                is_match = True
+                for param, values in value_dict.items():
+                    if not c._clobber(param) in values:
+                        is_match = False
+                        break
+                if is_match:
+                    matches[name].append(i)
+        return '/'.join([ s.name + ','.join(matches[s.name]) for s in self.sets ])
+
+def create_constellation_guide():
+    parameter_sets = [
+        ParameterSet('T' , Configuration().from_dict({ 'type' : [ 'IC', ... ] })),
+        ParameterSet('B' , Configuration().from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
+        ParameterSet('W' , Configuration().from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
+        ParameterSet('X' , Configuration().from_dict({ 'jre' : [ ... ], 'jdk' : [ ... ] })),
+        # Independent refactoring configurations (Only one will be active per expression.).
+        # Only include the ones that we want to discuss.
+        # Note: We only need to include the parameters that we want to explore.
+        #       The rest will be ignored. How does this affect results?
+        #       We will include multiple variations of the same refactorings for parameters that we ignore.
+        ParameterSet('EM', Configuration().from_dict({ 'visibility' : [ '0', '1', '2', '3' ] })),
+        ParameterSet('RM', Configuration().from_dict({ 'name' : [ 'x', 'xxxx', 'xxxxxxxx' ] }))
+    ]
+    return ConstellationGuide(parameter_sets)
