@@ -290,9 +290,74 @@ class Experiments:
                             benchmarks[key][1].append(int(data_metrics._values['EXECUTION_TIME']) / int(baseline[baseline_key]))
         return [ Column(t, tc, data, count, constraints) for (t, tc_id), (tc, data, count) in benchmarks.items() ]
 
+    def create_data_file(self, the_file):
+        for b in self.get_folders(self.location / 'data'):
+            data_b = self.location / 'data' / b
+            for opportunity in self.get_folders(data_b):
+                for instance in self.get_folders(data_b / opportunity):
+                    for execution in self.get_folders(data_b / opportunity / instance):
+                        for configuration_id in self.get_folders(data_b / opportunity / instance / execution / 'stats'):
+                            instance_location = data_b / opportunity / instance
+
+                            if (instance_location / execution / 'stats' / configuration_id / 'FAILURE').exists():
+                                continue
+
+                            data_descriptor = RefactoringDescriptor.load(
+                                instance_location / 'descriptor.txt'
+                            )
+                            data_configuration = Configuration().load(
+                                instance_location / execution / 'stats' / configuration_id / 'configuration.txt'
+                            )
+                            data_metrics = Metrics().load(
+                                instance_location / execution / 'stats' / configuration_id / 'metrics.txt'
+                            )
+
+                            t = data_descriptor.refactoring_id()
+                            b = data_configuration.bm()
+                            w = data_configuration.bm_workload()
+                            x = data_configuration
+                            r = data_descriptor._params
+
+                            the_file.write(json.dumps({
+                                'T' : { 'type' : t },
+                                'B' : { 'name' : b },
+                                'W' : { 'name' : w },
+                                'X' : x._values,
+                                'R' : r,
+                                'M' : data_metrics._values
+                            }) + os.linesep)
+
+    def filter_data_file(self, path, filter):
+        baseline = self.get_baseline()
+        entries  = []
+        with open(path, 'r') as f:
+            for line in f:
+                entry = json.loads(line)
+
+                is_match = True
+                for name, params in filter.items():
+                    values = entry[name]
+                    for p, v in params.items():
+                        if not v == values[p]:
+                            is_match = False
+                            break
+                if is_match:
+                    tms          = entry['M']['EXECUTION_TIME']
+                    x            = Configuration().init_from_dict(entry['X'])
+                    baseline_key = '-'.join([x.bm(), x.bm_workload(), x.id()])
+                    speedup      = int(tms) / int(baseline[baseline_key])
+                    entries.append((entry, speedup))
+        return entries
+
 def _main(args):
     repo = Experiments(args.x_location)
     xbw  = repo.get_xbw()
+
+    # Write all data to specified file.
+    with open('all-data-file.txt', 'w') as f:
+        repo.create_data_file(f)
+
+    print(repo.filter_data_file('all-data-file.txt', { 'B' : { 'name' : 'xalan' } }))
 
     # ATTENTION
     # This code will break if anything in the experimental setup changes.
