@@ -147,57 +147,12 @@ class Plot:
                 plot = plots[i] if len(plots) > i else None
                 if plot is None:
                     continue
-                Plot._plot(plot, ax, caption)
-
-                #vp = ax.violinplot([ column.data_filtered for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
-                #
-                #medians = vp['cmedians'].get_paths()[0].vertices
-                #plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
-                #
-                #means   = vp['cmeans'].get_paths()[0].vertices
-                #plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
-                #
-                #ax.legend()
-                #
-                #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
-                #ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
-                #ax.set_xlim(0.25, len(labels) + 0.75)
-                #ax.set_ylim(0.5, 1.5)
-                ##ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
-                #caption.append(','.join([ column.get_xlabel(f"{i}{Plot._labels[column.ref_type]}") for i, column in enumerate(sorted(plot.columns, key = lambda it: it.ref_type)) ]))
-                #
-                #xoffset = 1
-                #for column in plot.columns:
-                #    plt.annotate(f"{len(data_filtered)}", (xoffset, 0.55))
-                #    xoffset = xoffset + 1
-                
+                Plot._plot(plot, ax, caption)                
         else:
             fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
             plot    = plots[0]
             ax.set_ylabel("Speedup (baseline/measure)")
             Plot._plot(plot, ax, caption)
-
-            #vp = ax.violinplot([ column.data_filtered for column in sorted(plot.columns, key = lambda it: it.ref_type) ], showmeans=True, showmedians=True)
-            #
-            #medians = vp['cmedians'].get_paths()[0].vertices
-            #plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
-            #
-            #means   = vp['cmeans'].get_paths()[0].vertices
-            #plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
-            #
-            #ax.legend()
-            #
-            #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
-            #ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
-            #ax.set_xlim(0.25, len(labels) + 0.75)
-            #ax.set_ylim(0.5, 1.5)
-            ##ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
-            #caption.append(','.join([ column.get_xlabel(Plot._labels[column.ref_type]) for column in sorted(plot.columns, key = lambda it: it.ref_type) ]))
-            #
-            #xoffset = 1
-            #for column in plot.columns:
-            #    plt.annotate(f"{len(column.data_filtered)}", (xoffset, 0.55))
-            #    xoffset = xoffset + 1
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
 
