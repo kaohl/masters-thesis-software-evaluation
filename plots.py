@@ -108,21 +108,26 @@ class Plot:
         Plot.show_plots([self])
 
     def plot_violins(title, violins, yrange = (0.5, 1.5)):
-        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
-        # plot    = plots[0]
-        ax.set_ylabel("Speedup (baseline/measure)")
-
+        ymin = 1
+        ymax = 1
         data = []
         for violin in violins:
+            print("Constellation", violin.constellation.get_name())
             violin.split(yrange)
             if len(violin.get_data()) > 0:
                 data.append(violin.get_data())
+            for d in violin.get_data():
+                if d > ymax:
+                    ymax = d
+                if d < ymin:
+                    ymin = d
 
         if len(data) == 0:
             return
 
-        print('DATA', data)
-        
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
+        ax.set_ylabel("Speedup (baseline/measure)")
+
         vp = ax.violinplot(
             data,
             showmeans   = True,
@@ -141,7 +146,7 @@ class Plot:
         labels = [ str(i) for i in range(1, len(violins) + 1) ]
         ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
         ax.set_xlim(0.25, len(labels) + 0.75)
-        ax.set_ylim(*yrange)
+        ax.set_ylim((ymin - 0.05, ymax + 0.05)) # *yrange
         #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
 
         # TODO
@@ -149,7 +154,9 @@ class Plot:
 
         xoffset = 1
         for violin in violins:
-            plt.annotate(f"{len(violin.get_data())}", (xoffset, 0.55))
+            name = violin.constellation.get_name()
+            plt.annotate(f"{name}, {len(violin.get_data())}", (xoffset, ymin - 0.05))
+            # plt.annotate(f"{violin.constellation.get_name()}", (xoffset + 0.4, ymin))
             xoffset = xoffset + 1
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
@@ -463,10 +470,10 @@ class CustomConfig(ConfigurationBase):
 
 def create_constellation_guide():
     parameter_sets = [
-        ParameterSet('T' , CustomConfig().init_from_dict({ 'type' : [ 'IC', ... ] })),
+        ParameterSet('T' , CustomConfig().init_from_dict({ 'type' : [ x for x in sorted(Plot._labels.values()) ] })),
         ParameterSet('B' , CustomConfig().init_from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
         ParameterSet('W' , CustomConfig().init_from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
-        ParameterSet('X' , CustomConfig().init_from_dict({ 'jre' : [ ... ], 'jdk' : [ ... ] })),
+        ParameterSet('X' , CustomConfig().init_from_dict({ 'jre'  : ['17.0.9-graalce', '17.0.14-tem'], 'jdk' : ['17.0.9-graalce', '17.0.14-tem'] })),
         # Independent refactoring configurations (Only one will be active per expression.).
         # Only include the ones that we want to discuss.
         # Note: We only need to include the parameters that we want to explore.
@@ -555,7 +562,8 @@ class Constellation:
 
 class Violin:
     def __init__(self, repo, file, constellation):
-        self.data    = repo.filter_data_file(file, constellation.get_filter())
+        self.constellation = constellation
+        self.data          = repo.filter_data_file(file, constellation.get_filter())
         # self.caption = f"The {constellation.get_name()} constellation with {len(self.data)} measurements."
 
     def split(self, yrange):
@@ -593,9 +601,44 @@ def _plot_from_file(args):
 
     guide = create_constellation_guide()
     # Plot refactoring per type
-    for rtype in Plot._labels.values():
-        v0 = Violin(repo, file, Constellation(guide).type({ 'type' : {rtype} }))
-        Plot.plot_violins("Title test", [v0])
+    for rtype in sorted(Plot._labels.values()):
+        violins = [
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} })
+            ),
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {'batik'} })
+            ),
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {'jacop'} })
+            ),
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {'luindex'} })
+            ),
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {'lusearch'} })
+            ),
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {'xalan'} })
+            )
+        ]
+        Plot.plot_violins(f"{rtype}", violins)
+
+        config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
+        for bm in ['batik', 'jacop', 'luindex', 'lusearch', 'xalan']:
+            violins = [
+                #Violin(repo, file,
+                #    Constellation(guide).type({ 'type' : {rtype} })
+                #),
+                Violin(repo, file,
+                       Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} })
+                       )
+            ] + [
+                Violin(repo, file,
+                       Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                       ) for c in config
+            ]
+            Plot.plot_violins(f"{bm} configurations", violins)
 
 def _main(args):
     repo = Experiments(args.x_location)
@@ -606,6 +649,8 @@ def _main(args):
     #    repo.create_data_file(f)
 
     _plot_from_file(args)
+
+    return
 
     # print(repo.filter_data_file('all-data-file.txt', { 'B' : { 'name' : 'xalan' } }))
 
