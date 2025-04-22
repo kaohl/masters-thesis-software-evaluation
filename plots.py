@@ -8,7 +8,7 @@ import os
 
 from pathlib import Path
 
-from configuration     import Configuration, Metrics, RefactoringConfiguration
+from configuration     import Configuration, Metrics, RefactoringConfiguration, ConfigurationBase
 from opportunity_cache import RefactoringDescriptor
 
 # Violin plots for speedup graphs.
@@ -106,6 +106,55 @@ class Plot:
         if len(self.columns) == 0:
             return
         Plot.show_plots([self])
+
+    def plot_violins(title, violins, yrange = (0.5, 1.5)):
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
+        # plot    = plots[0]
+        ax.set_ylabel("Speedup (baseline/measure)")
+
+        data = []
+        for violin in violins:
+            violin.split(yrange)
+            if len(violin.get_data()) > 0:
+                data.append(violin.get_data())
+
+        if len(data) == 0:
+            return
+
+        print('DATA', data)
+        
+        vp = ax.violinplot(
+            data,
+            showmeans   = True,
+            showmedians = True
+        )
+
+        medians = vp['cmedians'].get_paths()[0].vertices
+        plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
+
+        means   = vp['cmeans'].get_paths()[0].vertices
+        plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
+
+        ax.legend()
+
+        #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
+        labels = [ str(i) for i in range(1, len(violins) + 1) ]
+        ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
+        ax.set_xlim(0.25, len(labels) + 0.75)
+        ax.set_ylim(*yrange)
+        #ax.set_xlabel(','.join([ column.get_xlabel() for column in sorted(self.columns, key = lambda it: it.ref_type) ]))
+
+        # TODO
+        # caption.append(','.join([ column.get_xlabel(f"{i}{Plot._labels[column.ref_type]}") for i, column in enumerate(sorted(plot.columns, key = lambda it: it.ref_type)) ]))
+
+        xoffset = 1
+        for violin in violins:
+            plt.annotate(f"{len(violin.get_data())}", (xoffset, 0.55))
+            xoffset = xoffset + 1
+
+        plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
+
+        plt.show()
 
     def _plot(plot, ax, caption):
         vp = ax.violinplot(
@@ -312,7 +361,7 @@ class Experiments:
                                 instance_location / execution / 'stats' / configuration_id / 'metrics.txt'
                             )
 
-                            t = data_descriptor.refactoring_id()
+                            t = Plot._labels[data_descriptor.refactoring_id()]
                             b = data_configuration.bm()
                             w = data_configuration.bm_workload()
                             x = data_configuration
@@ -323,7 +372,7 @@ class Experiments:
                                 'B' : { 'name' : b },
                                 'W' : { 'name' : w },
                                 'X' : x._values,
-                                'R' : r,
+                                t   : r,
                                 'M' : data_metrics._values
                             }) + os.linesep)
 
@@ -337,10 +386,12 @@ class Experiments:
                 is_match = True
                 for name, params in filter.items():
                     values = entry[name]
-                    for p, v in params.items():
-                        if not v == values[p]:
+                    for p, value_set in params.items():
+                        if not values[p] in value_set:
                             is_match = False
                             break
+                    if not is_match:
+                        break
                 if is_match:
                     tms          = entry['M']['EXECUTION_TIME']
                     x            = Configuration().init_from_dict(entry['X'])
@@ -349,15 +400,214 @@ class Experiments:
                     entries.append((entry, speedup))
         return entries
 
+class ParameterSet:
+    def __init__(self, name, configuration):
+        self.name           = name
+        self.configuration  = configuration
+        self.configurations = configuration.get_all_combinations()
+        # Note that adding parameters will invalidate all configuration
+        # indices since the parameter vector changes for all rows in
+        # the table.
+        #
+        # It is safest to invalidate all and revalidate all existing
+        # references even if we just extend existing lines with new
+        # parameters.
+        #
+        # Try to decide all parameters from start to avoid revalidation.
+
+class ConstellationGuide:
+    def __init__(self, parameter_sets):
+        self.sets         = parameter_sets
+        self.sets_by_name = dict([ (s.name, s) for s in parameter_sets ])
+
+    def get_parameters(self, set_name):
+        return { k for k in self.sets_by_name[set_name].configuration._options.keys() }
+
+    def get_expression(self, constraints):
+        #{
+        #  'T'   : { 'type' : {'...'} },
+        #  'B'   : { 'name' : {'batik'} },
+        #  'W'   : { 'name' : {'small'} },
+        #  'X'   : { 'jre' : {'...'}, 'jdk' : {'...'} },
+        #  '<R>' : { 'visibility' : {'1'} }
+        #}
+        matches = dict()
+        for name, value_dict in constraints.items():
+            if len(value_dict) == 0:
+                continue # All matched by default. (Star'ed).
+            matches[name] = []
+            for i, c in enumerate(self.sets_by_name[name].configurations):
+                is_match = True
+                for param, values in value_dict.items():
+                    if not c._clobber(param) in values:
+                        is_match = False
+                        break
+                if is_match:
+                    if len(matches[name]) > 0:
+                        if matches[name][-1][0] + 1 == i:
+                            matches[name][-1] = (i-1, i)
+                        elif len(matches[name][-1]) == 2 and matches[name][-1][1] + 1 == i:
+                            matches[name][-1] = (matches[name][-1][0], i)
+                        else:
+                            matches[name].append((i,))
+                    else:
+                        matches[name].append((i,))
+        return '/'.join([ s.name + ','.join([ (f"{x[0]}" if len(x) == 1 else f"{x[0]}-{x[1]}") for x in matches[s.name]]) for s in self.sets if s.name in matches ])
+
+class CustomConfig(ConfigurationBase):
+    def __init__(self):
+        super().__init__(CustomConfig)
+
+    def is_valid_key(self, key):
+        return True
+
+def create_constellation_guide():
+    parameter_sets = [
+        ParameterSet('T' , CustomConfig().init_from_dict({ 'type' : [ 'IC', ... ] })),
+        ParameterSet('B' , CustomConfig().init_from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
+        ParameterSet('W' , CustomConfig().init_from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
+        ParameterSet('X' , CustomConfig().init_from_dict({ 'jre' : [ ... ], 'jdk' : [ ... ] })),
+        # Independent refactoring configurations (Only one will be active per expression.).
+        # Only include the ones that we want to discuss.
+        # Note: We only need to include the parameters that we want to explore.
+        #       The rest will be ignored. How does this affect results?
+        #       We will include multiple variations of the same refactorings for parameters that we ignore.
+        ParameterSet('EM', CustomConfig().init_from_dict({ 'visibility' : [ '0', '1', '2', '3' ] })),
+        ParameterSet('RM', CustomConfig().init_from_dict({ 'name' : [ 'x', 'xxxx', 'xxxxxxxx' ] }))
+    ]
+    return ConstellationGuide(parameter_sets)
+
+class Constellation:
+    def __init__(self, guide):
+        self._guide = guide
+
+        self._t = None
+        self._b = None
+        self._w = None
+        self._x = None
+        self._r = None
+
+    def _validate_filter(filter, parameter_names = set()):
+        if filter is None:
+            return
+        if not isinstance(filter, dict):
+            raise ValueError("Expected filter to be None or a dict")
+        for param, options in filter.items():
+            if not param in parameter_names:
+                raise ValueError(f"Expected parameter to be one of: {parameter_names}")
+            if not isinstance(options, set):
+                raise ValueError("Expected options to be a set of strings")
+            for option in options:
+                if not isinstance(option, str):
+                    raise ValueError("Expected option to be of type string")
+
+    def type(self, filter):
+        Constellation._validate_filter(filter, {'type'}) # self._guide.get_parameters('T')
+        self._t = filter
+        return self
+
+    def bm(self, filter):
+        Constellation._validate_filter(filter, {'name'}) # self._guide.get_parameters('B')
+        self._b = filter
+        return self
+
+    def workload(self, filter):
+        Constellation._validate_filter(filter, {'name'}) # self._guide.get_parameters('W')
+        self._w = filter
+        return self
+
+    def config(self, filter):
+        Constellation._validate_filter(filter, {'jre', 'jdk'}) # self._guide.get_parameters('X')
+        self._x = filter
+        return self
+
+    def _get_type(self):
+        return [ x for x in self._t['type'] ][0]
+
+    def options(self, filter):
+        if filter == None:
+            self.r = None
+            return
+        if self._t == None:
+            raise ValueError("Please register the type filter first")
+        if len(self._t['type']) != 1:
+            raise ValueError("Refactoring configuration is only applicable when a single type is specified.")
+        Constellation._validate_filter(filter, self._guide.get_parameters(self._get_type()))
+        self._r = filter
+        return self
+
+    def get_filter(self):
+        filter = dict()
+        if self._t != None:
+            filter['T'] = self._t
+        if self._b != None:
+            filter['B'] = self._b
+        if self._w != None:
+            filter['W'] = self._w
+        if self._x != None:
+            filter['X'] = self._x
+        if self._r != None:
+            filter[self._get_type()] = self._r
+        return filter
+
+    def get_name(self):
+        return self._guide.get_expression(self.get_filter())
+
+class Violin:
+    def __init__(self, repo, file, constellation):
+        self.data    = repo.filter_data_file(file, constellation.get_filter())
+        # self.caption = f"The {constellation.get_name()} constellation with {len(self.data)} measurements."
+
+    def split(self, yrange):
+        data       = []
+        data_below = []
+        data_above = []
+        for entry, speedup in self.data:
+            if speedup <= yrange[0]:
+                data_below.append(speedup)
+            elif speedup >= yrange[1]:
+                data_above.append(speedup)
+            else:
+                data.append(speedup)
+        self._data       = data
+        self._data_below = data_below
+        self._data_above = data_above
+        return self
+
+    def get_data_below(self):
+        return self._data_below
+
+    def get_data_above(self):
+        return self._data_above
+
+    def get_data(self):
+        return self._data
+
+def _plot_from_file(args):
+    repo = Experiments(args.x_location)
+    file = Path(args.file)
+
+    if not file.exists():
+        with open(file, 'w') as f:
+            repo.create_data_file(f)
+
+    guide = create_constellation_guide()
+    # Plot refactoring per type
+    for rtype in Plot._labels.values():
+        v0 = Violin(repo, file, Constellation(guide).type({ 'type' : {rtype} }))
+        Plot.plot_violins("Title test", [v0])
+
 def _main(args):
     repo = Experiments(args.x_location)
     xbw  = repo.get_xbw()
 
     # Write all data to specified file.
-    with open('all-data-file.txt', 'w') as f:
-        repo.create_data_file(f)
+    #with open('all-data-file.txt', 'w') as f:
+    #    repo.create_data_file(f)
 
-    print(repo.filter_data_file('all-data-file.txt', { 'B' : { 'name' : 'xalan' } }))
+    _plot_from_file(args)
+
+    # print(repo.filter_data_file('all-data-file.txt', { 'B' : { 'name' : 'xalan' } }))
 
     # ATTENTION
     # This code will break if anything in the experimental setup changes.
@@ -477,6 +727,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--x-location', required = False, default = 'experiments',
         help = "Path to location.")
+    parser.add_argument('--file', required = False, default = 'data.txt',
+        help = "File into which all measurements are written.")
     parser.add_argument('--bs', required = False, nargs = '+', default = [],
         help = "Benchmarks to plot.")
     args = parser.parse_args()
