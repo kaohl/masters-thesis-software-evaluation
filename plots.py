@@ -162,6 +162,7 @@ class Plot:
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
 
         plt.show()
+        plt.close()
 
     def _plot(plot, ax, caption):
         vp = ax.violinplot(
@@ -384,10 +385,12 @@ class Experiments:
                             }) + os.linesep)
 
     def filter_data_file(self, path, filter):
-        baseline = self.get_baseline()
-        entries  = []
+        print("FILTER", filter)
+        baseline    = self.get_baseline()
+        entries     = []
+        coordinates = []
         with open(path, 'r') as f:
-            for line in f:
+            for i, line in enumerate(f):
                 entry = json.loads(line)
 
                 is_match = True
@@ -404,8 +407,10 @@ class Experiments:
                     x            = Configuration().init_from_dict(entry['X'])
                     baseline_key = '-'.join([x.bm(), x.bm_workload(), x.id()])
                     speedup      = int(tms) / int(baseline[baseline_key])
+                    print(f"MATCH ({i})", entry['T']['type'], x.bm(), x.bm_workload())
                     entries.append((entry, speedup))
-        return entries
+                    coordinates.append((len(coordinates), i))
+        return entries, coordinates
 
 class ParameterSet:
     def __init__(self, name, configuration):
@@ -563,7 +568,7 @@ class Constellation:
 class Violin:
     def __init__(self, repo, file, constellation):
         self.constellation = constellation
-        self.data          = repo.filter_data_file(file, constellation.get_filter())
+        self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter())
         # self.caption = f"The {constellation.get_name()} constellation with {len(self.data)} measurements."
 
     def split(self, yrange):
@@ -600,7 +605,11 @@ def _plot_from_file(args):
             repo.create_data_file(f)
 
     guide = create_constellation_guide()
-    # Plot refactoring per type
+
+    b_data1 = dict()
+    b_data2 = dict()
+
+    off = 0
     for rtype in sorted(Plot._labels.values()):
         violins = [
             Violin(repo, file,
@@ -624,6 +633,28 @@ def _plot_from_file(args):
         ]
         Plot.plot_violins(f"{rtype}", violins)
 
+        # The following plots are just for data validation.
+        # But they are not very clear. Therefore, I also
+        # effectively check the set intersection between
+        # data indices for different refactoring types
+        # which shows that all datapoints are selected
+        # at most once.
+        loff = 0
+        for i, violin in enumerate(violins[1:]):
+            if not i in b_data1:
+                b_data1[i] = []
+                b_data2[i] = []
+            b_data1[i].append((range(0, len(violin.get_data())), [ x + off for x in violin.get_data() ], f"C{i}"))
+            xs = [ x for x, y in violin.coordinates ]
+            ys = [ y for x, y in violin.coordinates ]
+            b_data2[i].append((xs, ys, f"C{i}"))
+            plt.plot(range(0, len(violin.get_data())), [ x + loff for x in violin.get_data() ], f"C{i}")
+            loff = loff + 2
+        plt.show()
+        plt.close()
+        off = off + 2
+
+        # Split by T, B, and X
         config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
         for bm in ['batik', 'jacop', 'luindex', 'lusearch', 'xalan']:
             violins = [
@@ -631,14 +662,32 @@ def _plot_from_file(args):
                 #    Constellation(guide).type({ 'type' : {rtype} })
                 #),
                 Violin(repo, file,
-                       Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} })
-                       )
+                    Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} })
+                )
             ] + [
                 Violin(repo, file,
-                       Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
-                       ) for c in config
+                    Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                ) for c in config
             ]
             Plot.plot_violins(f"{bm} configurations", violins)
+
+    for i, vs in b_data1.items():
+        for v in vs:
+            plt.plot(*v)
+        plt.show()
+        plt.close()
+
+    for i, vs in b_data2.items():
+        indices = set()
+        for v in vs:
+            idxs = v[1]
+            for j in idxs:
+                if j in indices:
+                    raise ValueError("ERROR: Overlapping data indices for distinct refactoring types", i, j)
+                indices.add(j)
+            plt.plot(*v)
+        plt.show()
+        plt.close()
 
 def _main(args):
     repo = Experiments(args.x_location)
