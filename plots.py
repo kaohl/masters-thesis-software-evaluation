@@ -127,11 +127,11 @@ class Plot:
         if len(data) == 0:
             return
 
-        labels = [active_violins[0].constellation.get_name()]
+        # Define split labels, since is_split is the default. Override below if not.
+        labels = [active_violins[0].constellation.get_readable_name()]
         for v in active_violins[1:]:
             diff = Constellation.split_diff(active_violins[0].constellation, v.constellation)
-            labels.append(diff.get_name())
-        print("LABELS", labels)
+            labels.append(diff.get_readable_name())
 
         fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
         ax.set_ylabel("Speedup (baseline/measure)")
@@ -159,8 +159,11 @@ class Plot:
         ax.legend()
         ax.fill_between((0, len(violins) + 1), (0.95, 0.95), (1.05, 1.05), color = '#0000ff0f')
 
-        #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
+        # Override labels unless it is a split of first violin.
+        if not is_split:
+            labels = [ v.constellation.get_readable_name() for v in active_violins ]
 
+        #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
         #labels = [ str(i) for i in range(1, len(violins) + 1) ]
         ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
         ax.set_xlim(0.25, len(labels) + 0.75)
@@ -172,8 +175,11 @@ class Plot:
 
         xoffset = 1
         for violin in violins:
-            name = violin.constellation.get_name()
-            plt.annotate(f"{name}, {len(violin.get_data())}", (xoffset, ymin - 0.05))
+            # name = violin.constellation.get_name()
+            plt.annotate(f"{len(violin.get_data())}", (xoffset, ymin - 0.05))
+            plt.annotate(f"{len(violin.get_data_below())}", (xoffset, ymin))
+            plt.annotate(f"{len(violin.get_data_above())}", (xoffset, ymax))
+            # plt.annotate(f"{name}, {len(violin.get_data())}", (xoffset, ymin - 0.05))
             # plt.annotate(f"{violin.constellation.get_name()}", (xoffset + 0.4, ymin))
             xoffset = xoffset + 1
 
@@ -461,14 +467,14 @@ class ConstellationGuide:
     def get_parameters(self, set_name):
         return { k for k in self.sets_by_name[set_name].configuration._options.keys() }
 
-    def get_expression(self, constraints):
-        #{
-        #  'T'   : { 'type' : {'...'} },
-        #  'B'   : { 'name' : {'batik'} },
-        #  'W'   : { 'name' : {'small'} },
-        #  'X'   : { 'jre' : {'...'}, 'jdk' : {'...'} },
-        #  '<R>' : { 'visibility' : {'1'} }
-        #}
+    #{
+    #  'T'   : { 'type' : {'...'} },
+    #  'B'   : { 'name' : {'batik'} },
+    #  'W'   : { 'name' : {'small'} },
+    #  'X'   : { 'jre' : {'...'}, 'jdk' : {'...'} },
+    #  '<R>' : { 'visibility' : {'1'} }
+    #}
+    def _get_matches(self, constraints):
         matches = dict()
         for name, value_dict in constraints.items():
             if len(value_dict) == 0:
@@ -490,7 +496,29 @@ class ConstellationGuide:
                             matches[name].append((i,))
                     else:
                         matches[name].append((i,))
+        return matches
+
+    def get_expression(self, constraints):
+        matches = self._get_matches(constraints)
         return '/'.join([ s.name + ','.join([ (f"{x[0]}" if len(x) == 1 else f"{x[0]}-{x[1]}") for x in matches[s.name]]) for s in self.sets if s.name in matches ])
+
+    def get_readable_name(self, constraints):
+        matches = self._get_matches(constraints)
+        name    = []
+        for s in self.sets:
+            if not s.name in matches:
+                continue
+            n = len(matches[s.name])
+            if n == 1 and len(matches[s.name][0]) == 1 and len(s.configurations[matches[s.name][0][0]]._values) == 1:
+                name.append(list(s.configurations[matches[s.name][0][0]]._values.values())[0])
+
+                # TODO: EM visibility is reduced to 0, 1, 2 values for public, private, and protected (TODO: check order)
+                # Need to map to readable values.
+                # We could also map rename names to L1, L4, L8 (i.e., L<name_length>)
+                # We could also map multi parameter sets to single letters like GG, GT, TG, TT, where first is JDK and second is JRE.
+            else:
+                name.append(s.name + ','.join([ (f"{x[0]}" if len(x) == 1 else f"{x[0]}-{x[1]}") for x in matches[s.name]]))
+        return '/'.join(name)
 
 class CustomConfig(ConfigurationBase):
     def __init__(self):
@@ -599,6 +627,9 @@ class Constellation:
 
     def get_name(self):
         return self._guide.get_expression(self.get_filter())
+
+    def get_readable_name(self):
+        return self._guide.get_readable_name(self.get_filter())
 
     def split_diff(a, b):
         _t = b._t if a._t == None else (a._t if b._t == None else None)
