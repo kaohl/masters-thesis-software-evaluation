@@ -509,37 +509,94 @@ class ConstellationGuide:
             if not s.name in matches:
                 continue
             n = len(matches[s.name])
-            if n == 1 and len(matches[s.name][0]) == 1 and len(s.configurations[matches[s.name][0][0]]._values) == 1:
-                name.append(list(s.configurations[matches[s.name][0][0]]._values.values())[0])
-
-                # TODO: EM visibility is reduced to 0, 1, 2 values for public, private, and protected (TODO: check order)
-                # Need to map to readable values.
-                # We could also map rename names to L1, L4, L8 (i.e., L<name_length>)
-                # We could also map multi parameter sets to single letters like GG, GT, TG, TT, where first is JDK and second is JRE.
+            if n == 1 and len(matches[s.name][0]) == 1 and s.configurations[matches[s.name][0][0]].name() != None:#  len(s.configurations[matches[s.name][0][0]]._values) == 1:
+                # value = list(s.configurations[matches[s.name][0][0]]._values.values())[0]
+                # name.append(value)
+                name.append(s.configurations[matches[s.name][0][0]].name())
             else:
                 name.append(s.name + ','.join([ (f"{x[0]}" if len(x) == 1 else f"{x[0]}-{x[1]}") for x in matches[s.name]]))
         return '/'.join(name)
 
 class CustomConfig(ConfigurationBase):
-    def __init__(self):
+    def __init__(self, name_lookup_fn = None):
         super().__init__(CustomConfig)
+        self._name_lookup_fn = name_lookup_fn
+
+    def get_all_combinations(self):
+        parameters = [ (key, options) for key, options in sorted(self._options.items(), key = lambda it: it[0]) ]
+        return [ self._configuration_type(self._name_lookup_fn).init_from_dict(dict(value_list)) for value_list in self._all_rec(parameters) ]
 
     def is_valid_key(self, key):
         return True
 
+    def name(self):
+        if self._name_lookup_fn != None:
+            return self._name_lookup_fn(self)
+        return None
+
+def visibility_name_lookup(config):
+    v = config._values['visibility']
+    if v == '0':
+        return 'PK'
+    if v == '1':
+        return 'PL'
+    if v == '2':
+        return 'PV'
+    if v == '4':
+        return 'PT'
+    raise ValueError("Unknown visibility", v)
+
+def property_value_lookup(config, prop):
+    return config._values[prop]
+
+def name_value_lookup(config):
+    return property_value_lookup(config, 'name')
+
+def type_value_lookup(config):
+    return property_value_lookup(config, 'type')
+
+def name_name_lookup(config):
+    n = config._values['name']
+    return f"L{len(n)}"
+
+def final_name_lookup(config):
+    f = config._values['final']
+    return "FINAL" if bool(f) else "!FINAL"
+
+def em_name_lookup(config):
+    return visibility_name_lookup(config)
+
+def rm_name_lookup(config):
+    return name_name_lookup(config)
+
+def et_name_lookup(config):
+    return final_name_lookup(config)
+
+def ec_name_lookup(config):
+    return f"{visibility_name_lookup(config)}/{name_name_lookup(config)}"
+
+def x_value_lookup(config):
+    jdk = config._values['jdk']
+    jre = config._values['jre']
+    return f"{jdk[jdk.find('-') + 1].upper()}{jre[jre.find('-') + 1].upper()}"
+
 def create_constellation_guide():
+    names      = [ 'x', 'xxxxxxxx', 'xxxxxxxxxxxxxxxx' ]
+    visibility = [ '0', '1', '2', '4' ] # {package:0, public:1, private:2, protected:4}
     parameter_sets = [
-        ParameterSet('T' , CustomConfig().init_from_dict({ 'type' : [ x for x in sorted(Plot._labels.values()) ] })),
-        ParameterSet('B' , CustomConfig().init_from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
-        ParameterSet('W' , CustomConfig().init_from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
-        ParameterSet('X' , CustomConfig().init_from_dict({ 'jre'  : ['17.0.9-graalce', '17.0.14-tem'], 'jdk' : ['17.0.9-graalce', '17.0.14-tem'] })),
+        ParameterSet('T' , CustomConfig(type_value_lookup).init_from_dict({ 'type' : [ x for x in sorted(Plot._labels.values()) ] })),
+        ParameterSet('B' , CustomConfig(name_value_lookup).init_from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
+        ParameterSet('W' , CustomConfig(name_value_lookup).init_from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
+        ParameterSet('X' , CustomConfig(x_value_lookup).init_from_dict({ 'jre'  : ['17.0.9-graalce', '17.0.14-tem'], 'jdk' : ['17.0.9-graalce', '17.0.14-tem'] })),
         # Independent refactoring configurations (Only one will be active per expression.).
         # Only include the ones that we want to discuss.
         # Note: We only need to include the parameters that we want to explore.
         #       The rest will be ignored. How does this affect results?
         #       We will include multiple variations of the same refactorings for parameters that we ignore.
-        ParameterSet('EM', CustomConfig().init_from_dict({ 'visibility' : [ '0', '1', '2', '3' ] })),
-        ParameterSet('RM', CustomConfig().init_from_dict({ 'name' : [ 'x', 'xxxx', 'xxxxxxxx' ] }))
+        ParameterSet('EM', CustomConfig(em_name_lookup).init_from_dict({ 'visibility' : visibility })),
+        ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({ 'name' : names })),
+        ParameterSet('ET', CustomConfig(et_name_lookup).init_from_dict({ 'final' : ['true', 'false'] })),
+        ParameterSet('EC', CustomConfig(ec_name_lookup).init_from_dict({ 'name' : names, 'visibility' : visibility }))
     ]
     return ConstellationGuide(parameter_sets)
 
