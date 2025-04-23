@@ -561,7 +561,7 @@ def name_name_lookup(config):
 
 def final_name_lookup(config):
     f = config._values['final']
-    return "FINAL" if bool(f) else "!FINAL"
+    return "FINAL" if f == 'true' else "!FINAL"
 
 def em_name_lookup(config):
     return visibility_name_lookup(config)
