@@ -111,11 +111,13 @@ class Plot:
         ymin = 1
         ymax = 1
         data = []
+        active_violins = []
         for violin in violins:
             print("Constellation", violin.constellation.get_name())
             violin.split(yrange)
             if len(violin.get_data()) > 0:
                 data.append(violin.get_data())
+                active_violins.append(violin)
             for d in violin.get_data():
                 if d > ymax:
                     ymax = d
@@ -124,6 +126,12 @@ class Plot:
 
         if len(data) == 0:
             return
+
+        labels = [active_violins[0].constellation.get_name()]
+        for v in active_violins[1:]:
+            diff = Constellation.split_diff(active_violins[0].constellation, v.constellation)
+            labels.append(diff.get_name())
+        print("LABELS", labels)
 
         fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
         ax.set_ylabel("Speedup (baseline/measure)")
@@ -152,7 +160,8 @@ class Plot:
         ax.fill_between((0, len(violins) + 1), (0.95, 0.95), (1.05, 1.05), color = '#0000ff0f')
 
         #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
-        labels = [ str(i) for i in range(1, len(violins) + 1) ]
+
+        #labels = [ str(i) for i in range(1, len(violins) + 1) ]
         ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
         ax.set_xlim(0.25, len(labels) + 0.75)
         ax.set_ylim((ymin - 0.05, ymax + 0.05)) # *yrange
@@ -508,7 +517,8 @@ def create_constellation_guide():
 
 class Constellation:
     def __init__(self, guide):
-        self._guide = guide
+        self._guide     = guide
+        self._type_hint = None
 
         self._t = None
         self._b = None
@@ -553,15 +563,20 @@ class Constellation:
     def _get_type(self):
         return [ x for x in self._t['type'] ][0]
 
-    def options(self, filter):
+    # The type_hint is intended to handle the split_diff, where
+    # the type is known, but not assigned. 
+    def options(self, filter, type_hint = None):
         if filter == None:
-            self.r = None
-            return
-        if self._t == None:
+            self._r = None
+            return self
+        if type_hint == None and self._t == None:
             raise ValueError("Please register the type filter first")
-        if len(self._t['type']) != 1:
+        if type_hint == None and len(self._t['type']) != 1:
             raise ValueError("Refactoring configuration is only applicable when a single type is specified.")
-        Constellation._validate_filter(filter, self._guide.get_parameters(self._get_type()))
+        t = type_hint if self._t == None else self._get_type()
+        Constellation._validate_filter(filter, self._guide.get_parameters(t))
+        if type_hint != None:
+            self._type_hint = type_hint
         self._r = filter
         return self
 
@@ -576,11 +591,22 @@ class Constellation:
         if self._x != None:
             filter['X'] = self._x
         if self._r != None:
-            filter[self._get_type()] = self._r
+            if self._type_hint != None:
+                filter[self._type_hint] = self._r
+            else:
+                filter[self._get_type()] = self._r
         return filter
 
     def get_name(self):
         return self._guide.get_expression(self.get_filter())
+
+    def split_diff(a, b):
+        _t = b._t if a._t == None else (a._t if b._t == None else None)
+        _b = b._b if a._b == None else (a._b if b._b == None else None)
+        _w = b._w if a._w == None else (a._w if b._w == None else None)
+        _x = b._x if a._x == None else (a._x if b._x == None else None)
+        _r = b._r if a._r == None else (a._r if b._r == None else None)
+        return Constellation(a._guide).type(_t).bm(_b).workload(_w).config(_x).options(_r, a._get_type())
 
 class Violin:
     def __init__(self, repo, file, constellation):
