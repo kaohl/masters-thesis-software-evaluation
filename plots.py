@@ -107,7 +107,7 @@ class Plot:
             return
         Plot.show_plots([self])
 
-    def plot_violins(title, violins, yrange = (0.5, 1.5)):
+    def plot_violins(title, violins, is_split = True, yrange = (0.5, 1.5)):
         ymin = 1
         ymax = 1
         data = []
@@ -134,13 +134,22 @@ class Plot:
             showmedians = True
         )
 
-        medians = vp['cmedians'].get_paths()[0].vertices
-        plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
+        for i, p in enumerate(vp['cmedians'].get_paths()):
+            medians = p.vertices
+            if i == 0:
+                plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
+            else:
+                plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx')
 
-        means   = vp['cmeans'].get_paths()[0].vertices
-        plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
+        for i, p in enumerate(vp['cmeans'].get_paths()):
+            means = p.vertices
+            if i == 0:
+                plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
+            else:
+                plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+')
 
         ax.legend()
+        ax.fill_between((0, len(violins) + 1), (0.95, 0.95), (1.05, 1.05), color = '#0000ff0f')
 
         #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
         labels = [ str(i) for i in range(1, len(violins) + 1) ]
@@ -160,6 +169,9 @@ class Plot:
             xoffset = xoffset + 1
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
+
+        if is_split:
+            plt.axvline(x = 1.5, color = 'b', linestyle = ':')
 
         plt.show()
         plt.close()
@@ -618,7 +630,7 @@ def _plot_from_file(args):
         )
         for rtype in sorted(Plot._labels.values())
     ]
-    Plot.plot_violins("All types", violins)
+    Plot.plot_violins("All types", violins, is_split = False)
     
     b_data1 = dict()
     b_data2 = dict()
