@@ -24,6 +24,9 @@ class ConfigurationBase:
     def is_valid_key(self, key):
         raise ValueError("Unimplemented")
 
+    def to_dict(self):
+        return dict({ (k, v) for k, v in self._values.items() })
+
     def init_from_dict(self, parameters):
         for key, options in parameters.items():
             if not self.is_valid_key(key):
