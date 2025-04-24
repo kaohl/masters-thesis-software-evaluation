@@ -136,7 +136,7 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
     options.extend(features)
     options.extend([
         "-jar",
-        str(deployment / f"{bm}-1.0.jar {bm}")
+        str(deployment / f"{bm}-1.0.jar {bm} -n 10") # Run -n times and return exec-time of last iteration.
     ])
     options.extend(get_harness_options(configuration))
 
@@ -155,13 +155,15 @@ def run_benchmark(configuration, deployment, jfr, jfr_file):
         timeout    = get_configured_benchmark_timeout(configuration) # Raises subprocess.TimeoutExpired.
     )
     text = result.stdout.decode('utf-8')
-    if result.returncode != 0:
-        raise ValueError("Benchmark failed", text)
-    p    = re.compile('PASSED in (\\d+) msec')
-    execution_time = p.findall(text)[0]
     print("--- BENCHMARK OUTPUT ---")
     print(text)
     print("--- BENCHMARK OUTPUT END ---")
+    if result.returncode != 0:
+        raise ValueError("Benchmark failed", text)
+    if text.find('Benchmark failed to converge') != -1:
+        raise ValueError("Benchmark failed to converge")
+    p    = re.compile('PASSED in (\\d+) msec')
+    execution_time = p.findall(text)[0]
     print("CAPTURED EXECUTION TIME", execution_time, "ms")
     return execution_time
 
