@@ -646,6 +646,8 @@ class Constellation:
         return self
 
     def _get_type(self):
+        if self._t == None:
+            return None
         return [ x for x in self._t['type'] ][0]
 
     # The type_hint is intended to handle the split_diff, where
@@ -738,6 +740,7 @@ def _plot_from_file(args):
     guide = create_constellation_guide()
 
 
+    # Split all by type.
     violins = [
         Violin(repo, file,
             Constellation(guide).type({ 'type' : {rtype} })
@@ -745,7 +748,36 @@ def _plot_from_file(args):
         for rtype in sorted(Plot._labels.values())
     ]
     Plot.plot_violins("All types", violins, is_split = False)
-    
+
+    # Split all by X (/X)
+    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
+    violins = [
+        Violin(repo, file,
+            Constellation(guide)
+        )
+    ] + [
+        Violin(repo, file,
+            Constellation(guide).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+        ) for c in config
+    ]
+    Plot.plot_violins(f"All by X", violins)
+
+    benchmarks = ['batik', 'jacop', 'luindex', 'lusearch', 'xalan']
+
+    # Split B by X (B/X)
+    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
+    for bm in benchmarks:
+        violins = [
+            Violin(repo, file,
+                Constellation(guide).bm({ 'name' : {bm} })
+            )
+        ] + [
+            Violin(repo, file,
+                Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+            ) for c in config
+        ]
+        Plot.plot_violins(f"Split {bm} by configurations", violins)
+
     b_data1 = dict()
     b_data2 = dict()
 
@@ -793,6 +825,19 @@ def _plot_from_file(args):
         plt.show()
         plt.close()
         off = off + 2
+
+        # Split T by X (T/X)
+        config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
+        violins = [
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} })
+            )
+        ] + [
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+            ) for c in config
+        ]
+        Plot.plot_violins(f"{rtype} by configurations", violins)
 
         # Split TB by X (TB/X)
         config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
