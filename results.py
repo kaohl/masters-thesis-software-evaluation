@@ -315,7 +315,7 @@ def compute_progress(args):
                                 n_benched = n_benched + len(configurations)
                                 break
                         break
-            result = f"{(bm, workload, lst)}: {n_success}/{n_failure}/{n_total}, {n_benched}/{n_total * n_combinations}"
+            result = f"{(bm, workload, lst)}: {n_success}/{n_failure}/{n_total}, {n_benched}/{n_success * n_combinations}"
             print(result)
         break
 
