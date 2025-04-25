@@ -1,7 +1,7 @@
 #!/bin/env python3
 
 import argparse
-import configuration
+import datetime
 import itertools
 import logging
 import os
@@ -11,8 +11,10 @@ from random import randrange
 import shutil
 from subprocess import TimeoutExpired
 import tempfile
+import zoneinfo
 
 from executor import load_state, save_state, do_files
+import configuration
 import opportunity_cache
 import patch
 import run_benchmark as bm_script
@@ -405,6 +407,73 @@ def benchmark(args):
         if i >= n:
             break
 
+def benchmark_2(args):
+    n = args.n
+    if n <= 0:
+        raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
+
+    types        = set()
+    refactorings = dict() # { (b, w) => { '<id>' : [ <opp> ] } }
+    for (x, bm, opportunity, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
+        b  = configuration.bm()
+        w  = configuration.bm_workload()
+        id = opportunity_cache.RefactoringDescriptor.load(
+            x_location(args) / 'data' / bm / opportunity / refactoring / 'descriptor.txt'
+        ).refactoring_id()
+        if not (b, w) in refactorings:
+            refactorings[(b, w)] = dict()
+        rs = refactorings[(b, w)]
+        if not id in rs:
+            rs[id] = []
+        rs[id].append((x, bm, opportunity, refactoring, execution, configuration))
+        types.add(id)
+
+    for (b, w), d in refactorings.items():
+        for id, opps in d.items():
+            print("Refactorings", b, w, id, len(opps))
+            random.Random(0).shuffle(opps)
+
+    logfile = 'benchmarking.log'
+    with open(logfile, 'w') as f:
+        pass # Clear.
+
+    types = [ t for t in sorted(types) ]
+    ti    = 0
+    k     = 0
+    stop  = False
+    while k < n:
+        type = types[ti]
+        print("Select refactorings of type", type)
+        selection = []
+        for (b, w) in refactorings.keys(): # Spread execution equally across workloads.
+            opps = refactorings[(b, w)][type]
+            i    = randrange(len(opps))
+            selection.append(opps[i])
+            del opps[i]
+        ti = (ti + 1) % len(types)
+        random.Random(0).shuffle(selection)
+        for (x, bm, opportunity, refactoring, execution, configuration) in selection:
+            fldr = '/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.params_id()])
+
+            print()
+            print(f"Benchmark ({k+1}/{n}) {fldr}")
+            print()
+
+            data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / opportunity / refactoring / execution
+            enable_jfr    = False
+
+            t0 = datetime.datetime.now()
+            build_and_benchmark(args, x, configuration, data_location, enable_jfr)
+            t1 = datetime.datetime.now()
+
+            with open(logfile, 'a') as f:
+                time = datetime.datetime.now(tz = zoneinfo.ZoneInfo('Europe/Stockholm'))
+                f.write(f"{time}: duration: {t1-t0} {fldr}" + os.linesep)
+
+            k = k + 1
+            if k >= n:
+                break
+
 # Print result objects to stdout.
 # See 'results.py' for CSV files and statistics.
 #def report(args):
@@ -545,7 +614,7 @@ if __name__ == '__main__':
     if args.create:
         create(args)
     elif args.benchmark:
-        benchmark(args)
+        benchmark_2(args)
     elif args.refactor:
         refactor(args)
     elif args.report:

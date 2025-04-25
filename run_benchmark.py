@@ -15,8 +15,14 @@ import tools
 # Timeout configuration json object (integer timeouts in seconds):
 # { 'default' : int, 'defaults' : { '<bm>' : int }, '<bm>' : { '<wl>' : int } }
 
+# Please note that benchmarks are executed up to 10 times.
+# The configured timeout should take this into account.
+# It is not very common that refactorings cause infinite
+# loops, but it does happen. A high limit should not hurt
+# too much.
+
 _empty                     = dict()
-_default_timeout           = 40 # 40 seconds covers all small and default workloads that we use on our machines.
+_default_timeout           = 400    # Seconds.
 _configured_timeout        = None
 _configured_timeout_path   = Path('timeout.config')
 
