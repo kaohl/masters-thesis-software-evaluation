@@ -458,6 +458,8 @@ def benchmark_2(args):
         print(f"Select refactoring type {type}")
         selection = []
         for (b, w) in refactorings.keys():          # Select one descriptor of current type from each workload.
+            if not type in refactorings[(b, w)]:
+                continue
             oppmap = refactorings[(b, w)][type]
             i      = randrange(len(oppmap))         # Random opportunity.
             oid    = list(oppmap.keys())[i]
@@ -466,8 +468,16 @@ def benchmark_2(args):
             opp    = opps[j]
             selection.append(opp)
             del opps[j]
+            if len(opps) == 0:
+                del oppmap[oid]
+                if len(oppmap) == 0:
+                    del refactorings[(b, w)][type]
 
             print(f"Select refactoring: {b} {w} {oid} {opp[-1].id()}")
+
+        if len(selection) == 0:
+            print("No more benchmarks to run.")
+            break
 
         ti = (ti + 1) % len(types)                  # Update type index for next iteration.
         random.Random().shuffle(selection)          # Unseeded to get a random order of execution within the batch.
