@@ -408,12 +408,13 @@ def benchmark(args):
             break
 
 def benchmark_2(args):
+
     n = args.n
     if n <= 0:
         raise ValueError("Please specify the number of benchmark executions to run using a positive integer.")
 
     types        = set()
-    refactorings = dict() # { (b, w) => { '<id>' : [ <opp> ] } }
+    refactorings = dict() # { (b, w) : { '<type>' : { '<opp>' :  [ <ref> ] } } }
     for (x, bm, opportunity, refactoring, execution, configuration) in get_benchmark_execution_plan(args):
         b  = configuration.bm()
         w  = configuration.bm_workload()
@@ -424,34 +425,52 @@ def benchmark_2(args):
             refactorings[(b, w)] = dict()
         rs = refactorings[(b, w)]
         if not id in rs:
-            rs[id] = []
-        rs[id].append((x, bm, opportunity, refactoring, execution, configuration))
+            rs[id] = dict()
+        if not opportunity in rs[id]:
+            rs[id][opportunity] = []
+        rs[id][opportunity].append((x, bm, opportunity, refactoring, execution, configuration))
         types.add(id)
 
     for (b, w), d in refactorings.items():
-        for id, opps in d.items():
-            print("Refactorings", b, w, id, len(opps))
-            random.Random(0).shuffle(opps)
+        for ref_id, opps in d.items():
+            opp_count = 0
+            ref_count = 0
+            for opp_id, descriptors in opps.items():
+                ref_count = ref_count + len(descriptors)
+                opp_count = opp_count + 1
+                # Shuffling here has no effect since we pick elements at random.
+                # random.Random(0).shuffle(refactorings)
+            print(f"Refactorings {b} {w} type={ref_id} nopp={opp_count}, nref={ref_count}")
+
+    tz_europe_stockholm = zoneinfo.ZoneInfo('Europe/Stockholm')
 
     logfile = 'benchmarking.log'
-    with open(logfile, 'w') as f:
-        pass # Clear.
+    if not Path(logfile).exists():
+        with open(logfile, 'w') as f:
+            pass # Create
 
     types = [ t for t in sorted(types) ]
     ti    = 0
     k     = 0
     stop  = False
     while k < n:
-        type = types[ti]
-        print("Select refactorings of type", type)
+        type = types[ti]                            # Cycle through available types.
+        print(f"Select refactoring type {type}")
         selection = []
-        for (b, w) in refactorings.keys(): # Spread execution equally across workloads.
-            opps = refactorings[(b, w)][type]
-            i    = randrange(len(opps))
-            selection.append(opps[i])
-            del opps[i]
-        ti = (ti + 1) % len(types)
-        random.Random(0).shuffle(selection)
+        for (b, w) in refactorings.keys():          # Select one descriptor of current type from each workload.
+            oppmap = refactorings[(b, w)][type]
+            i      = randrange(len(oppmap))         # Random opportunity.
+            oid    = list(oppmap.keys())[i]
+            opps   = oppmap[oid]
+            j      = randrange(len(opps))           # Random specialization of opportunity. (Spread equally across opportunities.)
+            opp    = opps[j]
+            selection.append(opp)
+            del opps[j]
+
+            print(f"Select refactoring: {b} {w} {oid} {opp[-1].id()}")
+
+        ti = (ti + 1) % len(types)                  # Update type index for next iteration.
+        random.Random().shuffle(selection)          # Unseeded to get a random order of execution within the batch.
         for (x, bm, opportunity, refactoring, execution, configuration) in selection:
             fldr = '/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.params_id()])
 
@@ -467,7 +486,7 @@ def benchmark_2(args):
             t1 = datetime.datetime.now()
 
             with open(logfile, 'a') as f:
-                time = datetime.datetime.now(tz = zoneinfo.ZoneInfo('Europe/Stockholm'))
+                time = datetime.datetime.now(tz = tz_europe_stockholm)
                 f.write(f"{time}: duration: {t1-t0} {fldr}" + os.linesep)
 
             k = k + 1
