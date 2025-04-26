@@ -482,14 +482,29 @@ def benchmark_2(args):
         ti = (ti + 1) % len(types)                  # Update type index for next iteration.
         random.Random().shuffle(selection)          # Unseeded to get a random order of execution within the batch.
         for (x, bm, opportunity, refactoring, execution, configuration) in selection:
-            fldr = '/'.join([bm, opportunity, refactoring, execution, 'stats', configuration.params_id()])
-
-            print()
-            print(f"Benchmark ({k+1}/{n}) {fldr}")
-            print()
 
             data_location = Path(os.getcwd()) / x_location(args) / 'data' / bm / opportunity / refactoring / execution
-            enable_jfr    = False
+
+            # Scan 'stats' folder for failures before spending time (re-)compiling a case that have already been proven to fail.
+            # Note: We perform the test here since we may not have any proof when the benchmark execution plan is created.
+
+            is_failure = False
+            for dir, folders, files in os.walk(data_location / 'stats'):
+                for cid in folders:
+                    if (Path(dir) / cid / 'FAILURE').exists():
+                        is_failure = True
+                        break
+                break
+
+            if is_failure:
+                print(f"Skipping failed case: {data_location}")
+                continue
+
+            print()
+            print(f"Benchmark ({k+1}/{n}) {data_location}")
+            print()
+
+            enable_jfr = False
 
             t0 = datetime.datetime.now()
             build_and_benchmark(args, x, configuration, data_location, enable_jfr)
@@ -497,7 +512,7 @@ def benchmark_2(args):
 
             with open(logfile, 'a') as f:
                 time = datetime.datetime.now(tz = tz_europe_stockholm)
-                f.write(f"{time}: duration: {t1-t0} {fldr}" + os.linesep)
+                f.write(f"{time}: duration: {t1-t0} {data_location}" + os.linesep)
 
             k = k + 1
             if k >= n:
