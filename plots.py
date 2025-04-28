@@ -734,7 +734,7 @@ def print_parameter_tables(path):
         with open(path / (ps.name + '.tex'), 'w') as f:
             f.write("\\begin{table}[!h]" + os.linesep)
             f.write("\\caption{@1}".replace("@1", captions[ps.name]) + os.linesep)
-            f.write("\\begin{tabular}{l*{@N}{l}r}".replace("@N", str(len(params))) + os.linesep)
+            f.write("\\begin{tabular}{l|*{@N}{l}r}".replace("@N", str(len(params))) + os.linesep)
             f.write('&'.join([ ps.name ] + [ p for p in sorted(params) ]) + "\\\\" + os.linesep)
             f.write("\\hline" + os.linesep)
             f.write(os.linesep.join(table) + os.linesep)
