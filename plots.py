@@ -95,7 +95,7 @@ class Plot:
         'org.eclipse.jdt.ui.rename.local.variable'   : 'RV',
         'org.eclipse.jdt.ui.rename.method'           : 'RM',
         'org.eclipse.jdt.ui.rename.type'             : 'RT',
-        'org.eclipse.jdt.ui.rename.type.parameter'   : 'TP'
+        'org.eclipse.jdt.ui.rename.type.parameter'   : 'RP'
     }
 
     def __init__(self, title, columns):
@@ -575,6 +575,9 @@ def et_name_lookup(config):
 def ec_name_lookup(config):
     return f"{visibility_name_lookup(config)}/{name_name_lookup(config)}"
 
+def no_name_lookup(config):
+    return None
+
 def x_value_lookup(config):
     jdk = config._values['jdk']
     jre = config._values['jre']
@@ -599,6 +602,145 @@ def create_constellation_guide():
         ParameterSet('EC', CustomConfig(ec_name_lookup).init_from_dict({ 'name' : names, 'visibility' : visibility }))
     ]
     return ConstellationGuide(parameter_sets)
+
+
+def print_parameter_tables(path):
+    true_false = ["true", "false"]
+    names      = [ 'x', 'xxxxxxxx', 'xxxxxxxxxxxxxxxx' ]
+    X_names    = [ 'X', 'Xxxxxxxx', 'Xxxxxxxxxxxxxxxx' ]
+    visibility = [ '0', '1', '2', '4' ] # {package:0, public:1, private:2, protected:4}
+    parameter_sets = [
+        ParameterSet('T' , CustomConfig(type_value_lookup).init_from_dict({ 'type' : [ x for x in sorted(Plot._labels.values()) ] })),
+        ParameterSet('B' , CustomConfig(name_value_lookup).init_from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
+        ParameterSet('W' , CustomConfig(name_value_lookup).init_from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
+        ParameterSet('X' , CustomConfig(x_value_lookup).init_from_dict({ 'jre'  : ['17.0.9-graalce', '17.0.14-tem'], 'jdk' : ['17.0.9-graalce', '17.0.14-tem'] })),
+        # Independent refactoring configurations (Only one will be active per expression.).
+        # Only include the ones that we want to discuss.
+        # Note: We only need to include the parameters that we want to explore.
+        #       The rest will be ignored. How does this affect results?
+        #       We will include multiple variations of the same refactorings for parameters that we ignore.
+        
+        #ParameterSet('EM', CustomConfig(em_name_lookup).init_from_dict({ 'visibility' : visibility })),
+        #ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({ 'name' : names })),
+        #ParameterSet('ET', CustomConfig(et_name_lookup).init_from_dict({ 'final' : ['true', 'false'] })),
+        #ParameterSet('EC', CustomConfig(ec_name_lookup).init_from_dict({ 'name' : names, 'visibility' : visibility }))
+
+        ParameterSet('IC', CustomConfig(no_name_lookup).init_from_dict({
+            "replace" : ["false"],
+            "remove"  : ["false"]
+        })),
+        ParameterSet('IM', CustomConfig(no_name_lookup).init_from_dict({
+            "mode"   : ["0"],
+            "delete" : ["false"]
+        })),
+        ParameterSet('IT', CustomConfig(no_name_lookup).init_from_dict({
+        })),
+        ParameterSet('EC', CustomConfig(ec_name_lookup).init_from_dict({
+            "name"       : names,
+            "visibility" : visibility,
+            "qualify"    : true_false,
+            "replace"    : ["false"]
+        })),
+        ParameterSet('EM', CustomConfig(em_name_lookup).init_from_dict({
+            "name"       : names,
+            "visibility" : visibility,
+            "comments"   : ["false"],
+            "replace"    : ["true"],
+            "exceptions" : ["false"]
+        })),
+        ParameterSet('ET', CustomConfig(et_name_lookup).init_from_dict({
+            "name"                 : names,
+            "final"                : true_false,
+            "replace"              : ["false"],
+            "replaceAllInThisFile" : ["false"],
+            "varType"              : ["false"]
+        })),
+        ParameterSet('II', CustomConfig(no_name_lookup).init_from_dict({
+            "name"       : names,
+            "references" : true_false,
+        })),
+        ParameterSet('RF', CustomConfig(no_name_lookup).init_from_dict({
+            "name"       : names,
+            "references" : ["true"],
+            "textual"    : ["false"],
+            "getter"     : ["false"],
+            "setter"     : ["false"],
+            "delegate"   : ["false"],
+            "deprecate"  : ["false"]
+        })),
+        ParameterSet('RV', CustomConfig(no_name_lookup).init_from_dict({
+            "name"       : names,
+            "references" : ["true"]
+        })),
+        ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({
+            "name"       : names,
+            "delegate"   : ["false"],
+            "deprecate"  : ["false"],
+            "references" : ["true"]
+        })),
+        ParameterSet('RT', CustomConfig(no_name_lookup).init_from_dict({
+            "name"                : X_names,
+            "patterns"            : [""],
+            "references"          : ["true"],
+            "textual"             : ["false"],
+            "qualified"           : ["false"],
+            "similarDeclarations" : ["false"],
+            "matchStrategy"       : ["1"]
+        })),
+        ParameterSet('RP', CustomConfig(no_name_lookup).init_from_dict({
+            "name"       : X_names,
+            "references" : ["true"]
+        }))
+    ]
+
+    captions = {
+        'T' : "The table shows all refactoring types that were used in the evaluation.",
+        'B' : "The table shows all benchmarks that were used in the evaluation.",
+        'W' : "The table shows all workloads that were used in the evaluation.",
+        'X' : "The table shows the combinations of compiler (Jdk) and runtime (Jre) that were used in the evaluation.",
+        'EC' : "The table shows the \\textit{extract constant} refactoring parameter configurations that were used in the evaluation.",
+        'EM' : "The table shows all \\textit{extract method} refactoring parameter configurations that were used in the evaluation.",
+        'ET' : "The table shows all \\textit{extract temp} refactoring parameter configurations that were used in the evaluation.",
+        'IC' : "The table shows all \\textit{inline constant} refactoring parameter configurations that were used in the evaluation.",
+        'IM' : "The table shows all \\textit{inline method} refactoring parameter configurations that were used in the evaluation.",
+        'IT' : "The table shows all \\textit{inline temp} refactoring parameter configurations that were used in the evaluation.",
+        'II' : "The table shows all \\textit{introduce indirection} refactoring parameter configurations that were used in the evaluation.",
+        'RF' : "The table shows all \\textit{rename field} refactoring parameter configurations that were used in the evaluation.",
+        'RV' : "The table shows all \\textit{rename local} variable refactoring parameter configurations that were used in the evaluation.",
+        'RM' : "The table shows all \\textit{rename method} refactoring parameter configurations that were used in the evaluation.",
+        'RT' : "The table shows all \\textit{rename type} refactoring parameter configurations that were used in the evaluation.",
+        'RP' : "The table shows all \\textit{rename type} parameter refactoring parameter configurations that were used in the evaluation."
+    }
+
+    guide = create_constellation_guide()
+
+    for ps in parameter_sets:
+        params = set()
+        table  = []
+        for i, c in enumerate(ps.configurations):
+            for k in c._values.keys():
+                params.add(k.capitalize())
+            name = f"{ps.name}{i}"
+            if ps.name == "X":
+                d = c.to_dict()
+                for k, v in c.to_dict().items():
+                    d[k] = {v}
+                name = Constellation(guide).config(d).get_readable_name()
+            table.append('&'.join([f"{name}"] + [ v.replace("_", '\\_') for k, v in sorted(c._values.items(), key = lambda it: it[0]) ]) + "\\\\")
+
+        if len(params) == 0: # IC
+            continue
+
+        with open(path / (ps.name + '.tex'), 'w') as f:
+            f.write("\\begin{table}[!h]" + os.linesep)
+            f.write("\\caption{@1}".replace("@1", captions[ps.name]) + os.linesep)
+            f.write("\\begin{tabular}{l*{@N}{l}r}".replace("@N", str(len(params))) + os.linesep)
+            f.write('&'.join([ ps.name ] + [ p for p in sorted(params) ]) + "\\\\" + os.linesep)
+            f.write("\\hline" + os.linesep)
+            f.write(os.linesep.join(table) + os.linesep)
+            f.write("\\end{tabular}" + os.linesep)
+            f.write("\\end{table}" + os.linesep)
+            # f.write() # To separate tables into different paragraphs.
 
 class Constellation:
     def __init__(self, guide):
@@ -1038,6 +1180,15 @@ if __name__ == '__main__':
         help = "File into which all measurements are written.")
     parser.add_argument('--bs', required = False, nargs = '+', default = [],
         help = "Benchmarks to plot.")
+    parser.add_argument('--print-ptables', required = False, default = False, action = 'store_true',
+        help = "Print parameter tables to stdout.")
+    parser.add_argument('--print-ptables-path', required = False, default = 'tables',
+        help = "Output folder path parameter tables")
     args = parser.parse_args()
+
+    if args.print_ptables:
+        print_parameter_tables(Path(args.print_ptables_path))
+        exit(0)
+
     _main(args)
 
