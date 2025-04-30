@@ -304,9 +304,72 @@ class Experiments:
             return [ f for f in folders ]
         return []
 
-    def get_baseline(self):
-        with open('baseline.txt', 'r') as f:
+    def get_baseline(self, file = 'baseline.txt'):
+        with open(file, 'r') as f:
             return json.load(f)
+
+    def print_baseline(self, args):
+        hw_parameters = set()
+        baselines     = []
+        for f in args.baseline_files:
+            baseline = self.get_baseline(f)
+            if not '_meta_' in baseline:
+                raise ValueError("Please define '_meta_' object with hardware parameters in baseline object", f)
+            meta     = baseline['_meta_']
+            hw_parameters = hw_parameters.union({ k for k in meta.keys() })
+            baselines.append((baseline, meta))
+
+        bms       = [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ]
+        workloads = [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ]
+
+        hw_columns = '&'.join(['H'] + [ p.capitalize() for p in sorted(hw_parameters) ])
+        hw_rows    = []
+        for i, (baseline, meta) in enumerate(baselines):
+            # Each meta object represents a hardware configuration.
+            hw_rows.append([f"H{i}"] + [ f"{meta[p] if p in meta else 'N/A'}" for p in sorted(hw_parameters) ])
+
+        with open(Path(args.baseline_out) / f"hardware-table.tex", 'w') as f:
+            f.write("\\begin{table}[!h]" + os.linesep)
+            f.write("\\caption{The table shows all hardware configurations used in the evaluation.}" + os.linesep)
+            f.write("\\begin{tabular}{l|*{@N}{l}r}".replace("@N", str(len(hw_rows[0]))) + os.linesep)
+            f.write(hw_columns + "\\\\" + os.linesep)
+            f.write("\\hline" + os.linesep)
+            f.write(os.linesep.join([ '&'.join(row) + "\\\\" for row in hw_rows ]) + os.linesep)
+            f.write("\\end{tabular}" + os.linesep)
+            f.write("\\end{table}" + os.linesep)
+
+        config_order = ["GG", "GT", "TG", "TT"]
+        for i, (baseline, meta) in enumerate(baselines):
+            rows = []
+            for b in bms:
+                for w in (workloads[:2] if b != 'jacop' else workloads[2:]):
+                    config  = Configuration().load(self.get_parameters_location(b, b, w))
+                    times   = dict()
+                    for c in config.get_all_combinations():
+                        config_name  = ''.join([
+                            'T' if c.jdk().find('tem') != -1 else 'G',
+                            'T' if c.jre().find('tem') != -1 else 'G'
+                        ])
+                        baseline_key = '-'.join([c.bm(), c.bm_workload(), c.id()])
+                        times[config_name] = baseline[baseline_key]
+
+                    rows.append((b, w.replace('_', '\\_'), *[ times[c_name] for c_name in config_order]))
+
+                    machine = meta['machine']
+                    cpufreq = meta['cpufreq']
+                    nexec   = meta['nexec']
+
+                    caption = f"The table shows baseline execution times for all workloads in the experiment, using {int(nexec) - 1} warmup runs before measurement, and hardware configuration H{i}."
+
+                    with open(Path(args.baseline_out) / f"baseline-{machine}-f{cpufreq}-n{nexec}.tex", 'w') as f:
+                        f.write("\\begin{table}[!h]" + os.linesep)
+                        f.write("\\caption{@1}".replace("@1", caption) + os.linesep)
+                        f.write("\\begin{tabular}{ll|*{@N}{l}r}".replace("@N", str(len(rows[0]) - 2)) + os.linesep)
+                        f.write('&'.join([ "B", "W", *config_order ]) + "\\\\" + os.linesep)
+                        f.write("\\hline" + os.linesep)
+                        f.write(os.linesep.join([ '&'.join(list(row)) + "\\\\" for row in rows ]) + os.linesep)
+                        f.write("\\end{tabular}" + os.linesep)
+                        f.write("\\end{table}" + os.linesep)
 
     def for_workloads_and_configurations(self, constraints):
         target_b                         = constraints.b
@@ -1184,10 +1247,24 @@ if __name__ == '__main__':
         help = "Print parameter tables to stdout.")
     parser.add_argument('--print-ptables-path', required = False, default = 'tables',
         help = "Output folder path parameter tables")
+    parser.add_argument('--print-btable', required = False, default = False, action = 'store_true',
+        help = "Print baseline table to standard output.")
+    parser.add_argument('--baseline-files', required = False, nargs = '+',  default = ['baseline.txt'],
+        help = "Baseline input files for --print-btable")
+    parser.add_argument('--baseline-out', required = False,
+        help = "Baseline tables output folder.")
     args = parser.parse_args()
 
     if args.print_ptables:
         print_parameter_tables(Path(args.print_ptables_path))
+        exit(0)
+
+    if args.print_btable:
+        if not len(args.baseline_files) > 0:
+            raise ValueError("Please specify one or more baseline files")
+        if not Path(args.baseline_out).exists():
+            raise ValueError("Please create the output location")
+        Experiments(args.x_location).print_baseline(args)
         exit(0)
 
     _main(args)
