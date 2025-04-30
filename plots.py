@@ -138,23 +138,25 @@ class Plot:
 
         vp = ax.violinplot(
             data,
-            showmeans   = True,
+            #showmeans   = True,  # The mean does not really add anything.
             showmedians = True
         )
 
-        for i, p in enumerate(vp['cmedians'].get_paths()):
-            medians = p.vertices
-            if i == 0:
-                plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
-            else:
-                plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx')
+        if 'cmedians' in vp:
+            for i, p in enumerate(vp['cmedians'].get_paths()):
+                medians = p.vertices
+                if i == 0:
+                    plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx', label = 'Median')
+                else:
+                    plt.plot((medians[0][0] + medians[1][0]) / 2.0, medians[0,1], 'rx')
 
-        for i, p in enumerate(vp['cmeans'].get_paths()):
-            means = p.vertices
-            if i == 0:
-                plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
-            else:
-                plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+')
+        if 'cmeans' in vp:
+            for i, p in enumerate(vp['cmeans'].get_paths()):
+                means = p.vertices
+                if i == 0:
+                    plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+', label = 'Mean')
+                else:
+                    plt.plot((means[0][0] + means[1][0]) / 2.0, means[0,1], 'r+')
 
         ax.legend()
         ax.fill_between((0, len(violins) + 1), (0.95, 0.95), (1.05, 1.05), color = '#0000ff0f')
@@ -174,7 +176,7 @@ class Plot:
         # caption.append(','.join([ column.get_xlabel(f"{i}{Plot._labels[column.ref_type]}") for i, column in enumerate(sorted(plot.columns, key = lambda it: it.ref_type)) ]))
 
         xoffset = 1
-        for violin in violins:
+        for violin in active_violins:
             # name = violin.constellation.get_name()
             plt.annotate(f"{len(violin.get_data())}", (xoffset, ymin - 0.05))
             plt.annotate(f"{len(violin.get_data_below())}", (xoffset, ymin))
