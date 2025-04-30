@@ -107,7 +107,7 @@ class Plot:
             return
         Plot.show_plots([self])
 
-    def plot_violins(title, violins, is_split = True, yrange = (0.5, 1.5)):
+    def plot_violins(title, violins, is_split = True, yrange = (0.5, 1.5), caption = None, label = None, output_location = Path('figures'), filename = None):
         ymin = 1
         ymax = 1
         data = []
@@ -190,7 +190,22 @@ class Plot:
         if is_split:
             plt.axvline(x = 1.5, color = 'b', linestyle = ':')
 
-        plt.show()
+        #plt.show()
+
+        if filename == None:
+            plt.close()
+            return
+
+        plt.savefig(Path(output_location) / (filename + '.png'))
+        with open(Path(output_location) / (filename + '.tex'), 'w') as f:
+            f.write("""
+\\begin{figure}[h]
+    \\centering
+    \\includegraphics[width=0.25\\textwidth]{mesh}
+    \\caption{@CAPTION}
+    \\label{fig:@NAME}
+\\end{figure}
+                    """.replace("@NAME", label).replace("@CAPTION", caption))
         plt.close()
 
     def _plot(plot, ax, caption):
@@ -937,6 +952,7 @@ class Violin:
         return self._data
 
 def _plot_from_file(args):
+    output_location = Path(args.plots_out)
     repo = Experiments(args.x_location)
     file = Path(args.file)
 
@@ -955,7 +971,12 @@ def _plot_from_file(args):
         )
         for rtype in rtypes
     ]
-    Plot.plot_violins("All types", violins, is_split = False)
+    Plot.plot_violins("All types", violins, is_split = False,
+                      label           = "all_by_type",
+                      caption         = "The figure shows a speedup plot where all data is split by refactoring type.",
+                      output_location = Path('figures'),
+                      filename        = "all_by_type"
+                      )
 
     # Split all by X (/X)
     config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
@@ -1021,7 +1042,15 @@ def _plot_from_file(args):
                     Constellation(guide).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).type({ 'type' : {rtype} })
                 ) for rtype in rtypes
             ]
-            Plot.plot_violins(f"Split {bm} by configurations", violins)
+            w_ = w.replace('_', '\\_')
+            Plot.plot_violins(f"Split {bm} by configurations", violins,
+                              label           = f"{bm}_{w_}_by_type",
+                              caption         = f"The figure show a speedup plot where {bm}/{w_} is split by type.",
+                              output_location = output_location,
+                              filename        = f"{bm}_{w}_by_type"
+                              )
+
+    #return
 
     # Split B/X by T (B/X/T)
     config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
@@ -1308,6 +1337,8 @@ if __name__ == '__main__':
         help = "Baseline input files for --print-btable")
     parser.add_argument('--baseline-out', required = False,
         help = "Baseline tables output folder.")
+    parser.add_argument('--plots-out', required = False, default = 'figures',
+        help = "Plots output folder.")
     args = parser.parse_args()
 
     if args.print_ptables:
