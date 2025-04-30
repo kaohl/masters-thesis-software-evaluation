@@ -983,6 +983,21 @@ def _plot_from_file(args):
         ]
         Plot.plot_violins(f"Split {bm} by configurations", violins)
 
+    # Split B/X by T (B/X/T)
+    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
+    for bm in benchmarks:
+        for c in config:
+            violins = [
+                Violin(repo, file,
+                    Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                )
+            ] + [
+                Violin(repo, file,
+                    Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ])).type({ 'type' : {rtype} })
+                ) for rtype in sorted(Plot._labels.values())
+            ]
+            Plot.plot_violins(f"Split {bm} by configurations", violins)
+
     b_data1 = dict()
     b_data2 = dict()
 
