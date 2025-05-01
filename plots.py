@@ -5,9 +5,13 @@ import json
 import matplotlib.pyplot as plt
 import numpy             as np
 import os
+import pandas
+import statsmodels.api as sm
 
-from pathlib import Path
+from statsmodels.formula.api import ols
+from pathlib                 import Path
 
+import experiment
 from configuration     import Configuration, Metrics, RefactoringConfiguration, ConfigurationBase
 from opportunity_cache import RefactoringDescriptor
 
@@ -920,6 +924,102 @@ class Constellation:
         _r = b._r if a._r == None else (a._r if b._r == None else None)
         return Constellation(a._guide).type(_t).bm(_b).workload(_w).config(_x).options(_r, a._get_type())
 
+class ANOVATable:
+    def __init__(self, experiments, repo, file, constellation):
+        self._experiments  = experiments
+        self.constellation = constellation
+        self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter())
+
+    def compute(self, label = None, caption = None, filename = None, output_location = None):
+        i_vars    = set()
+        d_vars    = set()
+        variables = set()
+        results   = []
+        is_r_set  = self.constellation._r != None
+
+        required_baselines = set()
+
+        for d, speedup in self.data:
+            t = d['T']['type']
+            b = d['B']['name']
+            w = d['W']['name']
+            x = d['X']
+            m = d['M']
+            r = d[t]
+
+            xc = Configuration().init_from_dict(x)
+            required_baselines.add((b, w, xc.id()))
+
+            entry = { **x, **m, 'R' : t, **(r if is_r_set else {}) }
+            entry['EXECUTION_TIME'] = float(speedup)
+            results.append(entry)
+
+            for k in m.keys():
+                d_vars.add(k)
+                variables.add(k)
+
+            for k in x.keys():
+                i_vars.add(k)
+                variables.add(k)
+
+            if is_r_set:
+                # Include refactoring parameters.
+                for k in r.keys():
+                    i_vars.add(k)
+                    variables.add(k)
+
+        variables.add('R')
+        i_vars.add('R')
+
+        for (x, b, w), combinations in self._experiments.workloads().parameter_combinations().items():
+            for c in combinations:
+                if (b, w, c.id()) in required_baselines:
+                    # Baseline value is always 1.0 for all dependent variables.
+                    baseline_metrics = dict([ (v, 1.0) for v in d_vars ])
+                    results.append({**c._values, **baseline_metrics, 'R' : 'N/A'})
+
+        ANOVATable.anova(variables, d_vars, i_vars, results, filename, output_location)
+
+    def setdftype(df, name, type):
+        if name in df:
+            df[name] = df[name].astype(type)
+
+    def anova(variables, d_vars, i_vars, data, filename, output_location):
+        # metrics.txt gives all the dependent variables
+        # parameters.txt gives all independent categorical variables and their value sets
+        # configuration.txt gives a specific combination of the independent variables
+
+        csv_path = output_location / f'{filename}.csv'
+
+        with open(csv_path, 'w') as f:
+            header = ','.join(sorted(variables))
+            f.write(header + os.linesep)
+            for d in data:
+                f.write(','.join([ str(d[var]) for var in sorted(variables) ]) + os.linesep)
+
+        df = pandas.read_csv(csv_path)
+
+        for v in d_vars:
+            ANOVATable.setdftype(df, v, float)
+
+        for v in i_vars:
+            ANOVATable.setdftype(df, v, str)
+
+        for d_var in d_vars:
+            ## https://www.statsmodels.org/stable/gettingstarted.html
+            ## https://patsy.readthedocs.io/en/latest/formulas.html
+            formula = '{} ~ {}'.format(d_var, ' + '.join(sorted(i_vars)))
+            #print("-"*80)
+            #print("Formula", formula)
+            #print("-"*80)
+            mod = ols(formula, data = df).fit()
+            res = sm.stats.anova_lm(mod)
+            #print(res)
+            table_path = output_location / f"{filename}.{d_var}.table"
+            with open(table_path, 'w') as f:
+                f.write(str(res))
+            #print("-"*80)
+
 class Violin:
     def __init__(self, repo, file, constellation):
         self.constellation = constellation
@@ -952,7 +1052,9 @@ class Violin:
         return self._data
 
 def _plot_from_file(args):
-    output_location = Path(args.plots_out)
+    output_location       = Path(args.plots_out)
+    table_output_location = Path(args.tables_out)
+
     repo = Experiments(args.x_location)
     file = Path(args.file)
 
@@ -962,7 +1064,29 @@ def _plot_from_file(args):
 
     guide = create_constellation_guide()
 
-    rtypes = sorted(Plot._labels.values())
+    rtypes     = sorted(Plot._labels.values())
+    benchmarks = ['batik', 'jacop', 'luindex', 'lusearch', 'xalan']
+    workloads  = {
+        'batik'    : ['small', 'default'],
+        'jacop'    : ['mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4'],
+        'luindex'  : ['small', 'default'],
+        'lusearch' : ['small', 'default'],
+        'xalan'    : ['small', 'default']
+    }
+
+    # TODO: Consider which tables we want to look at.
+
+    ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }))\
+        .compute(filename = "all_workloads_and_types", output_location = table_output_location)
+
+    for b in benchmarks:
+        ANOVATable(
+            experiment.Experiments(args.x_location),
+            repo,
+            file,
+            Constellation(guide).bm({ 'name' : {b} })
+        )\
+        .compute(filename = f"{b}_all_types", output_location = table_output_location)
 
     # Split all by type.
     violins = [
@@ -990,15 +1114,6 @@ def _plot_from_file(args):
         ) for c in config
     ]
     Plot.plot_violins(f"All by X", violins)
-
-    benchmarks = ['batik', 'jacop', 'luindex', 'lusearch', 'xalan']
-    workloads  = {
-        'batik'    : ['small', 'default'],
-        'jacop'    : ['mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4'],
-        'luindex'  : ['small', 'default'],
-        'lusearch' : ['small', 'default'],
-        'xalan'    : ['small', 'default']
-    }
 
     # Split B by X (B/X)
     config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
@@ -1339,6 +1454,8 @@ if __name__ == '__main__':
         help = "Baseline tables output folder.")
     parser.add_argument('--plots-out', required = False, default = 'figures',
         help = "Plots output folder.")
+    parser.add_argument('--tables-out', required = False, default = 'tables/anova',
+        help = "ANOVA tables output folder.")
     args = parser.parse_args()
 
     if args.print_ptables:
