@@ -204,15 +204,15 @@ class Plot:
             return
 
         plt.savefig(Path(output_location) / (filename + '.png'))
-        with open(Path(output_location) / (filename + '.tex'), 'w') as f:
-            f.write("""
-\\begin{figure}[h]
-    \\centering
-    \\includegraphics[width=0.25\\textwidth]{mesh}
-    \\caption{@CAPTION}
-    \\label{fig:@NAME}
-\\end{figure}
-                    """.replace("@NAME", label).replace("@CAPTION", caption))
+        #with open(Path(output_location) / (filename + '.tex'), 'w') as f:
+        #    f.write("""
+        #    \\begin{figure}[h]
+        #    \\centering
+        #    \\includegraphics[width=1.0\\textwidth, scale=1.0]{./chapters/plots/pascal_f1200_n10/lusearch_small_by_type.png}
+        #    \\caption{@CAPTION}
+        #    \\label{fig:@NAME}
+        #    \\end{figure}
+        #    """.replace("@NAME", label).replace("@CAPTION", caption))
         plt.close()
 
     def _plot(plot, ax, caption):
@@ -1101,7 +1101,7 @@ def _plot_from_file(args):
     Plot.plot_violins("All types", violins, is_split = False,
                       label           = "all_by_type",
                       caption         = "The figure shows a speedup plot where all data is split by refactoring type.",
-                      output_location = Path('figures'),
+                      output_location = output_location,
                       filename        = "all_by_type"
                       )
 
