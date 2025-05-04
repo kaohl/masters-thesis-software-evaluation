@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import matplotlib
 import matplotlib.pyplot as plt
 import numpy             as np
 import os
@@ -14,6 +15,8 @@ from pathlib                 import Path
 import experiment
 from configuration     import Configuration, Metrics, RefactoringConfiguration, ConfigurationBase
 from opportunity_cache import RefactoringDescriptor
+
+matplotlib.use('TkAgg') # Fix for some ICE error...
 
 # Violin plots for speedup graphs.
 #
