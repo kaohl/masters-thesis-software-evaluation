@@ -1182,6 +1182,31 @@ def _plot_from_file(args):
                               filename        = f"{bm}_{w}_by_type"
                               )
 
+    # Split B/W/X by T (B/W/X/T)
+    for bm in benchmarks:
+        for w in workloads[bm]:
+            for c in config:
+                violins = [
+                    Violin(repo, file,
+                        Constellation(guide).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(config_to_filter(c))
+                    )
+                ] + [
+                    Violin(repo, file,
+                        Constellation(guide).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(config_to_filter(c)).type({ 'type' : {rtype} })
+                    ) for rtype in rtypes
+                ]
+                w_ = w.replace('_', '\\_')
+                x_ = ''.join([
+                    'T' if c.jdk().find('tem') != -1 else 'G',
+                    'T' if c.jre().find('tem') != -1 else 'G'
+                ])
+                Plot.plot_violins(f"Split {bm}/{w}/{x_} by type", violins,
+                                  label           = f"{bm}_{w_}_{x_}_by_type",
+                                  caption         = f"The figure show a speedup plot where {bm}/{w_}/{x_} is split by type.",
+                                  output_location = output_location,
+                                  filename        = f"{bm}_{w}_{x_}_by_type"
+                                  )
+
     # Split B/X by T (B/X/T)
     for bm in benchmarks:
         for c in config:
