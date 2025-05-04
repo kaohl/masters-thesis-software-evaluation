@@ -138,7 +138,7 @@ class Plot:
             labels.append(diff.get_readable_name())
 
         fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
-        ax.set_ylabel("Speedup (baseline/measure)")
+        ax.set_ylabel("Speedup (measure/baseline)")
 
         vp = ax.violinplot(
             data,
@@ -256,7 +256,7 @@ class Plot:
         else:
             fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
             plot    = plots[0]
-            ax.set_ylabel("Speedup (baseline/measure)")
+            ax.set_ylabel("Speedup (measure/baseline)")
             Plot._plot(plot, ax, caption)
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
@@ -1113,7 +1113,11 @@ def _plot_from_file(args):
             Constellation(guide).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
         ) for c in config
     ]
-    Plot.plot_violins(f"All by X", violins)
+    Plot.plot_violins(f"All by X", violins,
+                      label           = f"all_by_X",
+                      caption         = f"The figure show a speedup plot where all data is split by JDK and JRE configurations.",
+                      output_location = output_location,
+                      filename        = f"all_by_X")
 
     # Split B by X (B/X)
     config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
@@ -1127,7 +1131,12 @@ def _plot_from_file(args):
                 Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
             ) for c in config
         ]
-        Plot.plot_violins(f"Split {bm} by configurations", violins)
+        Plot.plot_violins(f"Split {bm} by configurations", violins,
+                          label           = f"{bm}_by_X",
+                          caption         = f"The figure show a speedup plot where {bm} data is split by JDK and JRE configurations.",
+                          output_location = output_location,
+                          filename        = f"{bm}_by_X"
+                          )
 
     # Split B/W by X (B/W/X)
     config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
@@ -1142,7 +1151,13 @@ def _plot_from_file(args):
                     Constellation(guide).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
                 ) for c in config
             ]
-            Plot.plot_violins(f"Split {bm} by configurations", violins)
+            w_ = w.replace('_', '\\_')
+            Plot.plot_violins(f"Split {bm} by configurations", violins,
+                              label           = f"{bm}_{w_}_by_X",
+                              caption         = f"The figure show a speedup plot where {bm}/{w_} is split by JDK and JRE configurations.",
+                              output_location = output_location,
+                              filename        = f"{bm}_{w}_by_X"
+                              )
 
     # Split B/W by T (B/W/T)
     config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
@@ -1180,7 +1195,18 @@ def _plot_from_file(args):
                     Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ])).type({ 'type' : {rtype} })
                 ) for rtype in rtypes
             ]
-            Plot.plot_violins(f"Split {bm} by configurations", violins)
+            c_ = ''.join([
+                'T' if c.jdk().find('tem') != -1 else 'G',
+                'T' if c.jre().find('tem') != -1 else 'G'
+            ])
+            Plot.plot_violins(f"Split {bm} by configurations", violins,
+                              label           = f"{bm}_{c_}_by_type",
+                              caption         = f"The figure show a speedup plot where {bm}/{c_} is split by type.",
+                              output_location = output_location,
+                              filename        = f"{bm}_{c_}_by_type"
+                              )
+
+    return
 
     b_data1 = dict()
     b_data2 = dict()
