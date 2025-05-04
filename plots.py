@@ -1077,6 +1077,9 @@ def _plot_from_file(args):
         'xalan'    : ['small', 'default']
     }
 
+    config           = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
+    config_to_filter = lambda c: dict([ (k, {v}) for k, v in c.to_dict().items() ])
+
     # TODO: Consider which tables we want to look at.
 
     ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }))\
@@ -1106,14 +1109,13 @@ def _plot_from_file(args):
                       )
 
     # Split all by X (/X)
-    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
     violins = [
         Violin(repo, file,
             Constellation(guide)
         )
     ] + [
         Violin(repo, file,
-            Constellation(guide).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+            Constellation(guide).config(config_to_filter(c))
         ) for c in config
     ]
     Plot.plot_violins(f"All by X", violins,
@@ -1123,7 +1125,6 @@ def _plot_from_file(args):
                       filename        = f"all_by_X")
 
     # Split B by X (B/X)
-    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
     for bm in benchmarks:
         violins = [
             Violin(repo, file,
@@ -1131,7 +1132,7 @@ def _plot_from_file(args):
             )
         ] + [
             Violin(repo, file,
-                Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                Constellation(guide).bm({ 'name' : {bm} }).config(config_to_filter(c))
             ) for c in config
         ]
         Plot.plot_violins(f"Split {bm} by configurations", violins,
@@ -1142,7 +1143,6 @@ def _plot_from_file(args):
                           )
 
     # Split B/W by X (B/W/X)
-    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
     for bm in benchmarks:
         for w in workloads[bm]:
             violins = [
@@ -1151,7 +1151,7 @@ def _plot_from_file(args):
                 )
             ] + [
                 Violin(repo, file,
-                    Constellation(guide).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                    Constellation(guide).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(config_to_filter(c))
                 ) for c in config
             ]
             w_ = w.replace('_', '\\_')
@@ -1163,7 +1163,6 @@ def _plot_from_file(args):
                               )
 
     # Split B/W by T (B/W/T)
-    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
     for bm in benchmarks:
         for w in workloads[bm]:
             violins = [
@@ -1183,19 +1182,16 @@ def _plot_from_file(args):
                               filename        = f"{bm}_{w}_by_type"
                               )
 
-    #return
-
     # Split B/X by T (B/X/T)
-    config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
     for bm in benchmarks:
         for c in config:
             violins = [
                 Violin(repo, file,
-                    Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                    Constellation(guide).bm({ 'name' : {bm} }).config(config_to_filter(c))
                 )
             ] + [
                 Violin(repo, file,
-                    Constellation(guide).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ])).type({ 'type' : {rtype} })
+                    Constellation(guide).bm({ 'name' : {bm} }).config(config_to_filter(c)).type({ 'type' : {rtype} })
                 ) for rtype in rtypes
             ]
             c_ = ''.join([
@@ -1260,20 +1256,18 @@ def _plot_from_file(args):
         off = off + 2
 
         # Split T by X (T/X)
-        config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
         violins = [
             Violin(repo, file,
                 Constellation(guide).type({ 'type' : {rtype} })
             )
         ] + [
             Violin(repo, file,
-                Constellation(guide).type({ 'type' : {rtype} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                Constellation(guide).type({ 'type' : {rtype} }).config(config_to_filter(c))
             ) for c in config
         ]
         Plot.plot_violins(f"{rtype} by configurations", violins)
 
         # Split TB by X (TB/X)
-        config = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
         for bm in ['batik', 'jacop', 'luindex', 'lusearch', 'xalan']:
             violins = [
                 Violin(repo, file,
@@ -1281,7 +1275,7 @@ def _plot_from_file(args):
                 )
             ] + [
                 Violin(repo, file,
-                    Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in c.to_dict().items() ]))
+                    Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(config_to_filter(c))
                 ) for c in config
             ]
             Plot.plot_violins(f"{bm} configurations", violins)
@@ -1299,20 +1293,20 @@ def _plot_from_file(args):
                 )
             ] + [
                 Violin(repo, file,
-                    Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).options(dict([ (k, {v}) for k, v in rc.to_dict().items() ]))
+                    Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).options(config_to_filter(rc))
                 ) for rc in r_config
             ]
             Plot.plot_violins(f"{rtype}/{bm}", violins)
 
             # Split TBX by R (TBX/R)
-            for config in Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations():
+            for c in config:
                 violins = [
                     Violin(repo, file,
-                        Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in config.to_dict().items() ]))
+                        Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(config_to_filter(c))
                     )
                 ] + [
                     Violin(repo, file,
-                        Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(dict([ (k, {v}) for k, v in config.to_dict().items() ])).options(dict([ (k, {v}) for k, v in rc.to_dict().items() ]))
+                        Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).config(config_to_filter(c)).options(config_to_filter(rc))
                     ) for rc in r_config
                 ]
                 Plot.plot_violins(f"{bm} configurations", violins)
