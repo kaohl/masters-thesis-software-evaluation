@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import numpy as np
 import os
 import tempfile
 
@@ -12,15 +13,18 @@ import run_benchmark as bm_script
 
 from configuration import Configuration
 
-def benchmark(configuration):
+def benchmark(configuration, n = 10):
     try:
         bm = configuration.bm()
         wl = configuration.bm_workload()
         with tempfile.TemporaryDirectory(delete = True, dir = 'temp') as location:
             deploy_dir = Path(location)
             bm_script.deploy_benchmark(configuration, True, deploy_dir, None)
-            exectime = bm_script.run_benchmark(configuration, deploy_dir, False, None)
-            return exectime
+            xs = []
+            for i in range(n):
+                x = bm_script.run_benchmark(configuration, deploy_dir, False, None)
+                xs.append(int(x))
+            return np.mean(xs), np.std(xs, ddof=1)
     except TimeoutExpired as e:
         print(f"Benchmark timed out: {bm} {wl}")
     except Exception as e:
@@ -49,7 +53,10 @@ def compute_baseline(args):
             id  = configuration.id()
             key = '-'.join([bm, wl, id])
             if not key in baseline:
-                baseline[key] = benchmark(configuration)
+                mean, std = benchmark(configuration)
+                baseline[key          ] = int(mean)
+                baseline[key + '-mean'] = mean      # In case we need the precision... not likely.
+                baseline[key + '-std' ] = std
                 with open('baseline.txt', 'w') as f:
                     f.write(json.dumps(baseline, sort_keys = True))
 
