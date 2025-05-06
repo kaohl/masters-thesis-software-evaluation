@@ -340,17 +340,23 @@ class Experiments:
             if not '_meta_' in baseline:
                 raise ValueError("Please define '_meta_' object with hardware parameters in baseline object", f)
             meta     = baseline['_meta_']
-            hw_parameters = hw_parameters.union({ k for k in meta.keys() })
-            baselines.append((baseline, meta))
+            hardware = meta['hardware']
+            hw_parameters = hw_parameters.union({ k for k in hardware.keys() })
+            baselines.append((baseline, meta, hardware))
 
         bms       = [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ]
         workloads = [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ]
 
+        hw_map     = dict()
         hw_columns = '&'.join(['H'] + [ p.capitalize() for p in sorted(hw_parameters) ])
         hw_rows    = []
-        for i, (baseline, meta) in enumerate(baselines):
-            # Each meta object represents a hardware configuration.
-            hw_rows.append([f"H{i}"] + [ f"{meta[p] if p in meta else 'N/A'}" for p in sorted(hw_parameters) ])
+        hw_i       = 0
+        for i, (baseline, meta, hardware) in enumerate(baselines):
+            hw_values = [ f"{hardware[p] if p in hardware else 'N/A'}" for p in sorted(hw_parameters) ]
+            if not tuple(hw_values) in hw_map:
+                hw_map[tuple(hw_values)] = hw_i
+                hw_rows.append([f"H{hw_i}"] + hw_values)
+                hw_i                     = hw_i + 1
 
         with open(Path(args.baseline_out) / f"hardware-table.tex", 'w') as f:
             f.write("\\begin{table}[!h]" + os.linesep)
@@ -362,34 +368,40 @@ class Experiments:
             f.write("\\end{tabular}" + os.linesep)
             f.write("\\end{table}" + os.linesep)
 
-        config_order = ["GG", "GT", "TG", "TT"]
-        for i, (baseline, meta) in enumerate(baselines):
+        for i, (baseline, meta, hardware) in enumerate(baselines):
             rows = []
             for b in bms:
                 for w in (workloads[:2] if b != 'jacop' else workloads[2:]):
-                    config  = Configuration().load(self.get_parameters_location(b, b, w))
-                    times   = dict()
+                    config       = Configuration().load(self.get_parameters_location(b, b, w))
+                    times        = []
+                    column_order = []
                     for c in config.get_all_combinations():
                         config_name  = ''.join([
                             'T' if c.jdk().find('tem') != -1 else 'G',
                             'T' if c.jre().find('tem') != -1 else 'G'
                         ])
-                        baseline_key = '-'.join([c.bm(), c.bm_workload(), c.id()])
-                        times[config_name] = baseline[baseline_key]
+                        column_order.append(config_name)
+                        column_order.append(config_name + ' (std)')
+                        baseline_key_mean = '-'.join([c.bm(), c.bm_workload(), c.id()])
+                        baseline_key_std  = '-'.join([c.bm(), c.bm_workload(), c.id(), 'std'])
+                        times.append(str(baseline[baseline_key_mean]))
+                        times.append(str((round(baseline[baseline_key_std], 3) if baseline_key_std in baseline else "N/A")))
 
-                    rows.append((b, w.replace('_', '\\_'), *[ times[c_name] for c_name in config_order]))
+                    rows.append((b, w.replace('_', '\\_'), *times))
 
-                    machine = meta['machine']
-                    cpufreq = meta['cpufreq']
-                    nexec   = meta['nexec']
+                    hw_key = tuple([ f"{hardware[p] if p in hardware else 'N/A'}" for p in sorted(hw_parameters) ])
+                    hw_i   = hw_map[hw_key]
 
-                    caption = f"The table shows baseline execution times for all workloads in the experiment, using {int(nexec) - 1} warmup runs before measurement, and hardware configuration H{i}."
+                    nexec   = meta['nexec']   # Number of harness iterations (warmup+measure).
+                    bexec   = meta['bexec']   # Number of baseline executions.
 
-                    with open(Path(args.baseline_out) / f"baseline-{machine}-f{cpufreq}-n{nexec}.tex", 'w') as f:
+                    caption = f"The table shows baseline execution times in milliseconds, as an average over {bexec} invocations, for all workloads in the experiment, using {int(nexec) - 1} warmup runs before measurement, and hardware configuration H{hw_i}."
+
+                    with open(Path(args.baseline_out) / f"baseline-h{hw_i}-n{nexec}-b{bexec}.tex", 'w') as f:
                         f.write("\\begin{table}[!h]" + os.linesep)
                         f.write("\\caption{@1}".replace("@1", caption) + os.linesep)
                         f.write("\\begin{tabular}{ll|*{@N}{l}r}".replace("@N", str(len(rows[0]) - 2)) + os.linesep)
-                        f.write('&'.join([ "B", "W", *config_order ]) + "\\\\" + os.linesep)
+                        f.write('&'.join([ "B", "W", *column_order ]) + "\\\\" + os.linesep)
                         f.write("\\hline" + os.linesep)
                         f.write(os.linesep.join([ '&'.join(list(row)) + "\\\\" for row in rows ]) + os.linesep)
                         f.write("\\end{tabular}" + os.linesep)
