@@ -105,6 +105,36 @@ class Plot:
         'org.eclipse.jdt.ui.rename.type.parameter'   : 'RP'
     }
 
+    #_labels_names = {
+    #    'org.eclipse.jdt.ui.inline.constant'         : 'Inline constant',
+    #    'org.eclipse.jdt.ui.inline.method'           : 'Inline method',
+    #    'org.eclipse.jdt.ui.inline.temp'             : 'Inline temp',
+    #    'org.eclipse.jdt.ui.extract.constant'        : 'Extract constant',
+    #    'org.eclipse.jdt.ui.extract.method'          : 'Extract method',
+    #    'org.eclipse.jdt.ui.extract.temp'            : 'Extract temp',
+    #    'org.eclipse.jdt.ui.introduce.indirection'   : 'Introduce indirection',
+    #    'org.eclipse.jdt.ui.rename.field'            : 'Rename field',
+    #    'org.eclipse.jdt.ui.rename.local.variable'   : 'Rename variable',
+    #    'org.eclipse.jdt.ui.rename.method'           : 'Rename method',
+    #    'org.eclipse.jdt.ui.rename.type'             : 'Rename type',
+    #    'org.eclipse.jdt.ui.rename.type.parameter'   : 'Rename type parameter'
+    #}
+
+    _labels_names = {
+        'IC' : 'Inline constant',
+        'IM' : 'Inline method',
+        'IT' : 'Inline temp',
+        'EC' : 'Extract constant',
+        'EM' : 'Extract method',
+        'ET' : 'Extract temp',
+        'II' : 'Introduce indirection',
+        'RF' : 'Rename field',
+        'RV' : 'Rename variable',
+        'RM' : 'Rename method',
+        'RT' : 'Rename type',
+        'RP' : 'Rename type parameter'
+    }
+
     def __init__(self, title, columns):
         self.title   = title
         self.columns = columns
@@ -140,8 +170,8 @@ class Plot:
             diff = Constellation.split_diff(active_violins[0].constellation, v.constellation)
             labels.append(diff.get_readable_name())
 
-        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
-        ax.set_ylabel("Speedup (measure/baseline)")
+        fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 6), sharey = True, sharex = True)
+        ax.set_ylabel("Speedup (baseline/measure)")
 
         vp = ax.violinplot(
             data,
@@ -172,6 +202,12 @@ class Plot:
         if not is_split:
             labels = [ v.constellation.get_readable_name() for v in active_violins ]
 
+        apply_slanted_labels = False
+        for i, label in enumerate(labels):
+            if label in Plot._labels_names.keys():
+                apply_slanted_labels = True
+                labels[i] = f"{label} ({Plot._labels_names[label]})"
+
         #labels = [ Plot._labels[column.ref_type] for column in sorted(plot.columns, key = lambda it: it.ref_type) ]
         #labels = [ str(i) for i in range(1, len(violins) + 1) ]
         ax.set_xticks(np.arange(1, len(labels) + 1), labels=labels)
@@ -191,6 +227,9 @@ class Plot:
             # plt.annotate(f"{name}, {len(violin.get_data())}", (xoffset, ymin - 0.05))
             # plt.annotate(f"{violin.constellation.get_name()}", (xoffset + 0.4, ymin))
             xoffset = xoffset + 1
+
+        if apply_slanted_labels:
+            plt.xticks(rotation = 15)
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
 
@@ -259,7 +298,7 @@ class Plot:
         else:
             fig, ax = plt.subplots(nrows = 1, ncols = 1, figsize = (9, 4), sharey = True, sharex = True)
             plot    = plots[0]
-            ax.set_ylabel("Speedup (measure/baseline)")
+            ax.set_ylabel("Speedup (baseline/measure)")
             Plot._plot(plot, ax, caption)
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
@@ -532,8 +571,8 @@ class Experiments:
                     tms          = entry['M']['EXECUTION_TIME']
                     x            = Configuration().init_from_dict(entry['X'])
                     baseline_key = '-'.join([x.bm(), x.bm_workload(), x.id()])
-                    speedup      = int(tms) / int(baseline[baseline_key])
-                    print(f"MATCH ({i})", entry['T']['type'], x.bm(), x.bm_workload())
+                    speedup      =  int(baseline[baseline_key]) / int(tms) # Speedup is defined as > 1 if speedup, < 1 if no slowdown
+                    #print(f"MATCH ({i})", entry['T']['type'], x.bm(), x.bm_workload())
                     entries.append((entry, speedup))
                     coordinates.append((len(coordinates), i))
         return entries, coordinates
@@ -636,17 +675,17 @@ class CustomConfig(ConfigurationBase):
 def visibility_name_lookup(config):
     v = config._values['visibility']
     if v == '0':
-        return 'PK'
+        return 'package' # 'PK'
     if v == '1':
-        return 'PL'
+        return 'public'  # 'PL'
     if v == '2':
-        return 'PV'
+        return 'private' # 'PV'
     if v == '4':
-        return 'PT'
-    raise ValueError("Unknown visibility", v)
+        return 'protected' # 'PT'
+    return None
 
 def property_value_lookup(config, prop):
-    return config._values[prop]
+    return config._values.get(prop)
 
 def name_value_lookup(config):
     return property_value_lookup(config, 'name')
@@ -655,24 +694,43 @@ def type_value_lookup(config):
     return property_value_lookup(config, 'type')
 
 def name_name_lookup(config):
-    n = config._values['name']
-    return f"L{len(n)}"
+    n = config._values.get('name')
+    return f"L{len(n)}" if n != None else None
 
 def final_name_lookup(config):
     f = config._values['final']
-    return "FINAL" if f == 'true' else "!FINAL"
+    return "Final" if f == 'true' else "!Final"
 
 def em_name_lookup(config):
     return visibility_name_lookup(config)
-
-def rm_name_lookup(config):
-    return name_name_lookup(config)
 
 def et_name_lookup(config):
     return final_name_lookup(config)
 
 def ec_name_lookup(config):
-    return f"{visibility_name_lookup(config)}/{name_name_lookup(config)}"
+    parts = [
+        visibility_name_lookup(config),
+        name_name_lookup(config)
+    ]
+    return '/'.join([ p for p in parts if p != None ])
+
+def ii_name_lookup(config):
+    return name_name_lookup(config)
+
+def rf_name_lookup(config):
+    return name_name_lookup(config)
+
+def rv_name_lookup(config):
+    return name_name_lookup(config)
+
+def rm_name_lookup(config):
+    return name_name_lookup(config)
+
+def rt_name_lookup(config):
+    return name_name_lookup(config)
+
+def rp_name_lookup(config):
+    return name_name_lookup(config)
 
 def no_name_lookup(config):
     return None
@@ -684,21 +742,60 @@ def x_value_lookup(config):
 
 def create_constellation_guide():
     names      = [ 'x', 'xxxxxxxx', 'xxxxxxxxxxxxxxxx' ]
+    X_names    = [ 'X', 'Xxxxxxxx', 'Xxxxxxxxxxxxxxxx' ]
     visibility = [ '0', '1', '2', '4' ] # {package:0, public:1, private:2, protected:4}
+    true_false = ['true', 'false']
     parameter_sets = [
-        ParameterSet('T' , CustomConfig(type_value_lookup).init_from_dict({ 'type' : [ x for x in sorted(Plot._labels.values()) ] })),
-        ParameterSet('B' , CustomConfig(name_value_lookup).init_from_dict({ 'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ] })),
-        ParameterSet('W' , CustomConfig(name_value_lookup).init_from_dict({ 'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ] })),
-        ParameterSet('X' , CustomConfig(x_value_lookup).init_from_dict({ 'jre'  : ['17.0.9-graalce', '17.0.14-tem'], 'jdk' : ['17.0.9-graalce', '17.0.14-tem'] })),
-        # Independent refactoring configurations (Only one will be active per expression.).
+        ParameterSet('T' , CustomConfig(type_value_lookup).init_from_dict({
+            'type' : [ x for x in sorted(Plot._labels.values()) ]
+        })),
+        ParameterSet('B' , CustomConfig(name_value_lookup).init_from_dict({
+            'name' : [ 'batik', 'jacop', 'luindex', 'lusearch', 'xalan' ]
+        })),
+        ParameterSet('W' , CustomConfig(name_value_lookup).init_from_dict({
+            'name' : [ 'small', 'default', 'mzc18_1', 'mzc18_2', 'mzc18_3', 'mzc18_4' ]
+        })),
+        ParameterSet('X' , CustomConfig(x_value_lookup).init_from_dict({
+            'jre' : ['17.0.9-graalce', '17.0.14-tem'],
+            'jdk' : ['17.0.9-graalce', '17.0.14-tem']
+        })),
+        # Independent refactoring configurations (Only one will be active per constellation expression.).
         # Only include the ones that we want to discuss.
         # Note: We only need to include the parameters that we want to explore.
         #       The rest will be ignored. How does this affect results?
         #       We will include multiple variations of the same refactorings for parameters that we ignore.
-        ParameterSet('EM', CustomConfig(em_name_lookup).init_from_dict({ 'visibility' : visibility })),
-        ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({ 'name' : names })),
-        ParameterSet('ET', CustomConfig(et_name_lookup).init_from_dict({ 'final' : ['true', 'false'] })),
-        ParameterSet('EC', CustomConfig(ec_name_lookup).init_from_dict({ 'name' : names, 'visibility' : visibility }))
+        ParameterSet('EM', CustomConfig(em_name_lookup).init_from_dict({
+            'visibility' : visibility
+        })),
+        ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({
+            'name' : names
+        })),
+        ParameterSet('ET', CustomConfig(et_name_lookup).init_from_dict({
+            'final' : ['true', 'false']
+        })),
+        ParameterSet('EC', CustomConfig(ec_name_lookup).init_from_dict({
+            # 'name'       : names,
+            'visibility' : visibility
+        })),
+        ParameterSet('II', CustomConfig(ii_name_lookup).init_from_dict({
+            "name"       : names
+            #,"references" : true_false
+        })),
+        ParameterSet('RF', CustomConfig(rf_name_lookup).init_from_dict({
+            "name"       : names
+        })),
+        ParameterSet('RV', CustomConfig(rv_name_lookup).init_from_dict({
+            "name"       : names
+        })),
+        ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({
+            "name"       : names
+        })),
+        ParameterSet('RT', CustomConfig(rt_name_lookup).init_from_dict({
+            "name"       : X_names
+        })),
+        ParameterSet('RP', CustomConfig(rp_name_lookup).init_from_dict({
+            "name"       : X_names
+        }))
     ]
     return ConstellationGuide(parameter_sets)
 
@@ -1241,6 +1338,76 @@ def _plot_from_file(args):
                               output_location = output_location,
                               filename        = f"{bm}_{c_}_by_type"
                               )
+
+    # Selection of benchmarks, workloads, and types that show signs of
+    # performance effects on average based on manual inspection of violins.
+    # Since some violins have shown signs of being a "poor" fitting to some
+    # of the data, we could missing interesting effects by only investigating
+    # a subset of splits here.
+    rc_benchmarks = {
+        'jacop' : {
+            'mzc18_2' : {
+                'TG' : ['EM', 'IC', 'RF']
+            },
+            'mzc18_3' : {
+                'GG' : ['EM'],
+                'TG' : ['IC'],
+                'TT' : ['IT', 'RM', 'RV']
+            }
+        },
+        'lusearch' : {
+            'small' : {
+                'GG' : ['IC', 'IT', 'RF', 'RT'],
+                'GT' : ['EC', 'EM', 'ET', 'IC', 'II', 'IT', 'RF', 'RM', 'RT', 'RV'],
+                'TG' : ['EM', 'IC', 'II', 'RM', 'RT', 'RV'],
+                'TT' : ['EC']
+            }
+        },
+        'xalan' : {
+            'small' : {
+                'GG' : ['RT'],
+                'GT' : ['EC', 'IC', 'II', 'IT', 'RT'],
+                'TT' : ['RT']
+            }
+        }
+    }
+    for rtype in rtypes:
+        # Split TBX by R (TBX/R)
+        r_config = guide.get_parameter_configurations(rtype)
+        if len(r_config) == 0:
+            continue
+        for bm in benchmarks:
+            #if not bm in rc_benchmarks:
+            #    continue
+            for w in workloads[bm]:
+                #if not w in rc_benchmarks[bm]:
+                #    continue
+                # Split TBWX by R (TBWX/R)
+                for c in config:
+                    c_ = ''.join([
+                        'T' if c.jdk().find('tem') != -1 else 'G',
+                        'T' if c.jre().find('tem') != -1 else 'G'
+                    ])
+                    #if not c_ in rc_benchmarks[bm][w]:
+                    #    continue
+                    #if not rtype in rc_benchmarks[bm][w][c_]:
+                    #    continue
+                    violins = [
+                        Violin(repo, file,
+                            Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(config_to_filter(c))
+                        )
+                    ] + [
+                        Violin(repo, file,
+                               Constellation(guide).type({ 'type' : {rtype} }).bm({ 'name' : {bm} }).workload({ 'name' : {w} }).config(config_to_filter(c)).options(config_to_filter(rc))
+                               ) for rc in r_config
+                    ]
+                    w_ = w.replace('_', '\\_')
+                    Plot.plot_violins(f"Split {bm}/{w_}/{c_}/{rtype} by refactoring configurations", violins,
+                                      label           = f"{bm}_{w_}_{c_}_{rtype}_by_rc",
+                                      caption         = f"The figure show a speedup plot where {bm}/{w_}/{c_}/{rtype} is split by refactoring configuration.",
+                                      output_location = output_location,
+                                      filename        = f"{bm}_{w}_{c_}_{rtype}_by_rc"
+                                      )
 
     return
 
