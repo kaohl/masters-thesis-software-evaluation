@@ -605,6 +605,11 @@ class ConstellationGuide:
     def get_parameters(self, set_name):
         return { k for k in self.sets_by_name[set_name].configuration._options.keys() }
 
+    def get_parameter_options_filter(self, set_name):
+        if not set_name in self.sets_by_name:
+            return dict()
+        return dict([ (k, set(v)) for k, v in self.sets_by_name[set_name].configuration._options.items() ])
+
     #{
     #  'T'   : { 'type' : {'...'} },
     #  'B'   : { 'name' : {'batik'} },
@@ -767,9 +772,6 @@ def create_constellation_guide():
         ParameterSet('EM', CustomConfig(em_name_lookup).init_from_dict({
             'visibility' : visibility
         })),
-        ParameterSet('RM', CustomConfig(rm_name_lookup).init_from_dict({
-            'name' : names
-        })),
         ParameterSet('ET', CustomConfig(et_name_lookup).init_from_dict({
             'final' : ['true', 'false']
         })),
@@ -777,6 +779,9 @@ def create_constellation_guide():
             # 'name'       : names,
             'visibility' : visibility
         })),
+        #ParameterSet('IC', CustomConfig(no_name_lookup).init_from_dict({})),
+        #ParameterSet('IM', CustomConfig(no_name_lookup).init_from_dict({})),
+        #ParameterSet('IT', CustomConfig(no_name_lookup).init_from_dict({})),
         ParameterSet('II', CustomConfig(ii_name_lookup).init_from_dict({
             "name"       : names
             #,"references" : true_false
@@ -1090,7 +1095,12 @@ class ANOVATable:
                     baseline_metrics = dict([ (v, 1.0) for v in d_vars ])
                     results.append({**c._values, **baseline_metrics, 'R' : 'N/A'})
 
-        ANOVATable.anova(variables, d_vars, i_vars, results, filename, output_location)
+        try:
+            ANOVATable.anova(variables, d_vars, i_vars, results, filename, output_location)
+        except Exception as e:
+            print()
+            print("ERROR", str(e)) # TODO: For some reason this happens in the ols method for RT_rc
+            print()
 
     def setdftype(df, name, type):
         if name in df:
@@ -1103,11 +1113,13 @@ class ANOVATable:
 
         csv_path = output_location / f'{filename}.csv'
 
+        print("Computing ANOVA", str(csv_path), d_vars, i_vars, "DATA LEN:", len(data))
+
         with open(csv_path, 'w') as f:
             header = ','.join(sorted(variables))
             f.write(header + os.linesep)
             for d in data:
-                f.write(','.join([ str(d[var]) for var in sorted(variables) ]) + os.linesep)
+                f.write(','.join([ str(d[var] if var in d else 'N/A') for var in sorted(variables) ]) + os.linesep)
 
         df = pandas.read_csv(csv_path)
 
@@ -1193,6 +1205,32 @@ def _plot_from_file(args):
 
     ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }))\
         .compute(filename = "all_workloads_and_types", output_location = table_output_location)
+
+    for rtype in rtypes:
+        all_options_filter = guide.get_parameter_options_filter(rtype)
+        constellation      = Constellation(guide).type({ 'type' : {rtype} })
+        if len(all_options_filter) != 0:
+            constellation = constellation.options(all_options_filter)
+        ANOVATable(experiment.Experiments(args.x_location), repo, file, constellation)\
+            .compute(filename = f'{rtype}_rc', output_location = table_output_location)
+
+    # Split T by R
+    for rtype in rtypes:
+        r_config = guide.get_parameter_configurations(rtype)
+        violins = [
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} })
+            )
+        ] + [
+            Violin(repo, file,
+                Constellation(guide).type({ 'type' : {rtype} }).options(config_to_filter(rc))
+            ) for rc in r_config
+        ]
+        Plot.plot_violins(f"{rtype} by R", violins,
+                          label           = f"{rtype}_by_rc",
+                          caption         = f"The figure show a speedup plot where all {rtype} data is split by corresponding refactoring configurations.",
+                          output_location = output_location,
+                          filename        = f"{rtype}_by_rc")
 
     for b in benchmarks:
         ANOVATable(
