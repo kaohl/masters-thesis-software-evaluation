@@ -56,6 +56,9 @@ class ConfigurationBase:
             if isinstance(value, list):
                 options = value
                 value   = value[0]
+            #elif isinstance(value, set):
+            #    options = [ v for v in value ]
+            #    value   = options[0]
             else:
                 options = [value]
             self._options[key] = options

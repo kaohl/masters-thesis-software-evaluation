@@ -420,11 +420,15 @@ class Experiments:
                             'T' if c.jre().find('tem') != -1 else 'G'
                         ])
                         column_order.append(config_name)
-                        column_order.append(config_name + ' (std)')
+                        # column_order.append(config_name + ' (std)')
                         baseline_key_mean = '-'.join([c.bm(), c.bm_workload(), c.id()])
                         baseline_key_std  = '-'.join([c.bm(), c.bm_workload(), c.id(), 'std'])
-                        times.append(str(baseline[baseline_key_mean]))
-                        times.append(str((round(baseline[baseline_key_std], 3) if baseline_key_std in baseline else "N/A")))
+                        value = str(baseline[baseline_key_mean])
+                        if baseline_key_std in baseline:
+                            std   = round(baseline[baseline_key_std], 2)
+                            value = value + f'$\\pm {std}$'
+                        times.append(value)
+                        #times.append(str((round(baseline[baseline_key_std], 2) if baseline_key_std in baseline else "N/A")))
 
                     rows.append((b, w.replace('_', '\\_'), *times))
 
@@ -439,7 +443,7 @@ class Experiments:
                     with open(Path(args.baseline_out) / f"baseline-h{hw_i}-n{nexec}-b{bexec}.tex", 'w') as f:
                         f.write("\\begin{table}[!h]" + os.linesep)
                         f.write("\\caption{@1}".replace("@1", caption) + os.linesep)
-                        f.write("\\begin{tabular}{ll|*{@N}{l}r}".replace("@N", str(len(rows[0]) - 2)) + os.linesep)
+                        f.write("\\begin{tabular}{ll|*{@N}{r}r}".replace("@N", str(len(rows[0]) - 2)) + os.linesep)
                         f.write('&'.join([ "B", "W", *column_order ]) + "\\\\" + os.linesep)
                         f.write("\\hline" + os.linesep)
                         f.write(os.linesep.join([ '&'.join(list(row)) + "\\\\" for row in rows ]) + os.linesep)
