@@ -21,6 +21,8 @@ type_names = {
 }
 
 def _main(args):
+    dataset_name     = args.dataset_name
+    output_location  = args.output_location
     progress_objects = Experiments(args.x_location).compute_progress()
     xbw_pos          = dict()
     bms              = set()
@@ -66,8 +68,8 @@ def _main(args):
 
     for (b, w), rows in rows.items():
         w_      = w.replace('_', '\\_')
-        caption = "The table shows the number of refactoring opportunities per refactoring type that is available for workload \\textit{@W} (WT), and the number of available opportunities across all \\textit{@B} workloads (BT). The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.".replace('@W', f"{b}/{w_}").replace('@B', b)
-        with open(f'tables/{b}_{w}_opportunity_counts.tex', 'w') as f:
+        caption = "The table shows the number of refactoring opportunities per refactoring type that is available for workload \\textit{@W} (WT), and the number of available opportunities across all \\textit{@B} workloads (BT), in dataset \\textit{@D}. The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.".replace('@W', f"{b}/{w_}").replace('@B', b).replace('@D', dataset_name)
+        with open(f'{output_location}/{b}_{w}_opportunity_counts.tex', 'w') as f:
             f.write("\\begin{table}[!h]" + os.linesep)
             f.write("\\caption{@CAPTION}".replace('@CAPTION', caption) + os.linesep)
             f.write("\\begin{tabular}{c|*{@N}{r}r}".replace("@N", str(len(rows[0]) - 1)) + os.linesep)
@@ -81,5 +83,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--x-location', required = False, default = 'experiments',
         help = "Location where experiments are stored. Defaults to 'experiments'.")
+    parser.add_argument('--output-location', required = False, default = 'tables',
+        help = "The folder into which files are written.")
+    parser.add_argument('--dataset-name', required = True,
+        help = "The name if the data set. Used in the table caption.")
     args = parser.parse_args()
     _main(args)

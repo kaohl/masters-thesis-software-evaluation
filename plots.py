@@ -1146,6 +1146,35 @@ class ANOVATable:
             table_path = output_location / f"{filename}.{d_var}.table"
             with open(table_path, 'w') as f:
                 f.write(str(res))
+
+            params_filter = { 'R', 'bm', 'bm_workload', 'jdk', 'jre', 'name', 'visibility', 'final' } # Focus for analysis.
+            rows = []
+            for i, l in enumerate(str(res).split(os.linesep)):
+                if l.find('NaN') == -1:
+                    found = False
+                    for p in params_filter:
+                        if p in l:
+                            found = True
+                            break
+                    if found or i == 0:
+                        l = l.replace('bm_workload', 'workload')
+                        l = l.replace('bm', 'benchmark')
+                        rows.append((['param'] if i == 0 else []) + [ x.strip().replace('_', '\\_') for x in [ y for y in l.strip().split(' ') if y.strip() != "" ] ])
+
+            columns = '&'.join(rows[0])
+            rows    = rows[1:]
+
+            caption = f"The table shows the ANOVA results for model: ${formula}$. The computation was based on {len(data)} measurements."
+            with open(f'{output_location}/{filename}_{d_var}_N{len(data)}.tex', 'w') as f:
+                #f.write("\\begin{table}[!h]" + os.linesep)
+                #f.write("\\caption{@CAPTION}".replace('@CAPTION', caption) + os.linesep)
+                f.write("\\begin{tabular}{c|*{@N}{r}r}".replace("@N", str(len(rows[0]) - 1)) + os.linesep)
+                f.write(columns + "\\\\" + os.linesep)
+                f.write("\\hline" + os.linesep)
+                f.write(os.linesep.join([ '&'.join(row) + "\\\\" for row in rows ]) + os.linesep)
+                f.write("\\end{tabular}" + os.linesep)
+                #f.write("\\end{table}" + os.linesep)
+
             #print("-"*80)
 
 class Violin:
@@ -1217,6 +1246,8 @@ def _plot_from_file(args):
             constellation = constellation.options(all_options_filter)
         ANOVATable(experiment.Experiments(args.x_location), repo, file, constellation)\
             .compute(filename = f'{rtype}_rc', output_location = table_output_location)
+
+    return
 
     # Split T by R
     for rtype in rtypes:
