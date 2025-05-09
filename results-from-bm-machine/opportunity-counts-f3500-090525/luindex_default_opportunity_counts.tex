@@ -1,0 +1,19 @@
+\begin{table}[!h]
+\caption{The table shows the number of refactoring opportunities per refactoring type that is available for workload \textit{luindex/default} (WT), and the number of available opportunities across all \textit{luindex} workloads (BT). The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.}
+\begin{tabular}{c|*{7}{r}r}
+Type&BT&WT&pS&pF&bS&bFG&bFT\\
+\hline
+Extract constant&895&856&81&0&75&0&0\\
+Extract method&6238&5929&66&34&64&1&0\\
+Extract temp&2667&2504&65&20&62&0&0\\
+Inline constant&140&126&113&13&90&6&1\\
+Inline method&68&53&30&23&8&1&0\\
+Inline temp&3260&3035&30&159&26&3&0\\
+Introduce indirection&482&434&71&15&57&0&0\\
+Rename field&437&411&100&5&92&0&0\\
+Rename variable&665&596&81&0&53&0&0\\
+Rename method&231&202&51&9&31&6&0\\
+Rename type&86&82&76&1&54&16&0\\
+Rename type parameter&7&5&5&0&0&0&0\\
+\end{tabular}
+\end{table}

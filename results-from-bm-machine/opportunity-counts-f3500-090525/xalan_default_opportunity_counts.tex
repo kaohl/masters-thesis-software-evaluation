@@ -1,0 +1,19 @@
+\begin{table}[!h]
+\caption{The table shows the number of refactoring opportunities per refactoring type that is available for workload \textit{xalan/default} (WT), and the number of available opportunities across all \textit{xalan} workloads (BT). The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.}
+\begin{tabular}{c|*{7}{r}r}
+Type&BT&WT&pS&pF&bS&bFG&bFT\\
+\hline
+Extract constant&706&666&82&8&78&0&0\\
+Extract method&16962&16217&134&154&102&11&0\\
+Extract temp&2004&1806&156&75&119&0&1\\
+Inline constant&324&307&161&0&119&0&0\\
+Inline method&18&17&9&8&6&0&0\\
+Inline temp&2234&1962&171&261&118&8&1\\
+Introduce indirection&347&291&137&4&111&0&0\\
+Rename field&165&159&87&0&82&0&0\\
+Rename variable&573&497&117&0&98&0&0\\
+Rename method&67&60&40&2&39&0&0\\
+Rename type&31&28&27&1&17&10&0\\
+Rename type parameter&0&0&0&0&0&0&0\\
+\end{tabular}
+\end{table}

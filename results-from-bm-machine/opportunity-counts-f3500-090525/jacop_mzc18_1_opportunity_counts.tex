@@ -1,0 +1,19 @@
+\begin{table}[!h]
+\caption{The table shows the number of refactoring opportunities per refactoring type that is available for workload \textit{jacop/mzc18\_1} (WT), and the number of available opportunities across all \textit{jacop} workloads (BT). The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.}
+\begin{tabular}{c|*{7}{r}r}
+Type&BT&WT&pS&pF&bS&bFG&bFT\\
+\hline
+Extract constant&2285&991&210&3&136&0&0\\
+Extract method&14480&10582&195&74&129&1&0\\
+Extract temp&6861&3661&160&48&121&0&2\\
+Inline constant&462&215&213&2&130&7&0\\
+Inline method&37&35&4&31&4&0&0\\
+Inline temp&8177&4896&59&245&38&11&0\\
+Introduce indirection&526&284&147&6&116&2&0\\
+Rename field&434&270&181&6&128&1&0\\
+Rename variable&1106&657&186&2&126&0&0\\
+Rename method&277&137&60&0&60&0&0\\
+Rename type&54&37&37&0&24&13&0\\
+Rename type parameter&3&3&3&0&0&0&0\\
+\end{tabular}
+\end{table}

@@ -1,0 +1,19 @@
+\begin{table}[!h]
+\caption{The table shows the number of refactoring opportunities per refactoring type that is available for workload \textit{batik/small} (WT), and the number of available opportunities across all \textit{batik} workloads (BT). The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.}
+\begin{tabular}{c|*{7}{r}r}
+Type&BT&WT&pS&pF&bS&bFG&bFT\\
+\hline
+Extract constant&1430&568&20&0&20&0&0\\
+Extract method&10395&5217&20&10&20&0&0\\
+Extract temp&4605&1917&21&6&21&0&0\\
+Inline constant&279&54&51&1&47&4&0\\
+Inline method&218&31&10&21&8&0&0\\
+Inline temp&4603&2315&20&80&19&0&0\\
+Introduce indirection&565&226&19&0&18&0&0\\
+Rename field&362&137&29&3&29&0&0\\
+Rename variable&1105&530&25&2&22&0&0\\
+Rename method&182&53&26&6&24&0&0\\
+Rename type&73&35&35&0&29&6&0\\
+Rename type parameter&0&0&0&0&0&0&0\\
+\end{tabular}
+\end{table}
