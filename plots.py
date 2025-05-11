@@ -554,7 +554,7 @@ class Experiments:
                                 'M' : data_metrics._values
                             }) + os.linesep)
 
-    def filter_data_file(self, path, filter):
+    def filter_data_file(self, path, filter, workload_filter):
         print("FILTER", filter)
         baseline    = self.get_baseline()
         entries     = []
@@ -572,7 +572,7 @@ class Experiments:
                             break
                     if not is_match:
                         break
-                if is_match:
+                if is_match and (workload_filter == None or (entry['B']['name'], entry['W']['name']) in workload_filter):
                     tms          = entry['M']['EXECUTION_TIME']
                     x            = Configuration().init_from_dict(entry['X'])
                     baseline_key = '-'.join([x.bm(), x.bm_workload(), x.id()])
@@ -1047,10 +1047,10 @@ class Constellation:
         return Constellation(a._guide).type(_t).bm(_b).workload(_w).config(_x).options(_r, a._get_type())
 
 class ANOVATable:
-    def __init__(self, experiments, repo, file, constellation):
+    def __init__(self, experiments, repo, file, constellation, workload_filter):
         self._experiments  = experiments
         self.constellation = constellation
-        self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter())
+        self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter(), workload_filter)
 
     def compute(self, label = None, caption = None, filename = None, output_location = None):
         i_vars    = set()
@@ -1179,9 +1179,9 @@ class ANOVATable:
             #print("-"*80)
 
 class Violin:
-    def __init__(self, repo, file, constellation):
+    def __init__(self, repo, file, constellation, workload_filter = None):
         self.constellation = constellation
-        self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter())
+        self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter(), workload_filter)
         # self.caption = f"The {constellation.get_name()} constellation with {len(self.data)} measurements."
 
     def split(self, yrange):
@@ -1235,7 +1235,65 @@ def _plot_from_file(args):
     config           = Configuration().jdk(['17.0.9-graalce', '17.0.14-tem']).jre(['17.0.9-graalce', '17.0.14-tem']).get_all_combinations()
     config_to_filter = lambda c: dict([ (k, {v}) for k, v in c.to_dict().items() ])
 
-    # TODO: Consider which tables we want to look at.
+    baseline_ = dict()
+    baseline_object = repo.get_baseline()
+    workload_filter = set()
+    for k, v in baseline_object.items():
+        if k.endswith('-mean'):
+            ps   = k.split('-')
+            cxt  = ps[:-1]
+            bw   = ps[:-2]
+            std  = baseline_object['-'.join(cxt + ['std'])]
+            mean = v
+            if std / mean < 0.0205: # All that rounds to <=2%
+                if not tuple(bw) in baseline_:
+                    baseline_[tuple(bw)] = 0
+                baseline_[tuple(bw)] = baseline_[tuple(bw)] + 1
+
+    for bw, count in baseline_.items():
+        if count == 4: # All configurations
+            print("<=2%", bw)
+            workload_filter.add(bw)
+
+    ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }), workload_filter)\
+        .compute(filename = "all_workloads_and_types_2p", output_location = table_output_location)
+
+
+    # 2p; Split all by X (/X)
+    violins = [
+        Violin(repo, file, Constellation(guide), workload_filter)
+    ] + [
+        Violin(repo, file, Constellation(guide).config(config_to_filter(c)), workload_filter) for c in config
+    ]
+    Plot.plot_violins(f"All by X 2p", violins,
+                      label           = f"all_by_X_2p",
+                      caption         = f"The figure show a speedup plot where 2p data is split by JDK and JRE configurations.",
+                      output_location = output_location,
+                      filename        = f"all_by_X_2p")
+
+    # 2p; Split all by type.
+    violins = [
+        Violin(repo, file, Constellation(guide).type({ 'type' : {rtype} }), workload_filter) for rtype in rtypes
+    ]
+    Plot.plot_violins("All types 2p", violins, is_split = False,
+                      label           = "all_by_type_2p",
+                      caption         = "The figure shows a speedup plot where 2p data is split by refactoring type.",
+                      output_location = output_location,
+                      filename        = "all_by_type_2p"
+                      )
+
+    # 2p; Split IT by X (/X)
+    violins = [
+        Violin(repo, file, Constellation(guide).type({ 'type' : {'IT'} }), workload_filter)
+    ] + [
+        Violin(repo, file, Constellation(guide).type({ 'type' : {'IT'} }).config(config_to_filter(c)), workload_filter) for c in config
+    ]
+    Plot.plot_violins(f"IT by X 2p", violins,
+                      label           = f"IT_by_X_2p",
+                      caption         = f"The figure show a speedup plot where IT 2p data is split by JDK and JRE configurations.",
+                      output_location = output_location,
+                      filename        = f"IT_by_X_2p")
+    return
 
     ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }))\
         .compute(filename = "all_workloads_and_types", output_location = table_output_location)
