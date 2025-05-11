@@ -425,8 +425,9 @@ class Experiments:
                         baseline_key_std  = '-'.join([c.bm(), c.bm_workload(), c.id(), 'std'])
                         value = str(baseline[baseline_key_mean])
                         if baseline_key_std in baseline:
-                            std   = round(baseline[baseline_key_std], 2)
-                            value = value + f'$\\pm {std}$'
+                            std   = baseline[baseline_key_std]
+                            std   = "{:4.1f}".format((std / float(value)) * 100).replace(' ', '0')
+                            value = value + f'$\\pm {std}\\%$'
                         times.append(value)
                         #times.append(str((round(baseline[baseline_key_std], 2) if baseline_key_std in baseline else "N/A")))
 
@@ -438,7 +439,7 @@ class Experiments:
                     nexec   = meta['nexec']   # Number of harness iterations (warmup+measure).
                     bexec   = meta['bexec']   # Number of baseline executions.
 
-                    caption = f"The table shows baseline execution times in milliseconds, as an average over {bexec} invocations, for all workloads in the experiment, using {int(nexec) - 1} warmup runs before measurement, and hardware configuration H{hw_i}."
+                    caption = f"The table shows baseline execution times in milliseconds, as an average over {bexec} invocations, for all workloads in the experiment, using {int(nexec) - 1} warmup runs before measurement, and CPU frequency {hardware['cpufreq']} MHz." #hardware configuration H{hw_i}."
 
                     with open(Path(args.baseline_out) / f"baseline-h{hw_i}-n{nexec}-b{bexec}.tex", 'w') as f:
                         f.write("\\begin{table}[!h]" + os.linesep)
@@ -1247,8 +1248,6 @@ def _plot_from_file(args):
         ANOVATable(experiment.Experiments(args.x_location), repo, file, constellation)\
             .compute(filename = f'{rtype}_rc', output_location = table_output_location)
 
-    return
-
     # Split T by R
     for rtype in rtypes:
         r_config = guide.get_parameter_configurations(rtype)
@@ -1411,6 +1410,8 @@ def _plot_from_file(args):
                               output_location = output_location,
                               filename        = f"{bm}_{c_}_by_type"
                               )
+
+    return
 
     # Selection of benchmarks, workloads, and types that show signs of
     # performance effects on average based on manual inspection of violins.
