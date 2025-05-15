@@ -13,6 +13,7 @@ from statsmodels.formula.api import ols
 from pathlib                 import Path
 
 import experiment
+import math_helpers as mh
 from configuration     import Configuration, Metrics, RefactoringConfiguration, ConfigurationBase
 from opportunity_cache import RefactoringDescriptor
 
@@ -414,6 +415,7 @@ class Experiments:
                     config       = Configuration().load(self.get_parameters_location(b, b, w))
                     times        = []
                     column_order = []
+                    highlight    = True
                     for c in config.get_all_combinations():
                         config_name  = ''.join([
                             'T' if c.jdk().find('tem') != -1 else 'G',
@@ -426,12 +428,16 @@ class Experiments:
                         value = str(baseline[baseline_key_mean])
                         if baseline_key_std in baseline:
                             std   = baseline[baseline_key_std]
-                            std   = "{:4.1f}".format((std / float(value)) * 100).replace(' ', '0')
+                            stdp  = (std / float(value)) * 100
+                            std   = "{:4.1f}".format(stdp).replace(' ', '0')
                             value = value + f'$\\pm {std}\\%$'
+                            if stdp >= 2:
+                                highlight = False
                         times.append(value)
                         #times.append(str((round(baseline[baseline_key_std], 2) if baseline_key_std in baseline else "N/A")))
 
-                    rows.append((b, w.replace('_', '\\_'), *times))
+                    row_attributes = ["\\rowcolor[gray]{.9}"] if highlight else []
+                    rows.append((row_attributes, (b, w.replace('_', '\\_'), *times)))
 
                     hw_key = tuple([ f"{hardware[p] if p in hardware else 'N/A'}" for p in sorted(hw_parameters) ])
                     hw_i   = hw_map[hw_key]
@@ -442,14 +448,14 @@ class Experiments:
                     caption = f"The table shows baseline execution times in milliseconds, as an average over {bexec} invocations, for all workloads in the experiment, using {int(nexec) - 1} warmup runs before measurement, and CPU frequency {hardware['cpufreq']} MHz." #hardware configuration H{hw_i}."
 
                     with open(Path(args.baseline_out) / f"baseline-h{hw_i}-n{nexec}-b{bexec}.tex", 'w') as f:
-                        f.write("\\begin{table}[!h]" + os.linesep)
-                        f.write("\\caption{@1}".replace("@1", caption) + os.linesep)
-                        f.write("\\begin{tabular}{ll|*{@N}{r}r}".replace("@N", str(len(rows[0]) - 2)) + os.linesep)
+                        #f.write("\\begin{table}[!h]" + os.linesep)
+                        #f.write("\\caption{@1}".replace("@1", caption) + os.linesep)
+                        f.write("\\begin{tabular}{ll|*{@N}{r}r}".replace("@N", str(len(rows[0][1]) - 2)) + os.linesep)
                         f.write('&'.join([ "B", "W", *column_order ]) + "\\\\" + os.linesep)
                         f.write("\\hline" + os.linesep)
-                        f.write(os.linesep.join([ '&'.join(list(row)) + "\\\\" for row in rows ]) + os.linesep)
+                        f.write(os.linesep.join([ ' '.join(attributes + [' ']) + '&'.join(list(row)) + "\\\\" for attributes, row in rows ]) + os.linesep)
                         f.write("\\end{tabular}" + os.linesep)
-                        f.write("\\end{table}" + os.linesep)
+                        #f.write("\\end{table}" + os.linesep)
 
     def for_workloads_and_configurations(self, constraints):
         target_b                         = constraints.b
@@ -1047,7 +1053,7 @@ class Constellation:
         return Constellation(a._guide).type(_t).bm(_b).workload(_w).config(_x).options(_r, a._get_type())
 
 class ANOVATable:
-    def __init__(self, experiments, repo, file, constellation, workload_filter):
+    def __init__(self, experiments, repo, file, constellation, workload_filter = None):
         self._experiments  = experiments
         self.constellation = constellation
         self.data, self.coordinates = repo.filter_data_file(file, constellation.get_filter(), workload_filter)
@@ -1111,6 +1117,11 @@ class ANOVATable:
         if name in df:
             df[name] = df[name].astype(type)
 
+    def latex_scientific_number_format(n, precision):
+        s, e   = mh.significand_and_exponent(n, precision)
+        e_sign = '+' if e >= 0 else '-'
+        return f"{s}\\times 10^{{{e_sign}{e if e >= 0 else - e}}}"
+
     def anova(variables, d_vars, i_vars, data, filename, output_location):
         # metrics.txt gives all the dependent variables
         # parameters.txt gives all independent categorical variables and their value sets
@@ -1163,7 +1174,7 @@ class ANOVATable:
                         rows.append((['param'] if i == 0 else []) + [ x.strip().replace('_', '\\_') for x in [ y for y in l.strip().split(' ') if y.strip() != "" ] ])
 
             columns = '&'.join(rows[0])
-            rows    = rows[1:]
+            rows    = [ [r[0]] + [ f"${ANOVATable.latex_scientific_number_format(float(x), 2)}$" for x in r[1:] ] for r in rows[1:] ]
 
             caption = f"The table shows the ANOVA results for model: ${formula}$. The computation was based on {len(data)} measurements."
             with open(f'{output_location}/{filename}_{d_var}_N{len(data)}.tex', 'w') as f:
@@ -1245,19 +1256,18 @@ def _plot_from_file(args):
             bw   = ps[:-2]
             std  = baseline_object['-'.join(cxt + ['std'])]
             mean = v
-            if std / mean < 0.0205: # All that rounds to <=2%
+            if std / mean < 0.02: # 2%
                 if not tuple(bw) in baseline_:
                     baseline_[tuple(bw)] = 0
                 baseline_[tuple(bw)] = baseline_[tuple(bw)] + 1
 
     for bw, count in baseline_.items():
         if count == 4: # All configurations
-            print("<=2%", bw)
+            print("<2%", bw)
             workload_filter.add(bw)
 
     ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }), workload_filter)\
         .compute(filename = "all_workloads_and_types_2p", output_location = table_output_location)
-
 
     # 2p; Split all by X (/X)
     violins = [
@@ -1293,7 +1303,7 @@ def _plot_from_file(args):
                       caption         = f"The figure show a speedup plot where IT 2p data is split by JDK and JRE configurations.",
                       output_location = output_location,
                       filename        = f"IT_by_X_2p")
-    return
+    #return
 
     ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }))\
         .compute(filename = "all_workloads_and_types", output_location = table_output_location)
@@ -1476,33 +1486,33 @@ def _plot_from_file(args):
     # Since some violins have shown signs of being a "poor" fitting to some
     # of the data, we could missing interesting effects by only investigating
     # a subset of splits here.
-    rc_benchmarks = {
-        'jacop' : {
-            'mzc18_2' : {
-                'TG' : ['EM', 'IC', 'RF']
-            },
-            'mzc18_3' : {
-                'GG' : ['EM'],
-                'TG' : ['IC'],
-                'TT' : ['IT', 'RM', 'RV']
-            }
-        },
-        'lusearch' : {
-            'small' : {
-                'GG' : ['IC', 'IT', 'RF', 'RT'],
-                'GT' : ['EC', 'EM', 'ET', 'IC', 'II', 'IT', 'RF', 'RM', 'RT', 'RV'],
-                'TG' : ['EM', 'IC', 'II', 'RM', 'RT', 'RV'],
-                'TT' : ['EC']
-            }
-        },
-        'xalan' : {
-            'small' : {
-                'GG' : ['RT'],
-                'GT' : ['EC', 'IC', 'II', 'IT', 'RT'],
-                'TT' : ['RT']
-            }
-        }
-    }
+    #rc_benchmarks = {
+    #    'jacop' : {
+    #        'mzc18_2' : {
+    #            'TG' : ['EM', 'IC', 'RF']
+    #        },
+    #        'mzc18_3' : {
+    #            'GG' : ['EM'],
+    #            'TG' : ['IC'],
+    #            'TT' : ['IT', 'RM', 'RV']
+    #        }
+    #    },
+    #    'lusearch' : {
+    #        'small' : {
+    #            'GG' : ['IC', 'IT', 'RF', 'RT'],
+    #            'GT' : ['EC', 'EM', 'ET', 'IC', 'II', 'IT', 'RF', 'RM', 'RT', 'RV'],
+    #            'TG' : ['EM', 'IC', 'II', 'RM', 'RT', 'RV'],
+    #            'TT' : ['EC']
+    #        }
+    #    },
+    #    'xalan' : {
+    #        'small' : {
+    #            'GG' : ['RT'],
+    #            'GT' : ['EC', 'IC', 'II', 'IT', 'RT'],
+    #            'TT' : ['RT']
+    #        }
+    #    }
+    #}
     for rtype in rtypes:
         # Split TBX by R (TBX/R)
         r_config = guide.get_parameter_configurations(rtype)
