@@ -48,19 +48,40 @@ def _main(args):
         'bFT' # 'bench_failure_timeout'
     ]])
 
-    rows = dict()
+    aggregate = dict()
+    rows      = dict()
     for (x, b, w, t), po in sorted(xbw_pos.items()):
+        bt  = po['bt_total']
+        wt  = po['wt_total']
+        pS  = po['patch']['success']
+        pF  = po['patch']['failure']
+        bS  = po['bench']['success']
+        bFG = po['bench']['failure']['generic']
+        bFT = po['bench']['failure']['timeout']
+
+        if not b in aggregate:
+            aggregate[b] = (set(), 0, 0, 0)
+
+        ab = aggregate[b]
+        ab[0].add(w)
+        aggregate[b] = (
+            ab[0],
+            ab[1] + bS,
+            ab[2] + bFG + bFT,
+            ab[3] + bFT
+        )
+
         values = [str(x).replace('_', '\\_') for x in [
             #b,
             #w,
             type_names[t],
-            po['bt_total'],
-            po['wt_total'],
-            po['patch']['success'],
-            po['patch']['failure'],
-            po['bench']['success'],
-            po['bench']['failure']['generic'],
-            po['bench']['failure']['timeout']
+            bt,
+            wt,
+            pS,
+            pF,
+            bS,
+            bFG,
+            bFT
         ]]
         if not (b, w) in rows:
             rows[(b, w)] = []
@@ -68,16 +89,37 @@ def _main(args):
 
     for (b, w), rows in rows.items():
         w_      = w.replace('_', '\\_')
-        caption = "The table shows the number of refactoring opportunities per refactoring type that is available for workload \\textit{@W} (WT), and the number of available opportunities across all \\textit{@B} workloads (BT), in dataset \\textit{@D}. The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.".replace('@W', f"{b}/{w_}").replace('@B', b).replace('@D', dataset_name)
+        caption = f"{b}/{w_}"
+        #caption = "The table shows the number of refactoring opportunities per refactoring type that is available for workload \\textit{@W} (WT), and the number of available opportunities across all \\textit{@B} workloads (BT), in dataset \\textit{@D}. The following numbers are derived from the intersection of BT and WT. pS is the number of opportunities that have been successfully converted into patches. pF is the number of opportunities for which refactoring failed. bS is the number of successfully benchmarked opportunities. bFG is the number of opportunities for which benchmarking failed due to 'generic' errors, including build errors, and bFT is the number of opportunities for which benchmarking failed because of benchmark timeout, 'timeout' errors.".replace('@W', f"{b}/{w_}").replace('@B', b).replace('@D', dataset_name)
         with open(f'{output_location}/{b}_{w}_opportunity_counts.tex', 'w') as f:
             f.write("\\begin{table}[!h]" + os.linesep)
             f.write("\\caption{@CAPTION}".replace('@CAPTION', caption) + os.linesep)
-            f.write("\\begin{tabular}{c|*{@N}{r}r}".replace("@N", str(len(rows[0]) - 1)) + os.linesep)
+            f.write("\\begin{tabular}{c|rr||rr||rrr}" + os.linesep)#.replace("@N", str(len(rows[0]) - 1)) + os.linesep)
             f.write(columns + "\\\\" + os.linesep)
             f.write("\\hline" + os.linesep)
             f.write(os.linesep.join([ '&'.join(row) + "\\\\" for row in rows ]) + os.linesep)
             f.write("\\end{tabular}" + os.linesep)
             f.write("\\end{table}" + os.linesep)
+
+
+    # Table in Evaluation Data:
+    # bm | number of workloads
+    #    | number of refactoring patches evaluated ;sum across all types
+    #    | failed runs (%)                         ;only those that failed during exection
+    #      Total | Timeout                         ;double column
+    agg_total = 0
+    for b, (ws, bS, bF, bFT) in aggregate.items():
+        agg_total = agg_total + bS + bF
+    agg_rows = []
+    for b, (ws, bS, bF, bFT) in aggregate.items():
+        agg_rows.append((b, len(ws), bS, round(100*bF/agg_total, 1), round(100*bFT/agg_total, 1)))
+    with open(f'{output_location}/opportunity_aggregation.tex', 'w') as f:
+        f.write("\\begin{tabular}{|c|c|r|r|c|}\\hline" + os.linesep)
+        f.write("\\multirow{2}{*}{Benchmark} & \\multirow{2}{*}{Workloads} & \\multirow{2}{*}{Success} & \\multicolumn{2}{|c|}{Failure (\\%)}\\\\\\cline{4-5}" + os.linesep)
+        f.write("          &           &         & Total & Timeout \\\\\\hline\\hline" + os.linesep)
+        for row in agg_rows:
+            f.write('&'.join([str(x) for x in list(row)]) + "\\\\\\hline" + os.linesep)
+        f.write("\\end{tabular}" + os.linesep)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -89,3 +131,4 @@ if __name__ == '__main__':
         help = "The name if the data set. Used in the table caption.")
     args = parser.parse_args()
     _main(args)
+
