@@ -230,7 +230,8 @@ class Plot:
             xoffset = xoffset + 1
 
         if apply_slanted_labels:
-            plt.xticks(rotation = 15)
+            #plt.xticks(rotation = 15)
+            ax.set_xticklabels(labels, rotation = 15, ha = 'right')
 
         plt.axhline(y = 1.0, color = 'C1', linestyle = '--')
 
@@ -243,16 +244,7 @@ class Plot:
             plt.close()
             return
 
-        plt.savefig(Path(output_location) / (filename + '.png'))
-        #with open(Path(output_location) / (filename + '.tex'), 'w') as f:
-        #    f.write("""
-        #    \\begin{figure}[h]
-        #    \\centering
-        #    \\includegraphics[width=1.0\\textwidth, scale=1.0]{./chapters/plots/pascal_f1200_n10/lusearch_small_by_type.png}
-        #    \\caption{@CAPTION}
-        #    \\label{fig:@NAME}
-        #    \\end{figure}
-        #    """.replace("@NAME", label).replace("@CAPTION", caption))
+        plt.savefig(Path(output_location) / (filename + '.pdf'), format = 'pdf')
         plt.close()
 
     def _plot(plot, ax, caption):
