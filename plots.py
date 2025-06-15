@@ -578,6 +578,12 @@ class Experiments:
                     #print(f"MATCH ({i})", entry['T']['type'], x.bm(), x.bm_workload())
                     entries.append((entry, speedup))
                     coordinates.append((len(coordinates), i))
+
+                    if speedup > 1.5:
+                        print("FAST", entry)
+                    if speedup < 0.5:
+                        print("SLOW", entry)
+
         return entries, coordinates
 
 class ParameterSet:
@@ -1060,6 +1066,16 @@ class ANOVATable:
         required_baselines = set()
 
         for d, speedup in self.data:
+            # Before enabling this check, I verified that
+            # all speedup outlier patches are invalid
+            # (behavior is not preserved).
+            # However, we can't do the same on the slowdown side
+            # because there is one slowdown that appears to have
+            # a valid patch (RF in F3500).
+            if speedup > 1.5:
+                print("Exclude", speedup)
+                continue
+
             t = d['T']['type']
             b = d['B']['name']
             w = d['W']['name']
@@ -1169,7 +1185,9 @@ class ANOVATable:
             rows    = [ [r[0]] + [ f"${ANOVATable.latex_scientific_number_format(float(x), 2)}$" for x in r[1:] ] for r in rows[1:] ]
 
             caption = f"The table shows the ANOVA results for model: ${formula}$. The computation was based on {len(data)} measurements."
-            with open(f'{output_location}/{filename}_{d_var}_N{len(data)}.tex', 'w') as f:
+            table_file = f'{output_location}/{filename}_{d_var}_N{len(data)}.tex'
+            print("Writing table at", table_file)
+            with open(table_file, 'w') as f:
                 #f.write("\\begin{table}[!h]" + os.linesep)
                 #f.write("\\caption{@CAPTION}".replace('@CAPTION', caption) + os.linesep)
                 f.write("\\begin{tabular}{c|*{@N}{r}r}".replace("@N", str(len(rows[0]) - 1)) + os.linesep)
@@ -1223,6 +1241,9 @@ def _plot_from_file(args):
         with open(file, 'w') as f:
             repo.create_data_file(f)
 
+    #repo.filter_data_file(file, { 'T' : { 'type' : { 'RF' } } }, None)
+    #exit(0)
+
     guide = create_constellation_guide()
 
     rtypes     = sorted(Plot._labels.values())
@@ -1260,6 +1281,8 @@ def _plot_from_file(args):
 
     ANOVATable(experiment.Experiments(args.x_location), repo, file, Constellation(guide).type({ 'type' : set(rtypes) }), workload_filter)\
         .compute(filename = "all_workloads_and_types_2p", output_location = table_output_location)
+
+    return
 
     # 2p; Split all by X (/X)
     violins = [
