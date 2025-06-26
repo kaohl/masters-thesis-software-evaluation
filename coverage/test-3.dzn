@@ -10,5 +10,5 @@
 target_time = 15000; % ms
 Tn   = 2;
 Un   = 2;
-m    = array2d(0..Tn-1, 0..Un-1, [|1,0|0,1|]);
+uc   = array2d(0..Tn-1, 0..Un-1, [|1,0|0,1|]);
 txms = array1d(0..Tn-1, [100,50]);

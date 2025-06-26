@@ -633,10 +633,6 @@ class CoverageStore:
         print(  "methods", len(methods))
 
         # NOTE
-        # We should be able to get more exact line numbers for
-        # method start and end using the code parser in the
-        # refactoring framework, if we need it.
-        #
         # We are using line coverage to try to determine if the
         # line coverage provided by a particular test is more
         # valuable (rare) than for other tests that cover the

@@ -74,3 +74,5 @@ if __name__ == '__main__':
 
     # Example: ./javap.py -t ../../alfine-repos/daivy/projects/batik-1.16/build/dist -c org.apache.batik.anim.AbstractAnimation -l 117
 
+    # javap -classpath projects/jacop-4.10.0/build/dist -l org.jacop.constraints.SumBool
+
