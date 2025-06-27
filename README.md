@@ -60,7 +60,7 @@ Note that the *--data* command-line parameter is optional and defaults to *"expe
 
 Please refer to the *evaluation.py* script for additional command-line parameters.
 
-You can use the following to explore the refactoring descriptor cache to some degree. Currently, only meta attribute filtering is supported. But easy to extend to args filtering as well if/when needed.
+You can use the following to explore the refactoring descriptor cache to some degree. Currently, only *meta* attribute filtering is supported. However, it is easy to extend the matching mechanism to support *args* filtering as well, if/when needed.
 ```
 ./opportunity_cache.py \
     --cache experiments/jacop/workspaces/jacop/default/workspace/oppcache \
