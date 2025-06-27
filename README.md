@@ -13,9 +13,17 @@ The benchmarks and refactoring types available for experimentation can be found 
 
 # Create an experiment, refactor, and benchmark refactorings
 ## Prerequisites
-- Requires SDKMAN! to be installed, including at least one SDK
-- Generate (recommended) an *experiments* folder with configuration (see *generate_experiment.py*)
+- Install Python 3.13.1. Probably works with higher versions. Not sure about lower versions. You may have to install a few python packages to be able to run all scripts in the repository.
+- Install SDKMAN!.
+- Install one or more Java SDKs of your choice. Please note that some of the available distributions requires a license to use.
+- Clone the refactoring framework and export the application into the *refactoring-framework* directory at the root of this repository, using the plugin export wizard from within [Eclipse IDE](https://www.eclipse.org/downloads/packages/release/2024-12/r).
+- Clone the build framework into a directory of your choice and set the DAIVY_HOME environment variable to the absolute path of the top-level directory of the cloned repository. It is recommended to add this variable to the *.bashrc* file in your home directory for a smoother user experience.
 
+## Procedure
+1. Create an *experiments* folder, for example, by running *generate_experiment.py* after adapting it to your needs:
+```
+./generate_experiment.py
+```
 > [!CAUTION]
 > If additional parameters are added after after an experiment is started, the parameter files in all existing data will be incomplete and data processing may fail because of missing values.
 >
@@ -25,43 +33,39 @@ The benchmarks and refactoring types available for experimentation can be found 
 
 > [!TIP]
 > In contrast, adding additional values for existing parameters can be done at any time to extend the dataset and the analysis.
-
-## Procedure
-Note that the `--x-location' argument is optional and defaults to 'experiments'.
+2. Compute baseline performance:
 ```
-mkdir -p experiments/<name>/<bm>/<workload>/{lists,views}
-cp examples/<bm>.<workload>.parameters.txt experiments/<name>/<bm>/<workload>/parameters.txt
-
-<adapt experiments/x/batik/small/parameters.txt>
-<create/copy/adapt lists and views>
-
-export DAIVY_HOME=...
-./evaluation.py --x y --create
-./evaluation.py --x y --refactor --bm batik --workload small --n <number of runs>
-./evaluation.py --x y --benchmark --n <number of runs>
-./results.py --x jacop --bm jacop --workload default
-
-# Dump result objects to stdout. (Precursor to 'results.py'.)
-./evaluation.py --x y --report
-
-# Helpers for estimating size and time.
-# Use in conjunction with 'wc -l' to find appropriate values for the --n parameter to --benchmark and --refactor.
-# Multiply by two times the average EXECUTION_TIME of a given workload to get an upper estimate for the time it
-# takes to run all remaining configurations for all created refactorings.
-./evaluation.py --x y --show-configurations
-./evaluation.py --x y --show-execution-plan
+./compute_baseline.py
 ```
+3. Create workspaces for refactoring by running:
+```
+./evaluation.py --create [--bs <bm> [ <bm>]*] [--ws <wl> [ <wl>]*]
+```
+4. Generate refactoring patches for one or more workloads:
+```
+./evaluation.py --refactor [--bs <bm> [ <bm>]*] [--ws <wl> [ <wl>]*] --n <number of iterations>
+```
+5. Run benchmarks
+```
+./evaluation.py --benchmark --n <number of iterations>
+```
+6. Compute ANOVA tables and speedup plots:
+```
+./plots.py 
+```
+Note that the *--data* command-line parameter is optional and defaults to *"experiments"*. If you set up multiple experiment folders, you need to set the *--data* parameter accordingly to perform operations on the correct directory.
 
-Example of descriptor attribute filter matching (for debugging):
+> [!TIP]
+> When running refactoring and benchmarks it is safe to terminate the program at any time. This usually results in one incomplete datapoint on disk. This will cause the analysis script to fail when processing this datapoint. Simply delete the corresponding directory when that happens.
+
+Please refer to the *evaluation.py* script for additional command-line parameters.
+
+You can use the following to explore the refactoring descriptor cache to some degree. Currently, only meta attribute filtering is supported. But easy to extend to args filtering as well if/when needed.
 ```
 ./opportunity_cache.py \
     --cache experiments/jacop/workspaces/jacop/default/workspace/oppcache \
     --filter "{\"id\":\"org.eclipse.jdt.ui.extract.method\"}" | wc -l
 ```
-The evaluation script uses the stream variant to write matching descriptors
-directly to the target file inside the experiment configuration.
-Currently, only meta attribute filtering is supported. But easy to extend
-to args filtering as well if/when needed.
 
 # Troubleshooting
 ## Missing data
