@@ -20,7 +20,7 @@ The benchmarks and refactoring types available for experimentation can be found 
 - Clone the build framework into a directory of your choice and set the DAIVY_HOME environment variable to the absolute path of the top-level directory of the cloned repository. It is recommended to add this variable to the *.bashrc* file in your home directory for a smoother user experience.
 
 ## Procedure
-1. Create an *experiments* folder, for example, by running *generate_experiment.py* after adapting it to your needs:
+1. Create an *experiments* directory, for example, by running *generate_experiment.py* after adapting it to your needs:
 ```
 ./generate_experiment.py
 ```
@@ -53,7 +53,7 @@ The benchmarks and refactoring types available for experimentation can be found 
 ```
 ./plots.py 
 ```
-Note that the *--data* command-line parameter is optional and defaults to *"experiments"*. If you set up multiple experiment folders, you need to set the *--data* parameter accordingly to perform operations on the correct directory.
+Note that the *--data* command-line parameter is optional and defaults to *"experiments"*. If you set up multiple experiment directories, you need to set the *--data* parameter accordingly to perform operations on the correct directory.
 
 > [!TIP]
 > When running refactoring and benchmarks it is safe to terminate the program at any time. This usually results in one incomplete datapoint on disk. This will cause the analysis script to fail when processing this datapoint. Simply delete the corresponding directory when that happens.
@@ -69,10 +69,7 @@ You can use the following to explore the refactoring descriptor cache to some de
 
 # Troubleshooting
 ## Missing data
-If you get the following error, make sure that the linked in
-data folder actually exists. In this case, the folder linked
-symbolically at '<...>/luindex-1.0/dat' had been removed to
-save space.
+If you get the following error, make sure that the linked in data directory actually exists (see build framework). In this case, the directory linked symbolically at '<...>/luindex-1.0/dat' had been removed to save space.
 ```
 ===== DaCapo unknown luindex starting =====
 FATAL ERROR: Failed to find data at <...>/luindex-1.0
