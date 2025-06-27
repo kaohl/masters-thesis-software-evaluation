@@ -4,7 +4,7 @@ This is one of three repositories developed for my [master's thesis](https://lup
 See also the [refactoring framework](https://github.com/kaohl/alfine-refactoring) and the [build framework](https://github.com/kaohl/daivy).
 
 > [!NOTE]
-> Derived works should reference the thesis, which provides context for this work, and links to all repositories.
+> Regarding citation: Please reference the thesis, which provides context for this work, and links to all repositories.
 
 # Java Performance Evaluation Framework
 The evaluation framework utilizes the refactoring framework and the build framework, linked above, to provide the infrastructure required to study the impact of Java refactoring on execution performance.
@@ -53,6 +53,7 @@ The benchmarks and refactoring types available for experimentation can be found 
 ```
 ./plots.py 
 ```
+
 Note that the *--data* command-line parameter is optional and defaults to *"experiments"*. If you set up multiple experiment directories, you need to set the *--data* parameter accordingly to perform operations on the correct directory.
 
 > [!TIP]
@@ -60,7 +61,11 @@ Note that the *--data* command-line parameter is optional and defaults to *"expe
 
 Please refer to the *evaluation.py* script for additional command-line parameters.
 
-You can use the following to explore the refactoring descriptor cache to some degree. Currently, only *meta* attribute filtering is supported. However, it is easy to extend the matching mechanism to support *args* filtering as well, if/when needed.
+## Scripts
+
+There are a number of scripts available at the top-level and within the *scripts* directory that perform tasks that I found useful during experimentation. Please refer to these scripts for more details.
+
+For example, you can use the following to explore the refactoring descriptor cache to some degree. Currently, only *meta* attribute filtering is supported. However, it is easy to extend the matching mechanism to support *args* filtering as well, if/when needed.
 ```
 ./opportunity_cache.py \
     --cache experiments/jacop/workspaces/jacop/default/workspace/oppcache \
