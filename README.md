@@ -6,6 +6,9 @@ See also the [refactoring framework](https://github.com/kaohl/alfine-refactoring
 > [!NOTE]
 > Regarding citation: Please reference the thesis, which provides context for this work, and links to all repositories.
 
+> [!NOTE]
+> Please fork the repository for future work.
+
 # Java Performance Evaluation Framework
 The evaluation framework utilizes the refactoring framework and the build framework, linked above, to provide the infrastructure required to study the impact of Java refactoring on execution performance.
 
@@ -20,7 +23,10 @@ The benchmarks and refactoring types available for experimentation can be found 
 - Clone the build framework into a directory of your choice and set the DAIVY_HOME environment variable to the absolute path of the top-level directory of the cloned repository. It is recommended to add this variable to the *.bashrc* file in your home directory for a smoother user experience.
 
 ## Procedure
-1. Create an *experiments* directory, for example, by running *generate_experiment.py* after adapting it to your needs:
+Please understand that you will need to read the scripts to get a better understanding of how the implementation works. When everything is set up, refactoring and benchmarking can be batched and run automatically. However, manual intervention is required to configure experiments and analyse results. You will need to learn the input/output relation of all the main scripts mentioned below to successfully execute an experiment.
+
+To execute an experiment we perform the following steps:
+1. Create an *experiments* directory, for example, by running *generate_experiment.py* after adapting it to your experiment:
 ```
 ./generate_experiment.py
 ```
