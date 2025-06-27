@@ -1,9 +1,0 @@
-bm             = luindex
-bm_version     = 1.0
-bm_workload    = small
-source_version = 11
-target_version = 11
-jdk            = 11.0.25-tem
-jre            = 11.0.25-tem
-heap_size      = 512M, 1G
-

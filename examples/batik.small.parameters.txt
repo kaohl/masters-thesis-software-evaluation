@@ -1,9 +1,0 @@
-bm             = batik
-bm_version     = 1.0
-bm_workload    = small
-source_version = 8
-target_version = 8
-jdk            = 8.0.432-tem
-jre            = 8.0.432-tem
-heap_size      = 512M, 1G
-
