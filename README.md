@@ -4,7 +4,7 @@ This is one of three repositories developed for my [master's thesis](https://lup
 See also the [refactoring framework](https://github.com/kaohl/alfine-refactoring) and the [build framework](https://github.com/kaohl/daivy).
 
 > [!NOTE]
-> Future or derived works should reference the thesis, which provides context for this work, and links to all repositories.
+> Derived works should reference the thesis, which provides context for this work, and links to all repositories.
 
 # Java Performance Evaluation Framework
 The evaluation framework utilizes the refactoring framework and the build framework, linked above, to provide the infrastructure required to study the impact of Java refactoring on execution performance.
@@ -17,9 +17,9 @@ The benchmarks and refactoring types available for experimentation can be found 
 - Generate (recommended) an *experiments* folder with configuration (see *generate_experiment.py*)
 
 > [!CAUTION]
-> If additional parameters are added after after an experiment is started, the parameter files in all existing data will be incomplete and the generated results may be incomplete or simply fail because values are missing.
+> If additional parameters are added after after an experiment is started, the parameter files in all existing data will be incomplete and data processing may fail because of missing values.
 >
-> It is possible to upgrade the data, but only if you know the values that should be applied for these parameters in the existing data set.
+> It is possible to upgrade an existing dataset, but only if you know the values that should be applied to these parameters for each existing benchmark execution.
 >
 > Take care to add all parameters from the start.
 
