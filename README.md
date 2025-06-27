@@ -23,6 +23,9 @@ The benchmarks and refactoring types available for experimentation can be found 
 >
 > Take care to add all parameters from the start.
 
+> [!TIP]
+> In contrast, adding additional values for existing parameters can be done at any time to extend the dataset and the analysis.
+
 ## Procedure
 Note that the `--x-location' argument is optional and defaults to 'experiments'.
 ```
