@@ -1,0 +1,51 @@
+Rename
+ - Element
+ - Name (Generated)
+		super.configure(); // Generate name.
+		put("qualified",            "true");
+		put("references",          "true");
+		put("similarDeclarations", "false");
+		put("textual",             "false");
+
+
+    See RenameRefactoringDescriptor:
+
+		d.setUpdateReferences(true);
+		d.setDeprecateDelegate(false);
+		d.setRenameGetters(false);
+		d.setRenameSetters(false);
+		d.setKeepOriginal(false);
+		d.setUpdateHierarchy(false);
+		d.setUpdateSimilarDeclarations(false);
+
+Extract Constant
+ - Selection
+ - Visibility
+ - Name
+		put("name", NAME);
+		put("replace", "false"); // Not sure what this argument does.
+		put("qualify", "false"); // If "true" the constant is replace with a fully qualified name as opposed to its `SimpleName`.
+
+Inline Constant
+ - Selection
+		put("replace",    "false"); // Only inline the selected occurrence.
+		put("remove",     "false");
+		put("comments",   "false");
+		put("exceptions", "false");
+
+Extract Method
+ - Block statement ranges
+ - Visibility
+ - Name
+ - static/instance
+		put("name", "extractedMethodByAlfine");
+		put("visibility", "2"); // private
+		put("replace", "true");
+		put("comments", "false");
+		put("exceptions", "false");
+
+Inline Method
+ - Call statement
+ - static
+
+

@@ -69,17 +69,3 @@ it can be placed in a file called 'descriptors.txt' placed
 in a workload list folder. It is then simply a pre-computed
 list from the perspective of the framework.
 
-
-# TODO
-- We may want to define queries that make <n> random selections
-  from a computed list before multiplying with parameters
-- We may want to compute unique IDs for descriptors so that
-  a query filter can target a specific descriptor
-  (Not sure this is needed because the user could then just
-   as well simply generate a custom descriptor list for the
-   targeted opportunity.)
-  - The idea at least is to be able to vary a set of parameters
-    for a specific descriptor (e.g. rename the same opportunity
-    with a precomputed list of names for testing name content
-    and content length)
-
